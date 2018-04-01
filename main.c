@@ -6,8 +6,11 @@
  * @brief    Initilize version
  *
  * @note
- *  1. H‡m printf: khi print \n se tu dong print them \n
- *     => Edit h‡m SendChar_ToUART trong retarget.c
+ *  1. H√†m printf: khi print \n se tu dong print them \n
+ *     => Edit h√†m SendChar_ToUART trong retarget.c
+ *
+ 
+ 
 *******************************************************************************/
 
 /*******************************************************************************
@@ -16,7 +19,6 @@
 #include <stdio.h>
 #include "NUC200Series.h"
 #include "Get_ADC_Value.h"
-#include "PID_C.h"
 #include "Scheduler.h"
 #include "LED7Segment.h"
 #include "Button_Processing.h"
@@ -25,10 +27,6 @@
 /*******************************************************************************
 **                      Define macro                                          **
 *******************************************************************************/
-#define CHU_KY_PID 15000
-
-
-
 
 
 #define DEBUG_MODE                STD_ON
@@ -53,11 +51,6 @@
 #define TRIAC_ON                  0U
 #define TRIAC_OFF                 1U
 
-#define MAXDUTY                   50000U /* 2s */
-#define PWM_FREQUENCE             25000U /* 1s */
-/* DUTY50MS = (25000U/1000)*50 or PWM_FREQUENCE/20 */
-#define DUTY50MS                  1250U 
-
 
 /* Speaker control define */
 #define SPEAKER_ON                0U
@@ -71,9 +64,8 @@
 #define DATA_FLS_SETPOINT_IDX     0U
 
 /* Scheduler define */
-#define PID_AUTOTURN_IDX          0U
+
 #define UPDATE_ADC_IDX            1U
-#define PID_OUT_IDX               2U
 #define DISPLAY_IDX               3U
 #define BLINKING_LED_IDX          4U
 #define SEND_SETPOINT_IDX         5U
@@ -83,10 +75,12 @@
 #define BLINK_TIME                400U
 
 /* Lo Nhiet status */
-#define READING_INFO_SYSTEM       0U
-#define JUST_START                1U
-#define HEATING_FIRST             2U
-#define STABLE                    3U
+typedef enum ETag_LoNhietStatusType
+{
+  READING_INFO_SYSTEM = 0,
+  LONHIET_IDLE,
+  STABLE
+}LoNhietStatusType;
 
 
 
@@ -97,16 +91,16 @@ void SYS_Init(void);
 void GPIO_Init(void);
 void Buttons_Init(void);
 void Timer0_Init(void);
-void PWM_Init(void);
+
 
 /* Scheduler function prototypes */
 void Scheduler_Init(void);
 void DisplayTask(void);
 void BlinkingLed(void);
 void Send_SetPoint_to_PC(void);
-void PIDOut_Task(void);
+
 void UpdateADCValue(void);
-void PIDAutoTurn_Task(void);
+
 
 /* Button call-back function prototypes */
 void BSET_HoldToThres(void);
@@ -114,9 +108,6 @@ void BSET_Release(void);
 void BCONG_Release(void);
 void BTRU_Release(void);
 
-/* PID function prototypes */
-void PIDTemp_Init(void);
-void PwmTriac(int32_t LslDuty);
 
 #if (DEBUG_MODE == STD_ON)
 Std_ReturnType SYS_CheckResetSrc(void);
@@ -145,76 +136,20 @@ uint16_t GusTempTHC = 30;  /* Nhiet do Thermo-couple */
 /* Data flash variables */
 /* This array contains all data stored in flash memory */
 uint32_t GaaStoreData[DATA_FLS_LEN];
-d
+
 /* LED control variables */
 uint8_t GucBlinkTimes;
 
 /* PID variables */
 int32_t GslSetPoint = 60; 
-uint16_t GusStopTemp = 100;
-int32_t Kd, KpStable, GslPID_Output;
-int32_t *GpKp, *GpKi;
 uint16_t GusLastTempTHC;
-uint8_t GucLoNhietStatus;
-uint16_t GusOverShoot, GusLastOverShoot;
+LoNhietStatusType GucLoNhietStatus;
 
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
 *******************************************************************************/
 /* Scheduler Events */
-void PIDAutoTurn_Task(void)
-{
-  /* Start turning */
-  if(GucLoNhietStatus == HEATING_FIRST)
-  {
-    //printf("HEATING_FIRST\n");
-    if(GusTempTHC + GusStopTemp < GslSetPoint)
-    {
-      PwmTriac(MAXDUTY);
-    }
-    else
-    {
-      PwmTriac(0);
-      /* State change to STABLE */
-      GucLoNhietStatus = STABLE;  
-      Gaa_SchedulerTable[PID_AUTOTURN_IDX].ulInterval = 6000;
-      Gaa_SchedulerTable[PID_OUT_IDX].blEnable = TRUE;       
-    }   
-  }
-  else if(GucLoNhietStatus == STABLE)
-  {
-    printf("Kp %d\n", PID_GetKp());
-    
-    GslPID_Output = PID_Compute((int32_t)GusTempTHC);
-    
-    printf("PIDOut %d\n", GslPID_Output);
-    
-    PwmTriac(GslPID_Output);
-  }
-  else if(GucLoNhietStatus == JUST_START)
-  {
-    //printf("JUST_START\n");
-    if(GusTempTHC < GslSetPoint)
-    {
-      /* State change to HEATING_FIRST */
-      GucLoNhietStatus = HEATING_FIRST;
-      Gaa_SchedulerTable[PID_AUTOTURN_IDX].ulInterval = 4000;
-      Gaa_SchedulerTable[PID_OUT_IDX].blEnable = TRUE;
-    }
-    else
-    {
-      /* State change to STABLE */
-      GucLoNhietStatus = STABLE;
-      Gaa_SchedulerTable[PID_AUTOTURN_IDX].ulInterval = 8000;
-      Gaa_SchedulerTable[PID_OUT_IDX].blEnable = TRUE;   
-    }
-  }
-  
-  /* Update last temperature */
-  GusLastTempTHC = GusTempTHC;
-  
-  printf("STA %d\n", GucLoNhietStatus);
-}
+
 void DisplayTask(void)
 {
   LED_TEST ^= 1;
@@ -242,10 +177,7 @@ void Send_SetPoint_to_PC(void)
 {
   printf("SP %d\n", GslSetPoint);
 }
-void PIDOut_Task(void)
-{
 
-}
 void UpdateADCValue(void)
 {
   if(ADC_IDLE == ADC_GetStatus())
@@ -316,6 +248,7 @@ int main()
   
   /* Init Button */
   Buttons_Init();
+
 #if (DEBUG_MODE == STD_ON)
   /* Init UART1 use for debug and testing */
   UART1_Init();
@@ -324,9 +257,6 @@ int main()
      and PDMA use for tranfering ADC data */
   Get_ADC_Init();
   ADC_StartConvert();
-  
-  /* Init PWM0 use for on/off TRIAC */
-  PWM_Init();
   
 #if (DEBUG_MODE == STD_ON)
   /* Check the system reset source and report */
@@ -337,15 +267,13 @@ int main()
   DataFlash_Read(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
   GslSetPoint = (uint16_t) GaaStoreData[DATA_FLS_SETPOINT_IDX];
   
-  PIDTemp_Init();
-  
   Scheduler_Init();
   
   GucLoNhietStatus = READING_INFO_SYSTEM;
   printf("STA %d\n", GucLoNhietStatus);
   
   /*---------------------------------------------------------------------------- 
-    Waiting ADC get first value. TimeOut = 3s 
+    Waiting ADC get first value. TimeOut = 1s 
   ----------------------------------------------------------------------------*/
   while(ADC_GetStatus() != ADC_IDLE)
   {
@@ -363,7 +291,7 @@ int main()
   GucBlinkTimes = 6;
   Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable = TRUE;
   /*---------------------------------------------------------------------------- 
-    Waiting LED blink done. TimeOut = 10s
+    Waiting LED blink done. TimeOut = 5s
   ----------------------------------------------------------------------------*/
   while(Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable == TRUE)   
   {
@@ -376,16 +304,10 @@ int main()
     }
   }
   
-  GucLoNhietStatus = JUST_START;
-  Gaa_SchedulerTable[PID_AUTOTURN_IDX].blEnable = TRUE;
+  GucLoNhietStatus = LONHIET_IDLE;
   Gaa_SchedulerTable[UPDATE_ADC_IDX].blEnable = TRUE;
   Gaa_SchedulerTable[SEND_SETPOINT_IDX].blEnable = TRUE;
-      
-  /* Cai dat Kp: 0 - 50000 */
-  *GpKp = 2500;
-  //*GpKi = DUTY50MS;
-  
-  GucLoNhietStatus = STABLE;
+
   while(1)
   { 
     SchedulerPoll(); 
@@ -432,6 +354,10 @@ void GPIO_Init(void)
   /* Cau hinh chan DIEU KHIEN LED_TEST */
   GPIO_SetMode(LED_TEST_PORT, LED_TEST_BIT, GPIO_PMD_OUTPUT);
   LED_TEST = 0;
+  
+  /* Cau hinh chan DIEU KHIEN TRIAC */
+  GPIO_SetMode(TRIAC_PORT, TRIAC_BIT, GPIO_PMD_OUTPUT);
+  TRIAC_PIN = TRIAC_OFF;
 }
 
 
@@ -455,78 +381,8 @@ void Buttons_Init(void)
  * => Timer0 will be disable!                            
  * PWMA group is used.
 ******************************************************************************/
-void PWM_Init(void)
-{
-   /* Enable PWM clock source */
-  CLK_EnableModuleClock(PWM01_MODULE);
-  
-  /* Select PWMA clock source: HCLK 50 MHz */
-  CLK_SetModuleClock(PWM01_MODULE, CLK_CLKSEL_PWM01_HCLK, 0);
-  
-  /* Reset PWMA: channel0~channel3 */
-  SYS_ResetModule(PWM03_RST);
-  
-  /************************ PWM-Timer Start Produce *************************/
-  
-  /* 1. Setup clock selector (CSR): bo chia tan dau tien */
-  /* Set the divider = PWM_CLK/16 of the PWMA channel0 */
-  PWM_SET_DIVIDER(PWMA, PWM_CH0, PWM_CLK_DIV_16);
-  
-  /* 2. Setup prescaler (PPR)
-  * Set the prescaler = PWM_CLK/(124+1) of the PWMA channel0 */
-  PWM_WaitBusyTimeOK(PWMA, PWM_CH0);
-  PWM_SET_PRESCALER(PWMA, PWM_CH0, 124);
-
-  /* 3. Enable Auto-Reload mode for Channel0 */
-  PWM_WaitBusyTimeOK(PWMA, PWM_CH0);
-  PWMA->PCR |= PWM_PCR_CH0MOD_Msk; 
-  
-  /* 4. Because MOC3020 control signal is active low => invert output */
-  PWM_ENABLE_OUTPUT_INVERTER(PWMA, (1 << PWM_CH0));
-  PWMA->PCR |= PWM_PCR_CH0PINV_Msk;
-  
-  /* 5. Setup comparator register (CMR) for setting PWM duty */
-  PWM_WaitBusyTimeOK(PWMA, PWM_CH0);
-  PWM_SET_CMR(PWMA, PWM_CH0, MAXDUTY);
-  
-  /* 6. Setup PWM down-counter register (CNR) for setting PWM period: 0.5Hz */
-  PWM_WaitBusyTimeOK(PWMA, PWM_CH0);
-  PWM_SET_CNR(PWMA, PWM_CH0, MAXDUTY);
-
-  /* 6. Setup corresponding GPIO pin as PWM function (enable POE and disable
-   *   CAPENR) for corresponding PWM channel.
-   * Set PA.12 multi-function pins for PWMA Channel0 */
-  SYS->GPA_MFP |= SYS_GPA_MFP_PA12_PWM0;
-  
-  /* 8. Enable PWM timer start running (Set CHxEN = 1 in PCR)
-   *  Enable PWM Output path for PWMA channel0 <=> BIT0 */
-  PWM_EnableOutput(PWMA, (1 << PWM_CH0));
-  
-  /* 9. Start PWMA Channel0 <=> BIT0 */
-  PWM_Start(PWMA, (1 << PWM_CH0));
-  
-  PwmTriac(0);
-  /*****************************************************************************
-  *                         Tinh toan tan so PWM: 0.5Hz (T(s): 2)
-  * PWM Clock Source: 50 MHz
-  * PWM divider: 16
-  * PRESCALER: 1-256
-  * Counter register: 0-65535
-  * FREQ_PWM =  50 MHz / (16 * PRESCALER)
-  * FREQ_PWM =  3125000 Hz / PRESCALER
-  * Chon PRESCALER = 125
-  * => FREQ_PWM = 25000
-  *****************************************************************************/
-}
-
-
 void Scheduler_Init(void)
-{
-  Gaa_SchedulerTable[PID_AUTOTURN_IDX].pfnFunction = &PIDAutoTurn_Task;
-  Gaa_SchedulerTable[PID_AUTOTURN_IDX].ulInterval = CHU_KY_PID;
-  Gaa_SchedulerTable[PID_AUTOTURN_IDX].ulLastTick = 0;
-  Gaa_SchedulerTable[PID_AUTOTURN_IDX].blEnable = FALSE;
-  
+{  
   Gaa_SchedulerTable[UPDATE_ADC_IDX].pfnFunction = &UpdateADCValue;
   Gaa_SchedulerTable[UPDATE_ADC_IDX].ulInterval = 250;
   Gaa_SchedulerTable[UPDATE_ADC_IDX].ulLastTick = 0;
@@ -536,11 +392,6 @@ void Scheduler_Init(void)
   Gaa_SchedulerTable[DISPLAY_IDX].ulInterval = 500;
   Gaa_SchedulerTable[DISPLAY_IDX].ulLastTick = 0;
   Gaa_SchedulerTable[DISPLAY_IDX].blEnable = TRUE;
-  
-  Gaa_SchedulerTable[PID_OUT_IDX].pfnFunction = &PIDOut_Task;
-  Gaa_SchedulerTable[PID_OUT_IDX].ulInterval = 5000;
-  Gaa_SchedulerTable[PID_OUT_IDX].ulLastTick = 0;
-  Gaa_SchedulerTable[PID_OUT_IDX].blEnable = FALSE;
   
   Gaa_SchedulerTable[BLINKING_LED_IDX].pfnFunction = &BlinkingLed;
   Gaa_SchedulerTable[BLINKING_LED_IDX].ulInterval = BLINK_TIME;
@@ -672,55 +523,8 @@ void Led7segTest(void)
 }
 #endif
 
-void PIDTemp_Init(void)
-{
-  /* If user congifure 1000 C 
-  => OUTPUT = MAXDUTY = 50000 = 1000*Kp 
-  => Kp = 50
-  */
-  GpKp = &GslKp;
-  *GpKp = 0;
-  GpKi = &GslKi;
-  *GpKi = 0;
-  Kd = 0;
-  PID_Init(&GslSetPoint, GpKp, GpKi, &Kd, PID_DIRECT);
-  PID_SetOutputLimits(0, MAXDUTY);
 
-}
-/**
- * @brief The function output pwm 
- * @param[in] LusDuty : 0 - 50000(MAXDUTY)
- * @retval    None
-*/
-void PwmTriac(int32_t LslDuty)
-{
-  /* Limit output to avoid overflow */
-  if(LslDuty > MAXDUTY)
-    
-  {
-    LslDuty = MAXDUTY;
-  }
-  else if(LslDuty < 0)
-  {
-    LslDuty = 0;
-  }
-  PWM_SET_CMR(PWMA, PWM_CH0, MAXDUTY - LslDuty); \
-}
-  /*****************************************************************************
-  *                         PWM-Timer Stop Produce 
-  * 1. Method 1:(Recommended)
-  * Set 16-bit down counter (CNR) as 0, and monitor PDR (current value of 16-bit 
-  * down counter). When PDR reaches to 0, disable PWM-Timer(CHxEN in PCR).
-  *
-  * 2. Method 2:(Recommended)
-  * Set 16-bit down counter (CNR) as 0> When interrupt request happens, disable 
-  * PWM-Timer (CHxEN in PCR).
-  * Ex: PWM_Stop(PWMA, (1 << PWM_CHx));
-  * 
-  * 3. Method 2:(Not recommended)
-  * Disble PWM-Timer directly (CHxEN in PCR).
-  * => khong nen dung ham PWM_ForceStop()
-  *****************************************************************************/
+
 #if (WRITE_DATABASE_MODE == STD_ON)
 void SaveDataBase_to_Flash(void)
 {

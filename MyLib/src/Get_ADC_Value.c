@@ -88,12 +88,16 @@ void PDMA_IRQHandler(void)
       /* Reset value */
       ADC_Sum = 0;
     }
+    else 
+    { /* Nothing to do */ }
 
     if(LenConvertStatus != ADC_IDLE)
     {
       /* Trigger PDMA */
       PDMA_Trigger(PDMA_CHANNEL_ADC);
     }
+    else 
+    { /* Nothing to do */ }
   }
 }
 

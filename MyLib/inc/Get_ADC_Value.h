@@ -24,8 +24,16 @@ extern "C"
 #define ADC_THC_CH        0U
 #define ADC_LM35_CH       1U
   
-#define PDMA_CHANNEL_ADC  0U /* PDMA  channel0 use for ADC */
+#define PDMA_CHANNEL_ADC  0U   /* PDMA  channel0 use for ADC */
+  
+/******************************************************************************
+  This is number of PDMA transfer data 
+  ADC is trig by PDMA
+  => This is number of ADC get sample when PDMA is trigged.
+ *****************************************************************************/
 #define PDMA_DATA_NUM     500U /* Max = 65535/2 */
+  
+
 #define THC_RATIO         3U
   
 #define ADC_ERROR_VALUE   0U
