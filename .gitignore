@@ -1,6 +1,7 @@
 # Project files
 *.uvoptx
 *.uvguix*
+*.uvguix.Administrator
 
 # Backup files
 *.bak
