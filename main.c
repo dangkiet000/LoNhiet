@@ -18,6 +18,7 @@
 *******************************************************************************/
 #include <stdio.h>
 #include "NUC200Series.h"
+#include "LoNhiet_Configuration.h"
 #include "Get_ADC_Value.h"
 #include "Scheduler.h"
 #include "LED7Segment.h"
