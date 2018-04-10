@@ -1,3 +1,6 @@
+# Project files
+*.uvoptx
+*.uvguix*
 
 # Backup files
 *.bak
@@ -14,6 +17,7 @@
 *.htm
 *.axf
 *.iex
+*.dep
 
 # Linker output
 *.ilk
