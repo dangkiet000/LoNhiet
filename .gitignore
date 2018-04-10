@@ -2,6 +2,8 @@
 *.uvoptx
 *.uvguix*
 *.uvguix.Administrator
+*.scvd
+*.ini
 
 # Backup files
 *.bak
