@@ -8,7 +8,7 @@
  * @note
  * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
-#include "NUC200Series.h"
+
 #include "Get_ADC_Value.h"
 
 /*******************************************************************************

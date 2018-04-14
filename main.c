@@ -17,8 +17,9 @@
 **                      Include Section                                       **
 *******************************************************************************/
 #include <stdio.h>
-#include "NUC200Series.h"
-#include "LoNhiet_Configuration.h"
+#include "SystemTick_App.h"
+#include "LoNhiet_Cfg.h"
+#include "Temperature_Conversion.h"
 #include "Get_ADC_Value.h"
 #include "Scheduler.h"
 #include "LED7Segment.h"
@@ -30,14 +31,13 @@
 *******************************************************************************/
 
 
-#define DEBUG_MODE                STD_ON
+
 #define WRITE_DATABASE_MODE       STD_OFF
 #define TEST_MODE                 STD_OFF
 
 /* System define */
 #define PLLCON_SETTING            CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK                 50000000
-#define SYSTEMTICK_INTERRUPTVALUE 6000000UL
 
 
 /* Led test define */
@@ -64,12 +64,7 @@
 #define DATA_FLS_LEN              1U
 #define DATA_FLS_SETPOINT_IDX     0U
 
-/* Scheduler define */
 
-#define UPDATE_ADC_IDX            1U
-#define DISPLAY_IDX               3U
-#define BLINKING_LED_IDX          4U
-#define SEND_SETPOINT_IDX         5U
 
 
 #define NUM_OF_BLINK              10U
@@ -94,13 +89,6 @@ void Buttons_Init(void);
 void Timer0_Init(void);
 
 
-/* Scheduler function prototypes */
-void Scheduler_Init(void);
-void DisplayTask(void);
-void BlinkingLed(void);
-void Send_SetPoint_to_PC(void);
-
-void UpdateADCValue(void);
 
 
 /* Button call-back function prototypes */
@@ -155,7 +143,7 @@ void DisplayTask(void)
 {
   LED_TEST ^= 1;
   
-  if(Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable == FALSE)
+  if(Sch_GetStatus(SCH_BlinkingLED_Task) == TASK_DISABLE)
   {
     LED7Seg_Show(GusTempTHC);
     Send_TemptoPC();
@@ -166,7 +154,7 @@ void BlinkingLed(void)
   if(GucBlinkTimes == 0)
   {
     BlinkingLED(STD_OFF);
-    Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable = FALSE;
+    Sch_TaskDisable(SCH_BlinkingLED_Task);
   }
   else
   {
@@ -193,8 +181,8 @@ void BCONG_Release(void)
   GslSetPoint++;
   GslSetPoint = ((GslSetPoint > MAX_TEMP_TYPE_K) ? MAX_TEMP_TYPE_K : GslSetPoint);
   GucBlinkTimes = NUM_OF_BLINK;
-  Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable = TRUE;
-  Gaa_SchedulerTable[BLINKING_LED_IDX].ulInterval = BLINK_TIME;
+  Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
+  Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
   LED7Seg_Show(GslSetPoint);
 }
 
@@ -204,8 +192,8 @@ void BTRU_Release(void)
   {
     GslSetPoint--;
     GucBlinkTimes = NUM_OF_BLINK;
-    Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable = TRUE;
-    Gaa_SchedulerTable[BLINKING_LED_IDX].ulInterval = BLINK_TIME;
+    Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
+    Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
   }
   LED7Seg_Show(GslSetPoint);
 }
@@ -219,8 +207,8 @@ void BSET_Release(void)
   GaaStoreData[DATA_FLS_SETPOINT_IDX] = (uint32_t) GslSetPoint;
   DataFlash_Write(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
   GucBlinkTimes = 8;
-  Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable = TRUE;
-  Gaa_SchedulerTable[BLINKING_LED_IDX].ulInterval = 200;
+  Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
+  Sch_SetInterval(SCH_BlinkingLED_Task, 200);
   LED7Seg_Show(GslSetPoint);
   
 }
@@ -236,7 +224,7 @@ int main()
   SYS_Init();
   
   /* Init SystemTick timer */
-  SYSTick_Init(SYSTEMTICK_INTERRUPTVALUE);
+  SYSTick_Init(ONE_MS_SYSTICK*1000);
   
   /* Lock protected registers */
   SYS_LockReg();
@@ -268,8 +256,6 @@ int main()
   DataFlash_Read(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
   GslSetPoint = (uint16_t) GaaStoreData[DATA_FLS_SETPOINT_IDX];
   
-  Scheduler_Init();
-  
   GucLoNhietStatus = READING_INFO_SYSTEM;
   printf("STA %d\n", GucLoNhietStatus);
   
@@ -290,13 +276,13 @@ int main()
   
   /* Blinking LED to display */
   GucBlinkTimes = 6;
-  Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable = TRUE;
+  Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
   /*---------------------------------------------------------------------------- 
     Waiting LED blink done. TimeOut = 5s
   ----------------------------------------------------------------------------*/
-  while(Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable == TRUE)   
+  while(Sch_GetStatus(SCH_BlinkingLED_Task) == TASK_ENABLE)   
   {
-    SchedulerPoll(); 
+    Sch_MainFunction(); 
     if(millis() > 5000)
     {
       /* Report BLINKING LED ERROR */
@@ -306,13 +292,13 @@ int main()
   }
   
   GucLoNhietStatus = LONHIET_IDLE;
-  Gaa_SchedulerTable[UPDATE_ADC_IDX].blEnable = TRUE;
-  Gaa_SchedulerTable[SEND_SETPOINT_IDX].blEnable = TRUE;
+  Sch_TaskEnable(SCH_UpdateADC_Task, SCH_RUN_LATER);
+  Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
 
   while(1)
   { 
-    SchedulerPoll(); 
-    ButtonsPoll();
+    Sch_MainFunction(); 
+    Btn_MainFunction();
   }
 }
 
@@ -375,36 +361,14 @@ void Buttons_Init(void)
   Gaa_NotificationTable[BSET_INDEX].pfnFunction = &BSET_HoldToThres;
   Gaa_NotificationTable[BSET_INDEX].pfnHoldFunction = &BSET_Release;
   
-  ButtonsProcessing_Init();
+  Btn_Init();
 }
 /*****************************************************************************
  * In this project, we use PWM0 (PA.12) to generate PWM 
  * => Timer0 will be disable!                            
  * PWMA group is used.
 ******************************************************************************/
-void Scheduler_Init(void)
-{  
-  Gaa_SchedulerTable[UPDATE_ADC_IDX].pfnFunction = &UpdateADCValue;
-  Gaa_SchedulerTable[UPDATE_ADC_IDX].ulInterval = 250;
-  Gaa_SchedulerTable[UPDATE_ADC_IDX].ulLastTick = 0;
-  Gaa_SchedulerTable[UPDATE_ADC_IDX].blEnable = TRUE;
-  
-  Gaa_SchedulerTable[DISPLAY_IDX].pfnFunction = &DisplayTask;
-  Gaa_SchedulerTable[DISPLAY_IDX].ulInterval = 500;
-  Gaa_SchedulerTable[DISPLAY_IDX].ulLastTick = 0;
-  Gaa_SchedulerTable[DISPLAY_IDX].blEnable = TRUE;
-  
-  Gaa_SchedulerTable[BLINKING_LED_IDX].pfnFunction = &BlinkingLed;
-  Gaa_SchedulerTable[BLINKING_LED_IDX].ulInterval = BLINK_TIME;
-  Gaa_SchedulerTable[BLINKING_LED_IDX].ulLastTick = 0;
-  Gaa_SchedulerTable[BLINKING_LED_IDX].blEnable = FALSE;
-  
-  Gaa_SchedulerTable[SEND_SETPOINT_IDX].pfnFunction = &Send_SetPoint_to_PC;
-  Gaa_SchedulerTable[SEND_SETPOINT_IDX].ulInterval = 20000;
-  Gaa_SchedulerTable[SEND_SETPOINT_IDX].ulLastTick = 0;
-  Gaa_SchedulerTable[SEND_SETPOINT_IDX].blEnable = FALSE;
 
-}
 #if (DEBUG_MODE == STD_ON)
 /* This function check the system reset source and report */
 Std_ReturnType SYS_CheckResetSrc(void)

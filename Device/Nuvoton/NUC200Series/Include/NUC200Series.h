@@ -12751,8 +12751,6 @@ typedef volatile unsigned long  vu32;       ///< Define 32-bit unsigned volatile
 /******************************************************************************/
 /*                         Peripheral header files                            */
 /******************************************************************************/
-#include "Std_Common.h"
-
 #include "SYS.h"
 #include "ADC.h"
 #include "GPIO.h"
@@ -12772,8 +12770,6 @@ typedef volatile unsigned long  vu32;       ///< Define 32-bit unsigned volatile
 //#include "PS2.h"
 #include "CLK.h"
 //#include "ACMP.h"
-
-#include "Temperature_Conversion.h"
 
 #endif
 

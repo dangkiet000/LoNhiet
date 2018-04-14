@@ -1,13 +1,13 @@
 Dependencies for Project 'LoNhiet', Target 'LoNhiet': (DO NOT MODIFY !)
-F (..\main.c)(0x5ACD0A16)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\main.o --omf_browse .\object\main.crf --depend .\object\main.d)
+F (..\main.c)(0x5AD194E1)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\main.o --omf_browse .\object\main.crf --depend .\object\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\MyLib\inc\SystemTick_App.h)(0x5AD0FEF6)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -16,21 +16,24 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-I (..\LoNhiet_Configuration.h)(0x5ACD0AB8)
-I (..\MyLib\inc\Get_ADC_Value.h)(0x5A48C2E2)
-I (..\MyLib\inc\Scheduler.h)(0x587A68C5)
-I (..\MyLib\inc\LED7Segment.h)(0x587680E2)
-I (..\MyLib\inc\Button_Processing.h)(0x58766E42)
-I (..\MyLib\inc\DataFlash.h)(0x5869533D)
-F (..\MyLib\src\Temperature_Conversion.c)(0x58E93468)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\temperature_conversion.o --omf_browse .\object\temperature_conversion.crf --depend .\object\temperature_conversion.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\Common\Std_Types.h)(0x5AD0F178)
+I (..\Common\Compiler\IAR\Compiler.h)(0x5AD0F33B)
+I (..\Common\Platform_Types.h)(0x5AD0F8A4)
+I (..\LoNhiet_Cfg.h)(0x5AD0FEEE)
+I (..\MyLib\inc\Temperature_Conversion.h)(0x5AD0FFC5)
+I (..\MyLib\inc\Get_ADC_Value.h)(0x5AD0FFD2)
+I (..\MyLib\inc\Scheduler.h)(0x5AD19251)
+I (..\MyLib\inc\Scheduler_Cfg.h)(0x5AD191B0)
+I (..\MyLib\inc\LED7Segment.h)(0x5AD0FEB0)
+I (..\MyLib\inc\Button_Processing.h)(0x5AD194E1)
+I (..\MyLib\inc\DataFlash.h)(0x5AD0FF01)
+F (..\MyLib\src\Temperature_Conversion.c)(0x5AD0FD71)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\temperature_conversion.o --omf_browse .\object\temperature_conversion.crf --depend .\object\temperature_conversion.d)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -39,15 +42,15 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\MyLib\src\Std_Common.c)(0x58A1C76D)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\std_common.o --omf_browse .\object\std_common.crf --depend .\object\std_common.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\MyLib\inc\Temperature_Conversion.h)(0x5AD0FFC5)
+F (..\MyLib\src\Scheduler.c)(0x5AD192A3)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\scheduler.o --omf_browse .\object\scheduler.crf --depend .\object\scheduler.d)
+I (..\MyLib\inc\Scheduler.h)(0x5AD19251)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -56,19 +59,18 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\MyLib\src\PID_C.c)(0x58A8469C)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\pid_c.o --omf_browse .\object\pid_c.crf --depend .\object\pid_c.d)
-I (..\MyLib\inc\PID_C.h)(0x58A86DA2)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
-F (..\MyLib\src\Scheduler.c)(0x5874F724)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\scheduler.o --omf_browse .\object\scheduler.crf --depend .\object\scheduler.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\Common\Std_Types.h)(0x5AD0F178)
+I (..\Common\Compiler\IAR\Compiler.h)(0x5AD0F33B)
+I (..\Common\Platform_Types.h)(0x5AD0F8A4)
+I (..\MyLib\inc\Scheduler_Cfg.h)(0x5AD191B0)
+F (..\MyLib\src\LED7Segment.c)(0x5AD0FE7F)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\led7segment.o --omf_browse .\object\led7segment.crf --depend .\object\led7segment.d)
+I (..\MyLib\inc\LED7Segment.h)(0x5AD0FEB0)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -77,16 +79,17 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-I (..\MyLib\inc\Scheduler.h)(0x587A68C5)
-F (..\MyLib\src\LED7Segment.c)(0x5876811B)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\led7segment.o --omf_browse .\object\led7segment.crf --depend .\object\led7segment.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\Common\Std_Types.h)(0x5AD0F178)
+I (..\Common\Compiler\IAR\Compiler.h)(0x5AD0F33B)
+I (..\Common\Platform_Types.h)(0x5AD0F8A4)
+F (..\MyLib\src\Button_Processing.c)(0x5AD194E1)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\button_processing.o --omf_browse .\object\button_processing.crf --depend .\object\button_processing.d)
+I (..\MyLib\inc\Button_Processing.h)(0x5AD194E1)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -95,35 +98,17 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-I (..\MyLib\inc\LED7Segment.h)(0x587680E2)
-F (..\MyLib\src\Button_Processing.c)(0x5876725B)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\button_processing.o --omf_browse .\object\button_processing.crf --depend .\object\button_processing.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
-I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
-I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
-I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
-I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
-I (..\StdDriver\inc\SYS.h)(0x582463D4)
-I (..\StdDriver\inc\ADC.h)(0x582463D4)
-I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
-I (..\StdDriver\inc\PWM.h)(0x582463D4)
-I (..\StdDriver\inc\TIMER.h)(0x582463D4)
-I (..\StdDriver\inc\UART.h)(0x582463D4)
-I (..\StdDriver\inc\PDMA.h)(0x582463D4)
-I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-I (..\MyLib\inc\Button_Processing.h)(0x58766E42)
-F (..\MyLib\src\DataFlash.c)(0x58695338)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\dataflash.o --omf_browse .\object\dataflash.crf --depend .\object\dataflash.d)
+I (..\Common\Std_Types.h)(0x5AD0F178)
+I (..\Common\Compiler\IAR\Compiler.h)(0x5AD0F33B)
+I (..\Common\Platform_Types.h)(0x5AD0F8A4)
+F (..\MyLib\src\DataFlash.c)(0x5ACFAC3C)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\dataflash.o --omf_browse .\object\dataflash.crf --depend .\object\dataflash.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -132,16 +117,18 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-I (..\MyLib\inc\DataFlash.h)(0x5869533D)
-F (..\MyLib\src\Get_ADC_Value.c)(0x5A48C199)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\get_adc_value.o --omf_browse .\object\get_adc_value.crf --depend .\object\get_adc_value.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\MyLib\inc\DataFlash.h)(0x5AD0FF01)
+I (..\Common\Std_Types.h)(0x5AD0F178)
+I (..\Common\Compiler\IAR\Compiler.h)(0x5AD0F33B)
+I (..\Common\Platform_Types.h)(0x5AD0F8A4)
+F (..\MyLib\src\Get_ADC_Value.c)(0x5AD0FF62)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\get_adc_value.o --omf_browse .\object\get_adc_value.crf --depend .\object\get_adc_value.d)
+I (..\MyLib\inc\Get_ADC_Value.h)(0x5AD0FFD2)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -150,17 +137,17 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-I (..\MyLib\inc\Get_ADC_Value.h)(0x5A48C2E2)
-F (..\Device\Nuvoton\NUC200Series\Source\ARM\startup_NUC200Series.s)(0x582463D5)(--cpu Cortex-M0 -g --apcs=interwork -I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 525" --pd "_RTE_ SETA 1"--list .\listing\startup_nuc200series.lst --xref --width 80 -o .\object\startup_nuc200series.o --depend .\object\startup_nuc200series.d)
-F (..\Device\Nuvoton\NUC200Series\Source\system_NUC200Series.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\system_nuc200series.o --omf_browse .\object\system_nuc200series.crf --depend .\object\system_nuc200series.d)
-I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\Common\Std_Types.h)(0x5AD0F178)
+I (..\Common\Compiler\IAR\Compiler.h)(0x5AD0F33B)
+I (..\Common\Platform_Types.h)(0x5AD0F8A4)
+F (..\MyLib\src\SystemTick_App.c)(0x5AD0FAE0)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\systemtick_app.o --omf_browse .\object\systemtick_app.crf --depend .\object\systemtick_app.d)
+I (..\MyLib\inc\SystemTick_App.h)(0x5AD0FEF6)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -169,15 +156,17 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\adc.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\adc.o --omf_browse .\object\adc.crf --depend .\object\adc.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\Common\Std_Types.h)(0x5AD0F178)
+I (..\Common\Compiler\IAR\Compiler.h)(0x5AD0F33B)
+I (..\Common\Platform_Types.h)(0x5AD0F8A4)
+F (..\MyLib\src\Scheduler_Cfg.c)(0x5AD191B2)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\scheduler_cfg.o --omf_browse .\object\scheduler_cfg.crf --depend .\object\scheduler_cfg.d)
+I (..\MyLib\inc\Scheduler.h)(0x5AD19251)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -186,15 +175,18 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\clk.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\clk.o --omf_browse .\object\clk.crf --depend .\object\clk.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
-I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
+I (..\Common\Std_Types.h)(0x5AD0F178)
+I (..\Common\Compiler\IAR\Compiler.h)(0x5AD0F33B)
+I (..\Common\Platform_Types.h)(0x5AD0F8A4)
+I (..\MyLib\inc\Scheduler_Cfg.h)(0x5AD191B0)
+F (..\Device\Nuvoton\NUC200Series\Source\ARM\startup_NUC200Series.s)(0x582463D5)(--cpu Cortex-M0 -g --apcs=interwork -I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 525"--list .\listing\startup_nuc200series.lst --xref --width 80 -o .\object\startup_nuc200series.o --depend .\object\startup_nuc200series.d)
+F (..\Device\Nuvoton\NUC200Series\Source\system_NUC200Series.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\system_nuc200series.o --omf_browse .\object\system_nuc200series.crf --depend .\object\system_nuc200series.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
+I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -203,15 +195,13 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\gpio.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\gpio.o --omf_browse .\object\gpio.crf --depend .\object\gpio.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+F (..\StdDriver\src\adc.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\adc.o --omf_browse .\object\adc.crf --depend .\object\adc.d)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -220,15 +210,13 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\pdma.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\pdma.o --omf_browse .\object\pdma.crf --depend .\object\pdma.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+F (..\StdDriver\src\clk.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\clk.o --omf_browse .\object\clk.crf --depend .\object\clk.d)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -237,16 +225,44 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\retarget.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\retarget.o --omf_browse .\object\retarget.crf --depend .\object\retarget.d)
+F (..\StdDriver\src\gpio.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\gpio.o --omf_browse .\object\gpio.crf --depend .\object\gpio.d)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
+I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
+I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
+I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
+I (..\StdDriver\inc\SYS.h)(0x582463D4)
+I (..\StdDriver\inc\ADC.h)(0x582463D4)
+I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
+I (..\StdDriver\inc\PWM.h)(0x582463D4)
+I (..\StdDriver\inc\TIMER.h)(0x582463D4)
+I (..\StdDriver\inc\UART.h)(0x582463D4)
+I (..\StdDriver\inc\PDMA.h)(0x582463D4)
+I (..\StdDriver\inc\CLK.h)(0x582463D4)
+F (..\StdDriver\src\pdma.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\pdma.o --omf_browse .\object\pdma.crf --depend .\object\pdma.d)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
+I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
+I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
+I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
+I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
+I (..\StdDriver\inc\SYS.h)(0x582463D4)
+I (..\StdDriver\inc\ADC.h)(0x582463D4)
+I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
+I (..\StdDriver\inc\PWM.h)(0x582463D4)
+I (..\StdDriver\inc\TIMER.h)(0x582463D4)
+I (..\StdDriver\inc\UART.h)(0x582463D4)
+I (..\StdDriver\inc\PDMA.h)(0x582463D4)
+I (..\StdDriver\inc\CLK.h)(0x582463D4)
+F (..\StdDriver\src\retarget.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\retarget.o --omf_browse .\object\retarget.crf --depend .\object\retarget.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -255,15 +271,13 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\sys.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\sys.o --omf_browse .\object\sys.crf --depend .\object\sys.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+F (..\StdDriver\src\sys.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\sys.o --omf_browse .\object\sys.crf --depend .\object\sys.d)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -272,15 +286,13 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\timer.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\timer.o --omf_browse .\object\timer.crf --depend .\object\timer.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+F (..\StdDriver\src\timer.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\timer.o --omf_browse .\object\timer.crf --depend .\object\timer.d)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -289,16 +301,14 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\uart.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\uart.o --omf_browse .\object\uart.crf --depend .\object\uart.d)
+F (..\StdDriver\src\uart.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\uart.o --omf_browse .\object\uart.crf --depend .\object\uart.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -307,15 +317,13 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\wdt.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\wdt.o --omf_browse .\object\wdt.crf --depend .\object\wdt.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+F (..\StdDriver\src\wdt.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\wdt.o --omf_browse .\object\wdt.crf --depend .\object\wdt.d)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -324,15 +332,13 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)
-F (..\StdDriver\src\pwm.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525" -D_RTE_-o .\object\pwm.o --omf_browse .\object\pwm.crf --depend .\object\pwm.d)
-I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x587666C5)
+F (..\StdDriver\src\pwm.c)(0x582463D5)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\pwm.o --omf_browse .\object\pwm.crf --depend .\object\pwm.d)
+I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
 I (..\CMSIS\Include\core_cmInstr.h)(0x582463D6)
 I (..\CMSIS\Include\core_cmFunc.h)(0x582463D6)
 I (..\Device\Nuvoton\NUC200Series\Include\system_NUC200Series.h)(0x58614E20)
-I (..\MyLib\inc\Std_Common.h)(0x586794C5)
 I (..\StdDriver\inc\SYS.h)(0x582463D4)
 I (..\StdDriver\inc\ADC.h)(0x582463D4)
 I (..\StdDriver\inc\GPIO.h)(0x5867FCDA)
@@ -341,4 +347,3 @@ I (..\StdDriver\inc\TIMER.h)(0x582463D4)
 I (..\StdDriver\inc\UART.h)(0x582463D4)
 I (..\StdDriver\inc\PDMA.h)(0x582463D4)
 I (..\StdDriver\inc\CLK.h)(0x582463D4)
-I (..\MyLib\inc\Temperature_Conversion.h)(0x58765F42)

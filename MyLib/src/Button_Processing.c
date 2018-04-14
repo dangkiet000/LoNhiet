@@ -9,7 +9,6 @@
  * Copyright (C) 2016 DangKiet Technology Corp. All rights reserved.
 *****************************************************************************/
 
-#include "NUC200Series.h"
 #include "Button_Processing.h"
 
 /*******************************************************************************
@@ -35,7 +34,7 @@ void Button_ISR(void)
   if(GPIO_GET_INT_FLAG(ButtonBaseAddr, BSET_BIT))
   {
     /* To check if BSET is pressed <=> falling edge */
-    if(BSET == LOW)
+    if(BSET == STD_LOW)
     {
       Gaa_NotificationTable[BSET_INDEX].ulStartHoldTime = millis();
       Gaa_NotificationTable[BSET_INDEX].enStatus = ONHOLD;
@@ -61,7 +60,7 @@ void Button_ISR(void)
   else if(GPIO_GET_INT_FLAG(ButtonBaseAddr, BCONG_BIT))
   {
     /* To check if BCONG is pressed <=> falling edge */
-    if(BCONG == LOW)
+    if(BCONG == STD_LOW)
     {
       
     }
@@ -77,7 +76,7 @@ void Button_ISR(void)
   else if(GPIO_GET_INT_FLAG(ButtonBaseAddr, BTRU_BIT))
   {
     /* To check if BTRU is pressed <=> falling edge */
-    if(BTRU == LOW)
+    if(BTRU == STD_LOW)
     {
       
     }
@@ -125,7 +124,7 @@ void HW_Interrupt_GPIO_Init(void)
   * @details  Initialize to configure button as input and interrupt service 
   *           routine.
   */
-void ButtonsProcessing_Init(void)
+void Btn_Init(void)
 {
   uint8_t LucNotifyIndex;
   tNotification *pEvent;
@@ -147,7 +146,7 @@ void ButtonsProcessing_Init(void)
   * @details  Check status button to call notification function.
   *           This function must be called periodically by the user. 
   */
-void ButtonsPoll(void)
+void Btn_MainFunction(void)
 {
   uint8_t LucNotifyIndex;
   uint32_t LulNowTick;

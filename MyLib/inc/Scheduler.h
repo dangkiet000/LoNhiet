@@ -24,7 +24,11 @@
 #ifndef __SCHEDULER_H__
 #define __SCHEDULER_H__
 
-#define NUM_TASKS   6U
+#include "NUC200Series.h"
+#include "Std_Types.h"
+
+#include "Scheduler_Cfg.h"
+
 
 //*****************************************************************************
 //
@@ -51,6 +55,19 @@ extern "C"
 //*****************************************************************************
 typedef void (*tSchedulerFunction)(void *pvParam);
 
+/* Definition of event type */
+typedef enum ETag_Sch_StatusType
+{
+  TASK_ENABLE = 1,
+  TASK_DISABLE,
+  TASK_UNKNOWN
+} Sch_TaskStatusType;
+
+#define SCH_RUN_NOW    TRUE
+#define SCH_RUN_LATER  FALSE
+
+typedef uint8_t Sch_TaskIdType;
+
 //*****************************************************************************
 //
 //! The structure defining a function which the scheduler will call
@@ -69,7 +86,7 @@ typedef struct STag_tSchedulerTask
 
   /* The frequency the function is to be called expressed in terms of system
    * ticks.  If this value is 0, the function will be called on every call
-   * to SchedulerPoll.
+   * to Sch_MainFunction.
    */
   uint32_t ulInterval;
 
@@ -82,9 +99,12 @@ typedef struct STag_tSchedulerTask
    * function will be called periodically.  If false, the function is
    * disabled and will not be called.
    */
-  boolean blEnable;
+  Sch_TaskStatusType enStatus;
 }
 tSchedulerTask;
+
+
+
 
 //*****************************************************************************
 //
@@ -92,12 +112,12 @@ tSchedulerTask;
 //! on each function that the scheduler is to call.
 //
 //*****************************************************************************
-extern tSchedulerTask Gaa_SchedulerTable[];
+extern tSchedulerTask Sch_GaaTable[];
 
 //*****************************************************************************
 //
 //! This global variable must be exported by the client.  It must contain the
-//! number of entries in the Gaa_SchedulerTable array.
+//! number of entries in the Sch_GaaTable array.
 //
 //*****************************************************************************
 
@@ -114,10 +134,16 @@ extern tSchedulerTask Gaa_SchedulerTable[];
 // Public function prototypes
 //
 //*****************************************************************************
-extern void SchedulerPoll(void);
-extern boolean SchedulerTaskEnable(uint8_t LucIndex, boolean blEnable);
-extern boolean SchedulerTaskDisable(uint8_t LucIndex);
+extern void Sch_MainFunction(void);
+extern Std_ReturnType Sch_TaskEnable(Sch_TaskIdType ucTaskId, 
+                                          boolean blRunNow);
+extern Std_ReturnType Sch_TaskDisable(Sch_TaskIdType ucTaskId);
 
+extern Sch_TaskStatusType Sch_GetStatus(Sch_TaskIdType ucTaskId);
+
+extern void Sch_SetInterval(Sch_TaskIdType ucTaskId, uint32_t ulIntervalTime);
+
+extern uint32_t millis(void);
 //*****************************************************************************
 //
 // Mark the end of the C bindings section for C++ compilers.

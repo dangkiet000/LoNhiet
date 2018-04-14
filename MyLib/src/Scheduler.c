@@ -22,7 +22,6 @@
 //
 //*****************************************************************************
 
-#include "NUC200Series.h"
 #include "Scheduler.h"
 
 
@@ -33,8 +32,6 @@
 //
 //*****************************************************************************
 
-tSchedulerTask Gaa_SchedulerTable[NUM_TASKS];
-
 //*****************************************************************************
 //
 //! Instructs the scheduler to update its task table and make calls to
@@ -43,21 +40,23 @@ tSchedulerTask Gaa_SchedulerTable[NUM_TASKS];
 //! This function must be called periodically by the client to allow the
 //! scheduler to make calls to any configured task functions if it is their
 //! time to be called.  The call must be made at least as frequently as the
-//! most frequent task configured in the Gaa_SchedulerTable array.
+//! most frequent task configured in the Sch_GaaTable array.
 //!
 //! Although the scheduler makes use of the SysTick interrupt, all calls to
-//! functions configured in \e Gaa_SchedulerTable are made in the context of
-//! SchedulerPoll().
+//! functions configured in \e Sch_GaaTable are made in the context of
+//! Sch_MainFunction().
 //!
 //! \return None.
 //
 //*****************************************************************************
-void SchedulerPoll(void)
+void Sch_MainFunction(void)
 {
   uint8_t LucTaskIndex;
   uint32_t LulNowTick;
   tSchedulerTask *pTask;
   
+  /* Get a pointer to the task information. */
+  pTask = &Sch_GaaTable[0];
   
   /* Get current time */
   LulNowTick = millis();
@@ -65,11 +64,8 @@ void SchedulerPoll(void)
   /* Loop through each task in the task table. */
   for(LucTaskIndex = 0; LucTaskIndex < NUM_TASKS; LucTaskIndex++)
   {
-    /* Get a pointer to the task information. */
-    pTask = &Gaa_SchedulerTable[LucTaskIndex];
-
     /* Is this task active and, if so, is it time to call it's function? */
-    if((pTask->blEnable) && 
+    if((pTask->enStatus == TASK_ENABLE) && 
        (LulNowTick - pTask->ulLastTick >= pTask->ulInterval))
     {
       /* Remember the timestamp at which we make the function call. */
@@ -78,6 +74,7 @@ void SchedulerPoll(void)
       /* Call the task function, passing the provided parameter */
       pTask->pfnFunction();
     }
+    pTask++;
   }
 }
 
@@ -86,42 +83,42 @@ void SchedulerPoll(void)
 //! Enables a task and allows the scheduler to call it periodically.
 //!
 //! \param ui32Index is the index of the task which is to be enabled in the
-//! global \e Gaa_SchedulerTable array.
+//! global \e Sch_GaaTable array.
 //! \param bRunNow is \b true if the task is to be run on the next call to
-//! SchedulerPoll() or \b false if one whole period is to elapse before the task
+//! Sch_MainFunction() or \b false if one whole period is to elapse before the task
 //! is run.
 //!
 //! This function marks one of the configured tasks as enabled and causes
-//! SchedulerPoll() to call that task periodically.  The caller may choose to
+//! Sch_MainFunction() to call that task periodically.  The caller may choose to
 //! have the enabled task run for the first time on the next call to
-//! SchedulerPoll() or to wait one full task period before making the first
+//! Sch_MainFunction() or to wait one full task period before making the first
 //! call.
 //!
 //! \return None.
 //
 //*****************************************************************************
-boolean SchedulerTaskEnable(uint8_t LucIndex, boolean blEnable)
+Std_ReturnType Sch_TaskEnable(Sch_TaskIdType ucTaskId, boolean blRunNow)
 {
     /* Is the task index passed valid? */
-  if(LucIndex < NUM_TASKS)
+  if(ucTaskId < NUM_TASKS)
   {
     /* Yes - mark the task as active. */
-    Gaa_SchedulerTable[LucIndex].blEnable = TRUE;
+    Sch_GaaTable[ucTaskId].enStatus = TASK_ENABLE;
 
     /* Set the last call time to ensure that the function is called either
      * next time the scheduler is run or after the desired number of ticks
-     * depending upon the value of the bRunNow parameter. */
+     * depending upon the value of the blRunNow parameter. */
     
-    if(blEnable == TRUE)
+    if(blRunNow == SCH_RUN_NOW)
     {
-      /* Cause the task to run on the next call to SchedulerPoll(). */
-      Gaa_SchedulerTable[LucIndex].ulLastTick =
-          (millis() - Gaa_SchedulerTable[LucIndex].ulInterval);
+      /* Cause the task to run on the next call to Sch_MainFunction(). */
+      Sch_GaaTable[ucTaskId].ulLastTick =
+          (millis() - Sch_GaaTable[ucTaskId].ulInterval);
     }
     else
     {
       /* Cause the task to run after one full time period. */
-      Gaa_SchedulerTable[LucIndex].ulLastTick = millis();
+      Sch_GaaTable[ucTaskId].ulLastTick = millis();
     }
     
     return E_OK;
@@ -137,22 +134,22 @@ boolean SchedulerTaskEnable(uint8_t LucIndex, boolean blEnable)
 //! Disables a task and prevents the scheduler from calling it.
 //!
 //! \param ui32Index is the index of the task which is to be disabled in the
-//! global \e Gaa_SchedulerTable array.
+//! global \e Sch_GaaTable array.
 //!
 //! This function marks one of the configured tasks as inactive and prevents
-//! SchedulerPoll() from calling it.  The task may be reenabled by calling
-//! SchedulerTaskEnable().
+//! Sch_MainFunction() from calling it.  The task may be reenabled by calling
+//! Sch_TaskEnable().
 //!
 //! \return None.
 //
 //*****************************************************************************
-boolean SchedulerTaskDisable(uint8_t LucIndex)
+Std_ReturnType Sch_TaskDisable(Sch_TaskIdType ucTaskId)
 {
   /* Is the task index passed valid? */
-  if(LucIndex < NUM_TASKS)
+  if(ucTaskId < NUM_TASKS)
   {
     /* Yes - mark the task as inactive. */
-    Gaa_SchedulerTable[LucIndex].blEnable = FALSE;
+    Sch_GaaTable[ucTaskId].enStatus = TASK_DISABLE;
     
     return E_OK;
   }
@@ -162,6 +159,33 @@ boolean SchedulerTaskDisable(uint8_t LucIndex)
   }
 }
 
+Sch_TaskStatusType Sch_GetStatus(Sch_TaskIdType ucTaskId)
+{
+  /* Is the task index passed valid? */
+  if(ucTaskId < NUM_TASKS)
+  {
+    /* Yes - mark the task as inactive. */
+    return Sch_GaaTable[ucTaskId].enStatus;
+  }
+  else
+  {
+    return TASK_UNKNOWN;
+  }
+}
+
+void Sch_SetInterval(Sch_TaskIdType ucTaskId, uint32_t ulIntervalTime)
+{
+  /* Is the task index passed valid? */
+  if(ucTaskId < NUM_TASKS)
+  {
+    /* Yes - set interval time. */
+    Sch_GaaTable[ucTaskId].ulInterval = ulIntervalTime;
+  }
+  else
+  {
+    /* Do nothing */
+  }
+}
 //*****************************************************************************
 //
 // Close the Doxygen group.

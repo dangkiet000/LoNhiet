@@ -9,7 +9,7 @@
  * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #include "NUC200Series.h"
-
+#include "Temperature_Conversion.h"
 
 /**
   * @brief  Convert adc value of LM35 to ambient temperature.

@@ -21,9 +21,11 @@ extern "C"
 /*******************************************************************************
 **                      Define macro                                          **
 *******************************************************************************/
-#define  ADC_MAX_VALUE 4096U
-#define  VREF_ADC 4.096U
-#define  VREF_ADC_X1000 4096U
+#define  MAX_TEMP_TYPE_K       1350U
+
+#define  ADC_MAX_VALUE         4096U
+#define  VREF_ADC              4.096F
+#define  VREF_ADC_X1000        4096U
   
 #define  MAX_TEMP_TYPE_K 1350U
   
@@ -62,8 +64,8 @@ uint16_t Convert_mV_to_Temp(float Lfl_EmV);
 /*******************************************************************************
 **                      API Functions                                         **
 *******************************************************************************/
-uint16_t Temp_ThermoCouple_Convert(uint16_t ADC_ThermoCouple, 
-                              uint16_t ADC_Enviroment);
+extern uint16_t Temp_ThermoCouple_Convert(uint16_t ADC_ThermoCouple, 
+                                          uint16_t ADC_Enviroment);
 uint16_t Temp_LM35_Convert(uint16_t LusADCValue);
 
 #ifdef __cplusplus

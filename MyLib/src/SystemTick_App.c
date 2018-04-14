@@ -9,7 +9,7 @@
  * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 
-#include "NUC200Series.h"
+#include "SystemTick_App.h"
 
 /*******************************************************************************
 **                      Global Data                                           **
@@ -30,7 +30,7 @@ void SysTick_Handler(void)
 *******************************************************************************/
 /**
   * @brief  Software delay in miliseconds.
-  * @param[in] nTime: The pointer of the specified ADC module.
+  * @param[in] nTime: number of loop count.
   * @return None.
   * @details  Delay in miliseconds.
   */

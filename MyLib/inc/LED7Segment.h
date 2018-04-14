@@ -12,6 +12,8 @@
 #ifndef __LED7SEGMENT_H__
 #define __LED7SEGMENT_H__
 
+#include "NUC200Series.h"
+#include "Std_Types.h"
 
 #ifdef __cplusplus
 extern "C"

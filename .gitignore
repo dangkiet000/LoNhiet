@@ -73,3 +73,6 @@ dkms.conf
 *.dep
 LoNhiet/LoNhiet.uvguix.Administrator
 *.uvoptx
+*.dep
+LoNhiet/LoNhiet.uvguix.Administrator
+*.uvoptx

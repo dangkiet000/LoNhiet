@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS\Include;..\..\NUC220LC2AN;..\MyLib\inc;..\Device\Nuvoton\NUC200Series\Include;..\StdDriver\inc</IncludePath>
+              <IncludePath>..\CMSIS\Include;..\..\NUC220LC2AN;..\MyLib\inc;..\Device\Nuvoton\NUC200Series\Include;..\StdDriver\inc;..\Common;..\Common\Compiler\IAR</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -397,16 +397,6 @@
               <FilePath>..\MyLib\src\Temperature_Conversion.c</FilePath>
             </File>
             <File>
-              <FileName>Std_Common.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\MyLib\src\Std_Common.c</FilePath>
-            </File>
-            <File>
-              <FileName>PID_C.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\MyLib\src\PID_C.c</FilePath>
-            </File>
-            <File>
               <FileName>Scheduler.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\MyLib\src\Scheduler.c</FilePath>
@@ -430,6 +420,16 @@
               <FileName>Get_ADC_Value.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\MyLib\src\Get_ADC_Value.c</FilePath>
+            </File>
+            <File>
+              <FileName>SystemTick_App.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib\src\SystemTick_App.c</FilePath>
+            </File>
+            <File>
+              <FileName>Scheduler_Cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib\src\Scheduler_Cfg.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -502,6 +502,9 @@
               <FilePath>..\StdDriver\src\pwm.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>Common</GroupName>
         </Group>
       </Groups>
     </Target>

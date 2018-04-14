@@ -12,11 +12,12 @@
 #ifndef __BUTTON_PROCESSING_H__
 #define __BUTTON_PROCESSING_H__
 
+/*******************************************************************************
+**                      Include                                               **
+*******************************************************************************/
+#include "NUC200Series.h"
+#include "Std_Types.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 /*******************************************************************************
 **                      Define macro                                          **
@@ -43,21 +44,21 @@ extern "C"
 **                      TYPE DEFINITION                                       **
 *******************************************************************************/
 /* Definition of event type */
-typedef enum ETag_ButtonsEventType
+typedef enum ETag_Btn_EventType
 {
   PRESS = 0,
   RELEASE,
   HOLD
-} ButtonsEventType;
+} Btn_EventType;
  
 /* Definition of status type */
-typedef enum ETag_ButtonsStatusType
+typedef enum ETag_Btn_StatusType
 {
   IDLE = 0,
   JUST_RELEASED,
   ONHOLD,
   JUST_PRESSED
-} ButtonsStatusType;
+} Btn_StatusType;
 //*****************************************************************************
 //
 //! The structure defining a function which the scheduler will call
@@ -79,20 +80,19 @@ typedef struct STag_tNotification
    * function will be called periodically.  If false, the function is
    * disabled and will not be called.
    */
-  ButtonsEventType enEventType;
+  Btn_EventType enEventType;
   
-  ButtonsStatusType enStatus;
+  Btn_StatusType enStatus;
   
   /* A function pointer to the user function which is to be called 
-   * periodically by the scheduler. 
+   * periodically by the Btn_MainFunction function. 
    */
   void (*pfnFunction)(void);
   /* A function pointer to the user function which is to be called 
-   * periodically by the scheduler. 
+   * periodically by the Btn_MainFunction function. 
    */
   void (*pfnHoldFunction)(void);
-}
-tNotification;
+}tNotification;
 
 //*****************************************************************************
 //
@@ -119,12 +119,10 @@ void HW_Interrupt_GPIO_Init(void);
 /*******************************************************************************
 **                      API Function Prototypes                               **
 *******************************************************************************/
-void ButtonsProcessing_Init(void);
-void ButtonsPoll(void);
+void Btn_Init(void);
+void Btn_MainFunction(void);
 
-#ifdef __cplusplus
-}
-#endif
+extern uint32_t millis(void);
 
 #endif //__BUTTON_PROCESSING_H__
 

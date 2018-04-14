@@ -9,7 +9,6 @@
  * Copyright (C) 2016 DangKiet Technology Corp. All rights reserved.
 *****************************************************************************/
 
-#include "NUC200Series.h"
 #include "LED7Segment.h"
 
 /*******************************************************************************

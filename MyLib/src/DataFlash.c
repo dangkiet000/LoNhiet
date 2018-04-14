@@ -154,7 +154,7 @@ void FMC_Open(void)
  * @retval     E_NOT_OK Failed
  *
  * @details    Program 32-bit data into specified address of flash
- *             We only have 8 page (512 bytes) t store data.
+ *             We only have 8 pages (512 bytes) t store data.
  */
 Std_ReturnType DataFlash_Write(uint32_t LulPageAddr, uint32_t *LpData, 
                                uint16_t LusLen)
@@ -203,7 +203,7 @@ Std_ReturnType DataFlash_Write(uint32_t LulPageAddr, uint32_t *LpData,
  * @retval     E_NOT_OK Failed
  *
  * @details    Read data flash from address of data flash
- *             We only have 8 page (512 bytes) t store data.
+ *             We only have 8 pages (512 bytes) t store data.
  */
 Std_ReturnType DataFlash_Read(uint32_t LulPageAddr, uint32_t *LpDesData, 
                                uint16_t LusLen)

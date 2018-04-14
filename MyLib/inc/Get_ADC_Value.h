@@ -12,6 +12,11 @@
 #ifndef __GET_ADC_VALUE_H__
 #define __GET_ADC_VALUE_H__
 
+/*******************************************************************************
+**                      Include                                               **
+*******************************************************************************/
+#include "NUC200Series.h"
+#include "Std_Types.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -58,6 +63,9 @@ static uint32_t GulADC_LM35_TB; /* Gia tri ADC trung binh cua LM35 */
 void ADC_Init(void);
 void PDMA_Init(void);
 void Switch_PDMA_Channel(uint32_t LulChannel);
+
+extern uint16_t Temp_ThermoCouple_Convert(uint16_t ADC_ThermoCouple, 
+                                          uint16_t ADC_Enviroment);
 
 /*******************************************************************************
 **                      API Functions                                         **
