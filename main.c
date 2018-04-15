@@ -9,9 +9,7 @@
  *  1. Hàm printf: khi print \n se tu dong print them \n
  *     => Edit hàm SendChar_ToUART trong retarget.c
  *
- 
- 
-*******************************************************************************/
+ ******************************************************************************/
 
 /*******************************************************************************
 **                      Include Section                                       **
@@ -134,6 +132,9 @@ int32_t GslSetPoint = 60;
 uint16_t GusLastTempTHC;
 LoNhietStatusType GucLoNhietStatus;
 
+/* This variable store working-time (Unit: minute) */
+uint32_t GulWorkingTime;
+
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
 *******************************************************************************/
@@ -175,6 +176,31 @@ void UpdateADCValue(void)
   }
   ADC_StartConvert();
 }
+
+/* Storing working-time every 30 minutes to data flash memory */
+void StoringWorkingTime(void)
+{
+  /* To check if working-time is over Trial time */
+  if(GulWorkingTime > TRIAL_TIME_IN_MIN)
+  {
+    /* Yes. Disable LoNhiet */
+  
+  }
+  else /* No */
+  {
+    /* Accumulate working time */
+    GulWorkingTime += 30;
+    
+    /* To Store working-time in flash memory */
+  }
+  
+}
+
+
+
+
+
+
 /* Button processing events */
 void BCONG_Release(void)
 {
@@ -294,6 +320,29 @@ int main()
   GucLoNhietStatus = LONHIET_IDLE;
   Sch_TaskEnable(SCH_UpdateADC_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  /* Read data from flash memory to get wotking-time of LoNhiet */
+  GulWorkingTime = 0;
+  
+  /* To check if working-time is over Trial time */
+  if(GulWorkingTime > TRIAL_TIME_IN_MIN)
+  {
+    /* Yes. Disable LoNhiet */
+  
+  }
+  else /* No. Do nothing */
+  {
+  
+  }
 
   while(1)
   { 

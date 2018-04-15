@@ -9,8 +9,8 @@
  * @note
  *
  ******************************************************************************/
-#ifndef __LONHIET_CONFIGURATION_H__
-#define __LONHIET_CONFIGURATION_H__
+#ifndef __LONHIET_CFG_H__
+#define __LONHIET_CFG_H__
 /*******************************************************************************
 **                      Include                                               **
 *******************************************************************************/
@@ -41,6 +41,12 @@
 /* Đây là chế độ debug, khi ON thì sẽ xuất ra nhiều thông tin cần thiết qua 
    UART1 */
 #define DEBUG_MODE                STD_ON
+
+
+/* Trial time theo đơn vị phút, thời gian lưu trong flash memory có đơn vị là
+   phút. */
+#define TRIAL_TIME_IN_MIN     (TRIAL_TIME*60)
+
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
@@ -51,4 +57,4 @@
 *******************************************************************************/
 
 
-#endif //__LONHIET_CONFIGURATION_H__
+#endif //__LONHIET_CFG_H__

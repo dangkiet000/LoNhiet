@@ -76,3 +76,6 @@ LoNhiet/LoNhiet.uvguix.Administrator
 *.dep
 LoNhiet/LoNhiet.uvguix.Administrator
 *.uvoptx
+LoNhiet/Object/LoNhiet_LoNhiet.dep
+*.uvoptx
+LoNhiet/LoNhiet.uvguix.Administrator

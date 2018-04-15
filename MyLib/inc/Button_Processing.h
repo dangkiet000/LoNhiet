@@ -68,12 +68,11 @@ typedef enum ETag_Btn_StatusType
 typedef struct STag_tNotification
 {
    /* Tick count when this function was last called.  This field is updated
-   * by the scheduler.
-   */
+    * by the scheduler.
+    */
   uint32_t ulStartHoldTime;
 
-  /* Miliseconds
-   */
+  /* Miliseconds */
   uint16_t usHoldThresTime;
 
   /* A flag indicating whether or not this task is active.  If true, the
