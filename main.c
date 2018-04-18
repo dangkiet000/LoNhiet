@@ -22,7 +22,7 @@
 #include "Scheduler.h"
 #include "LED7Segment.h"
 #include "Button_Processing.h"
-#include "DataFlash.h"
+#include "Fls.h"
 
 /*******************************************************************************
 **                      Define macro                                          **
@@ -113,6 +113,7 @@ void Led7segTest(void);
 #if (WRITE_DATABASE_MODE == STD_ON)
 void SaveDataBase_to_Flash(void);
 #endif
+
 /*******************************************************************************
 **                      Global Data                                           **
 *******************************************************************************/
@@ -134,6 +135,7 @@ LoNhietStatusType GucLoNhietStatus;
 
 /* This variable store working-time (Unit: minute) */
 uint32_t GulWorkingTime;
+
 
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
@@ -231,7 +233,7 @@ void BSET_HoldToThres(void)
 void BSET_Release(void)
 {
   GaaStoreData[DATA_FLS_SETPOINT_IDX] = (uint32_t) GslSetPoint;
-  DataFlash_Write(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
+  //Fls_Write(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
   GucBlinkTimes = 8;
   Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
   Sch_SetInterval(SCH_BlinkingLED_Task, 200);
@@ -264,22 +266,23 @@ int main()
   /* Init Button */
   Buttons_Init();
 
-#if (DEBUG_MODE == STD_ON)
+  #if (DEBUG_MODE == STD_ON)
   /* Init UART1 use for debug and testing */
   UART1_Init();
-#endif
+  #endif
   /* Init ADC use for temperature sensor and thermo-couple 
      and PDMA use for tranfering ADC data */
   Get_ADC_Init();
   ADC_StartConvert();
   
-#if (DEBUG_MODE == STD_ON)
+  #if (DEBUG_MODE == STD_ON)
   /* Check the system reset source and report */
   SYS_CheckResetSrc();
-#endif
+  #endif
+
   
   /* Read data from flash memory to get setpoint */
-  DataFlash_Read(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
+  //DataFlash_Read(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
   GslSetPoint = (uint16_t) GaaStoreData[DATA_FLS_SETPOINT_IDX];
   
   GucLoNhietStatus = READING_INFO_SYSTEM;

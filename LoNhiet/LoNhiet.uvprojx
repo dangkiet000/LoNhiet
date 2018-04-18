@@ -412,11 +412,6 @@
               <FilePath>..\MyLib\src\Button_Processing.c</FilePath>
             </File>
             <File>
-              <FileName>DataFlash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\MyLib\src\DataFlash.c</FilePath>
-            </File>
-            <File>
               <FileName>Get_ADC_Value.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\MyLib\src\Get_ADC_Value.c</FilePath>
@@ -430,6 +425,11 @@
               <FileName>Scheduler_Cfg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\MyLib\src\Scheduler_Cfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>Fls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib\src\Fls.c</FilePath>
             </File>
           </Files>
         </Group>

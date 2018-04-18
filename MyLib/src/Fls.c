@@ -13,7 +13,7 @@
 **                      Include Section                                       **
 *******************************************************************************/
 
-#include "DataFlash.h"
+#include "Fls.h"
 
 /*******************************************************************************
 **                      Internal Functions                                    **
@@ -159,11 +159,11 @@ void FMC_Open(void)
  * @details    Program 32-bit data into specified address of flash
  *             We only have 8 pages (512 bytes) t store data.
  */
-Std_ReturnType DataFlash_Write(Fls_PageType PageID, \
-                         uint32_t TargetAddress, uint32_t *SourceAddressPtr, \
-                         uint16_t Lenght)
+Std_ReturnType Fls_Write(Fls_PageType PageID, \
+               Fls_AddressType TargetAddress, Fls_DataType *SourceAddressPtr, \
+                 Fls_LengthType Lenght)
 {
-  uint16_t LusCnt;
+  Fls_LengthType LusCnt;
   Fls_DataType LaaPageData[FLS_PAGE_DATASIZE];
   Fls_AddressType LddPageAddr;
 
@@ -172,12 +172,12 @@ Std_ReturnType DataFlash_Write(Fls_PageType PageID, \
     return E_NOT_OK;
   }
 
-  if(SourceAddress > (FLS_PAGE_DATASIZE - 1))
+  if(TargetAddress > (FLS_PAGE_DATASIZE - 1))
   {
     return E_NOT_OK;
   }
 
-  if(Lenght > FLS_PAGE_DATASIZE - SourceAddress)
+  if(Lenght > (FLS_PAGE_DATASIZE - TargetAddress))
   {
     return E_NOT_OK;
   }
@@ -239,26 +239,42 @@ Std_ReturnType DataFlash_Write(Fls_PageType PageID, \
  * @details    Read data flash from address of data flash
  *             We only have 8 pages (512 bytes) t store data.
  */
-Std_ReturnType DataFlash_Read(Fls_PageType PageID, \
-                         uint32_t SourceAddress, uint32_t* TargetAddressPtr, \
-                         uint16_t Lenght)
+Std_ReturnType Fls_Read(Fls_PageType PageID, \
+               Fls_AddressType SourceAddress, Fls_DataType* TargetAddressPtr, \
+                 Fls_LengthType Lenght)
 {
-  uint16_t LusCnt;
+  Fls_LengthType LusCnt;
+  Fls_AddressType LddPageAddr;
 
   if(PageID >= FLS_MAX_PAGE_NUMBER)
   {
     return E_NOT_OK;
+  }
+  else
+  {
+    /* Do Nothing */
   }
 
   if(SourceAddress > (FLS_PAGE_DATASIZE - 1))
   {
     return E_NOT_OK;
   }
-  if(Lenght > FLS_PAGE_DATASIZE - SourceAddress)
+  else
+  {
+    /* Do Nothing */
+  }
+
+  if(Lenght > (FLS_PAGE_DATASIZE - SourceAddress))
   {
     return E_NOT_OK;
   }
+  else
+  {
+    /* Do Nothing */
+  }
 
+  LddPageAddr = FLS_GET_PAGE_ADDR(PageID);
+  
   /* Disable register write-protection function */
   SYS_UnlockReg();
 
@@ -267,7 +283,7 @@ Std_ReturnType DataFlash_Read(Fls_PageType PageID, \
 
   for(LusCnt = SourceAddress; LusCnt < Lenght; LusCnt++)
   {
-    *TargetAddressPtr = FMC_Read(LulPageAddr + LusCnt*4);
+    *TargetAddressPtr = FMC_Read(LddPageAddr + LusCnt*4);
     TargetAddressPtr++;
   }
 
