@@ -22,25 +22,48 @@ extern "C"
 {
 #endif
 
-/* Used as address offset from the configured flash base address to access a 
+/*******************************************************************************
+ **                       Type definitions                                    **
+ ******************************************************************************/
+/* Definition pages type. */
+typedef enum ETag_Fls_PageType
+{
+  FLS_PAGE_ONE = 0,
+  FLS_PAGE_ONE,
+  FLS_PAGE_TWO,
+  FLS_PAGE_THREE,
+  FLS_PAGE_FOUR,
+  FLS_PAGE_FIVE,
+  FLS_PAGE_SIX,
+  FLS_PAGE_SEVEN,
+  FLS_PAGE_EIGHT,
+  FLS_MAX_PAGE_NUMBER
+} Fls_PageType;
+
+/* Used as address offset from the configured flash base address to access a
    certain flash memory area. */
 typedef uint32_t Fls_AddressType;
- 
+
 /* Specifies the number of bytes to read/write/erase/compare. */
 typedef uint32_t Fls_LengthType;
 
+/* Definition flash data type(8/16/32). It depend on MCU platform */
+typedef uint16_t Fls_DataType;
+
 /*----------------------------------------------------------------------------*/
-/* Define Base Address                                                        */
+/*                          USER CONFIGURATION                                */
 /*----------------------------------------------------------------------------*/
 #define FMC_APROM_BASE          0x00000000UL    /*!< APROM  Base Address      */
 #define FMC_LDROM_BASE          0x00100000UL    /*!< LDROM  Base Address      */
 #define FMC_CONFIG_BASE         0x00300000UL    /*!< CONFIG Base Address      */
 
-#define FMC_FLASH_PAGE_SIZE     0x200        /*!< Flash Page Size (512 Bytes) */
-#define FMC_LDROM_SIZE          0x1000       /*!< LDROM Size (4K Bytes)       */
+#define FMC_FLASH_PAGE_SIZE     0x200U       /*!< Flash Page Size (512 Bytes) */
+#define FMC_LDROM_SIZE          0x1000U      /*!< LDROM Size (4K Bytes)       */
 
-#define DATA_FLS_START_ADDR   0x0001F000UL /*!< Start address of data Flash */
-#define DATA_FLS_END_ADDR     0x0001FFFFUL /*!< End address of data Flash   */
+
+
+#define DATA_FLS_START_ADDR     0x0001F000UL /*!< Start address of data Flash */
+#define DATA_FLS_END_ADDR       0x0001FFFFUL /*!< End address of data Flash   */
 
 #define DATA_FLS_PAGE_ONE     DATA_FLS_START_ADDR
 #define DATA_FLS_PAGE_TWO     (DATA_FLS_START_ADDR + FMC_FLASH_PAGE_SIZE)
@@ -51,13 +74,19 @@ typedef uint32_t Fls_LengthType;
 #define DATA_FLS_PAGE_SEVEN   (DATA_FLS_START_ADDR + FMC_FLASH_PAGE_SIZE*6)
 #define DATA_FLS_PAGE_EIGHT   (DATA_FLS_START_ADDR + FMC_FLASH_PAGE_SIZE*7)
 
+#define FLS_PAGE_DATASIZE       (FMC_FLASH_PAGE_SIZE/4)U
+
+/*----------------------------------------------------------------------------*/
+/*                          END CONFIGURATION                                 */
+/*----------------------------------------------------------------------------*/
+
 /*----------------------------------------------------------------------------*/
 /*  ISPCON constant definitions                                               */
 /*----------------------------------------------------------------------------*/
 /*!< ISPCON setting to select to boot from LDROM */
-#define FMC_ISPCON_BS_LDROM     0x2     
+#define FMC_ISPCON_BS_LDROM     0x2
 /*!< ISPCON setting to select to boot from APROM */
-#define FMC_ISPCON_BS_APROM     0x0     
+#define FMC_ISPCON_BS_APROM     0x0
 
 /*----------------------------------------------------------------------------*/
 /*  ISPCMD constant definitions                                               */
@@ -87,7 +116,7 @@ typedef uint32_t Fls_LengthType;
  *
  * @return     None
  *
- * @details    This function will set ISPEN bit of ISPCON control register to 
+ * @details    This function will set ISPEN bit of ISPCON control register to
  *             enable ISP function.
  *
  */
@@ -101,7 +130,7 @@ typedef uint32_t Fls_LengthType;
  *
  * @return     None
  *
- * @details    This function will clear ISPEN bit of ISPCON control register to 
+ * @details    This function will clear ISPEN bit of ISPCON control register to
  *             disable ISP function.
  *
  */
@@ -123,6 +152,11 @@ typedef uint32_t Fls_LengthType;
  *
  */
 #define FMC_GET_FAIL_FLAG()       ((FMC->ISPCON & FMC_ISPCON_ISPFF_Msk) ? 1 : 0)
+
+
+#define FLS_GET_PAGE_ADDR(PageNumber)       (DATA_FLS_START_ADDR + \
+                                             (PageNumber*FMC_FLASH_PAGE_SIZE))
+
 /*******************************************************************************
 **                      Internal Functions                                    **
 *******************************************************************************/
@@ -135,18 +169,14 @@ void FMC_Write(uint32_t u32addr, uint32_t u32data);
 /*******************************************************************************
 **                      API Functions                                         **
 *******************************************************************************/
-extern Std_ReturnType DataFlash_Write(uint32_t LulPageAddr, uint32_t *LpData, 
-                                      uint16_t LusLen);
-extern Std_ReturnType DataFlash_Read(uint32_t LulPageAddr, uint32_t *LpDesData, 
-                                     uint16_t LusLen);
+extern Std_ReturnType DataFlash_Write(Fls_PageType PageID, \
+                         uint32_t TargetAddress, uint32_t *SourceAddressPtr, \
+                         uint16_t Lenght);
 
-/* Reads from flash memory. */
-Std_ReturnType Fls_Read(Fls_AddressType SourceAddress, \
-                        uint8* TargetAddressPtr, Fls_LengthType Length);
+extern Std_ReturnType DataFlash_Read(Fls_PageType PageID, \
+                         uint32_t SourceAddress, uint32_t* TargetAddressPtr, \
+                         uint16_t Lenght);
 
-/* Writes one or more complete flash pages. */
-Std_ReturnType Fls_Write(Fls_AddressType TargetAddress, \
-    const uint8* SourceAddressPtr, Fls_LengthType Length);
 #ifdef __cplusplus
 }
 #endif
