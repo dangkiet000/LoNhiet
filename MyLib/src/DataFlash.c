@@ -235,6 +235,53 @@ Std_ReturnType DataFlash_Read(uint32_t LulPageAddr, uint32_t *LpDesData,
   
   return E_OK;
 }
+
+
+
+/**
+ * @brief      Reads from flash memory. 
+ *
+ * @param[in]  SourceAddress:  Source address in flash memory. This address 
+ *             offset will be added to the flash memory base address. 
+ *                           Min.: 0 
+ *                           Max.: FLS_SIZE - 1 
+ * @param[in]  Length: Number of bytes to read.
+ *                    Min.: 1 
+ *                    Max.: FLS_SIZE - SourceAddress.
+ * @param[out] TargetAddressPtr:  Pointer to target data buffer.
+ * @retval     Std_ReturnType: - E_NOT_OK: read command has been accepted.
+ *                             - E_NOT_OK: read command has not been accepted.
+ *
+ * @details    Reads from flash memory. 
+ */
+Std_ReturnType Fls_Read(Fls_AddressType SourceAddress, \
+                        uint8* TargetAddressPtr, Fls_LengthType Length)
+{
+
+}
+
+/**
+ * @brief      Writes one or more complete flash pages. 
+ *
+ * @param[in]  TargetAddress: Target address in flash memory. This address 
+ *             offset will be  added to the flash memory base address.  
+ *                           Min.: 0 
+ *                           Max.: FLS_SIZE - 1 
+ * @param[in]  Length: Number of bytes to read.
+ *                    Min.: 1 
+ *                    Max.: FLS_SIZE - SourceAddress.
+ * @param[in]  SourceAddressPtr: Pointer to source data buffer.
+ * @param[out]  None
+ * @retval     Std_ReturnType: - E_NOT_OK: write command has been accepted.
+ *                             - E_NOT_OK: write command has not been accepted.
+ *
+ * @details    Writes one or more complete flash pages. 
+ */
+Std_ReturnType Fls_Write(Fls_AddressType TargetAddress, \
+    const uint8* SourceAddressPtr, Fls_LengthType Length)
+{
+
+}
 /*** (C) COPYRIGHT 2016 DangKiet Technology Corp. ***/
 
 

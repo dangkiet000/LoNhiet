@@ -22,6 +22,12 @@ extern "C"
 {
 #endif
 
+/* Used as address offset from the configured flash base address to access a 
+   certain flash memory area. */
+typedef uint32_t Fls_AddressType;
+ 
+/* Specifies the number of bytes to read/write/erase/compare. */
+typedef uint32_t Fls_LengthType;
 
 /*----------------------------------------------------------------------------*/
 /* Define Base Address                                                        */
@@ -133,6 +139,14 @@ extern Std_ReturnType DataFlash_Write(uint32_t LulPageAddr, uint32_t *LpData,
                                       uint16_t LusLen);
 extern Std_ReturnType DataFlash_Read(uint32_t LulPageAddr, uint32_t *LpDesData, 
                                      uint16_t LusLen);
+
+/* Reads from flash memory. */
+Std_ReturnType Fls_Read(Fls_AddressType SourceAddress, \
+                        uint8* TargetAddressPtr, Fls_LengthType Length);
+
+/* Writes one or more complete flash pages. */
+Std_ReturnType Fls_Write(Fls_AddressType TargetAddress, \
+    const uint8* SourceAddressPtr, Fls_LengthType Length);
 #ifdef __cplusplus
 }
 #endif
