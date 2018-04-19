@@ -69,7 +69,7 @@ uint32_t millis(void)
   
   LulSystemTickCount = GulSystemTickCount;
   
-  return (LulSystemTickCount*1000) - ((SysTick->VAL)/6000);
+  return (LulSystemTickCount*1000) - ((SysTick->VAL)/ONE_MS_SYSTICK);
 }
 
 

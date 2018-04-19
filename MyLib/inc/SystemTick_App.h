@@ -29,7 +29,7 @@
 /* Number of cycle = 1us */
 #define ONE_US_SYSTICK      (SYSTICK_CLOCK/(1000000UL))
 /* Number of cycle = 1ms */
-#define ONE_MS_SYSTICK      (SYSTICK_CLOCK/(1000000UL))
+#define ONE_MS_SYSTICK      (SYSTICK_CLOCK/(1000UL))
   
 /*******************************************************************************
 **                      Global Data Types                                    **

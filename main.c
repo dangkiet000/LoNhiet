@@ -55,7 +55,8 @@
 
 /* Data flash define */
 #define DATA_FLS_LEN              10U
-#define DATA_FLS_SETPOINT_IDX     0U
+#define DATA_FLS_SETPOINT_ADDR     0U
+#define DATA_FLS_WORKINGTIME_ADDR  1U
 
 
 
@@ -224,7 +225,7 @@ void BSET_HoldToThres(void)
 }
 void BSET_Release(void)
 {
-  GaaStoreData[DATA_FLS_SETPOINT_IDX] = (uint32_t) GslSetPoint;
+  GaaStoreData[DATA_FLS_SETPOINT_ADDR] = (uint32_t) GslSetPoint;
   //Fls_Write(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
   GucBlinkTimes = 8;
   Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
@@ -273,15 +274,27 @@ int main()
   SYS_CheckResetSrc();
   #endif
   
-  //Fls_Write(FLS_PAGE_ONE, 1, &GaaStoreData[1], 3);
-  Fls_Read(FLS_PAGE_ONE, 1, &GaaReadStoreData[1], 3);
+  /* Read data from flash memory to get working-time of LoNhiet */
+  Fls_Read(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &GulWorkingTime, 1);
+  
+  /* To check if working-time is over Trial time */
+  if(GulWorkingTime > TRIAL_TIME_IN_MIN)
+  {
+    /* Yes. Disable LoNhiet */
+  
+  }
+  else /* No. Do nothing */
+  {
+  
+  }
+  
   /* Read data from flash memory to get setpoint */
-  //DataFlash_Read(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
-  GslSetPoint = (uint16_t) GaaStoreData[DATA_FLS_SETPOINT_IDX];
+  Fls_Read(FLS_PAGE_ONE, DATA_FLS_SETPOINT_ADDR, &GaaStoreData[0], 1);
+  GslSetPoint = (sint16)GaaStoreData[0];
   
   GucLoNhietStatus = READING_INFO_SYSTEM;
   printf("STA %d\n", GucLoNhietStatus);
-  
+
   /*---------------------------------------------------------------------------- 
     Waiting ADC get first value. TimeOut = 1s 
   ----------------------------------------------------------------------------*/
@@ -317,6 +330,7 @@ int main()
   GucLoNhietStatus = LONHIET_IDLE;
   Sch_TaskEnable(SCH_UpdateADC_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
+  Sch_TaskEnable(SCH_StoringWorkingTime_Task, SCH_RUN_LATER);
   
   
   
@@ -327,19 +341,7 @@ int main()
   
   
   
-  /* Read data from flash memory to get wotking-time of LoNhiet */
-  GulWorkingTime = 0;
   
-  /* To check if working-time is over Trial time */
-  if(GulWorkingTime > TRIAL_TIME_IN_MIN)
-  {
-    /* Yes. Disable LoNhiet */
-  
-  }
-  else /* No. Do nothing */
-  {
-  
-  }
 
   while(1)
   { 

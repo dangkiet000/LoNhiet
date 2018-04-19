@@ -160,8 +160,9 @@ void FMC_Open(void)
  *             We only have 8 pages (512 bytes) t store data.
  */
 Std_ReturnType Fls_Write(Fls_PageType PageID, \
-               Fls_AddressType TargetAddress, Fls_DataType *SourceAddressPtr, \
-                 Fls_LengthType Lenght)
+                         Fls_AddressType TargetAddress, \
+                         const Fls_DataType *SourceAddressPtr, \
+                         Fls_LengthType Lenght)
 {
   Fls_LengthType LusCnt;
   Fls_DataType LaaPageData[FLS_PAGE_DATASIZE];
@@ -240,8 +241,9 @@ Std_ReturnType Fls_Write(Fls_PageType PageID, \
  *             We only have 8 pages (512 bytes) t store data.
  */
 Std_ReturnType Fls_Read(Fls_PageType PageID, \
-               Fls_AddressType SourceAddress, Fls_DataType* TargetAddressPtr, \
-                 Fls_LengthType Lenght)
+               Fls_AddressType SourceAddress, \
+               Fls_DataType* TargetAddressPtr, \
+               Fls_LengthType Lenght)
 {
   Fls_LengthType LusCnt;
   Fls_AddressType LddPageAddr;

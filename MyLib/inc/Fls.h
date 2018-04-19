@@ -120,12 +120,14 @@ void FMC_Write(uint32_t u32addr, uint32_t u32data);
 **                      API Functions                                         **
 *******************************************************************************/
 extern Std_ReturnType Fls_Write(Fls_PageType PageID, \
-                Fls_AddressType TargetAddress, Fls_DataType *SourceAddressPtr, \
-                  Fls_LengthType Lenght);
+                                Fls_AddressType TargetAddress, \
+                                const Fls_DataType *SourceAddressPtr, \
+                                Fls_LengthType Lenght);
 
 extern Std_ReturnType Fls_Read(Fls_PageType PageID, \
-                Fls_AddressType SourceAddress, Fls_DataType* TargetAddressPtr, \
-                  Fls_LengthType Lenght);
+                               Fls_AddressType SourceAddress, \
+                               Fls_DataType* TargetAddressPtr, \
+                               Fls_LengthType Lenght);
 
 #ifdef __cplusplus
 }
