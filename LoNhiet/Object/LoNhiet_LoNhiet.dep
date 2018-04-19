@@ -1,5 +1,5 @@
 Dependencies for Project 'LoNhiet', Target 'LoNhiet': (DO NOT MODIFY !)
-F (..\main.c)(0x5AD81931)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\main.o --omf_browse .\object\main.crf --depend .\object\main.d)
+F (..\main.c)(0x5AD82525)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\main.o --omf_browse .\object\main.crf --depend .\object\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
 I (..\MyLib\inc\SystemTick_App.h)(0x5AD0FEF6)
 I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
@@ -19,7 +19,7 @@ I (..\StdDriver\inc\CLK.h)(0x582463D4)
 I (..\Common\Std_Types.h)(0x5AD0F178)
 I (..\Common\Compiler\IAR\Compiler.h)(0x5AD0F33B)
 I (..\Common\Platform_Types.h)(0x5AD814FF)
-I (..\LoNhiet_Cfg.h)(0x5AD3A214)
+I (..\LoNhiet_Cfg.h)(0x5AD82228)
 I (..\MyLib\inc\Temperature_Conversion.h)(0x5AD0FFC5)
 I (..\MyLib\inc\Get_ADC_Value.h)(0x5AD0FFD2)
 I (..\MyLib\inc\Scheduler.h)(0x5AD19251)

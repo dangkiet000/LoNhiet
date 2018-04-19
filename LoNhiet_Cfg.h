@@ -42,6 +42,9 @@
    UART1 */
 #define DEBUG_MODE                STD_ON
 
+/* Đây là chế độ dùng để test mạch, khi ON thì sẽ xuất ra nhiều thông tin cần 
+   thiết qua và test các thành phần cơ bản của mạch UART1 */
+#define TEST_MODE                 STD_OFF
 
 /* Trial time theo đơn vị phút, thời gian lưu trong flash memory có đơn vị là
    phút. */

@@ -31,7 +31,7 @@
 
 
 #define WRITE_DATABASE_MODE       STD_OFF
-#define TEST_MODE                 STD_OFF
+
 
 /* System define */
 #define PLLCON_SETTING            CLK_PLLCON_50MHz_HXT
@@ -124,6 +124,7 @@ uint16_t GusTempTHC = 30;  /* Nhiet do Thermo-couple */
 /* Data flash variables */
 /* This array contains all data stored in flash memory */
 uint32_t GaaStoreData[DATA_FLS_LEN];
+uint32_t GaaReadStoreData[DATA_FLS_LEN];
 
 /* LED control variables */
 uint8_t GucBlinkTimes;
@@ -285,13 +286,13 @@ int main()
   GaaStoreData[3]= 0xBB;
   
   //Fls_Write(FLS_PAGE_ONE, 1, &GaaStoreData[1], 3);
-  Fls_Write(FLS_PAGE_ONE, 1, &GaaStoreData[4], 3);
-  printf("Flash data %d\n", GaaStoreData[0]);
-  printf("Flash data %d\n", GaaStoreData[1]);
-  printf("Flash data %d\n", GaaStoreData[2]);
-  printf("Flash data %d\n", GaaStoreData[3]);
-  printf("Flash data %d\n", GaaStoreData[4]);
-  printf("Flash data %d\n", GaaStoreData[9]);
+  Fls_Read(FLS_PAGE_ONE, 1, &GaaReadStoreData[1], 3);
+  printf("Flash data %d\n", GaaReadStoreData[0]);
+  printf("Flash data %d\n", GaaReadStoreData[1]);
+  printf("Flash data %d\n", GaaReadStoreData[2]);
+  printf("Flash data %d\n", GaaReadStoreData[3]);
+  printf("Flash data %d\n", GaaReadStoreData[4]);
+  printf("Flash data %d\n", GaaReadStoreData[9]);
   
   /* Read data from flash memory to get setpoint */
   //DataFlash_Read(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
