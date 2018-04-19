@@ -36,7 +36,7 @@ tSchedulerTask Sch_GaaTable[] =
     /* pfnFunction */
     &DisplayTask,
     /* ulInterval */
-    500,
+    1000,
     /* ulLastTick */
     0,
     /* enStatus */

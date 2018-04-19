@@ -59,7 +59,7 @@
 
 
 /* Data flash define */
-#define DATA_FLS_LEN              1U
+#define DATA_FLS_LEN              10U
 #define DATA_FLS_SETPOINT_IDX     0U
 
 
@@ -280,6 +280,18 @@ int main()
   SYS_CheckResetSrc();
   #endif
 
+  GaaStoreData[1]= 0xAA;
+  GaaStoreData[2]= 0xBB;
+  GaaStoreData[3]= 0xBB;
+  
+  //Fls_Write(FLS_PAGE_ONE, 1, &GaaStoreData[1], 3);
+  Fls_Write(FLS_PAGE_ONE, 1, &GaaStoreData[4], 3);
+  printf("Flash data %d\n", GaaStoreData[0]);
+  printf("Flash data %d\n", GaaStoreData[1]);
+  printf("Flash data %d\n", GaaStoreData[2]);
+  printf("Flash data %d\n", GaaStoreData[3]);
+  printf("Flash data %d\n", GaaStoreData[4]);
+  printf("Flash data %d\n", GaaStoreData[9]);
   
   /* Read data from flash memory to get setpoint */
   //DataFlash_Read(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
@@ -349,8 +361,8 @@ int main()
 
   while(1)
   { 
-    Sch_MainFunction(); 
-    Btn_MainFunction();
+    //Sch_MainFunction(); 
+    //Btn_MainFunction();
   }
 }
 
