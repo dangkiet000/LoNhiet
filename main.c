@@ -28,11 +28,6 @@
 **                      Define macro                                          **
 *******************************************************************************/
 
-
-
-#define WRITE_DATABASE_MODE       STD_OFF
-
-
 /* System define */
 #define PLLCON_SETTING            CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK                 50000000
@@ -108,10 +103,6 @@ void Send_TemptoPC(void);
 void SpeakerTest(void);
 void TriacTest(void);
 void Led7segTest(void);
-#endif
-
-#if (WRITE_DATABASE_MODE == STD_ON)
-void SaveDataBase_to_Flash(void);
 #endif
 
 /*******************************************************************************
@@ -271,6 +262,7 @@ int main()
   /* Init UART1 use for debug and testing */
   UART1_Init();
   #endif
+  
   /* Init ADC use for temperature sensor and thermo-couple 
      and PDMA use for tranfering ADC data */
   Get_ADC_Init();
@@ -280,20 +272,9 @@ int main()
   /* Check the system reset source and report */
   SYS_CheckResetSrc();
   #endif
-
-  GaaStoreData[1]= 0xAA;
-  GaaStoreData[2]= 0xBB;
-  GaaStoreData[3]= 0xBB;
   
   //Fls_Write(FLS_PAGE_ONE, 1, &GaaStoreData[1], 3);
   Fls_Read(FLS_PAGE_ONE, 1, &GaaReadStoreData[1], 3);
-  printf("Flash data %d\n", GaaReadStoreData[0]);
-  printf("Flash data %d\n", GaaReadStoreData[1]);
-  printf("Flash data %d\n", GaaReadStoreData[2]);
-  printf("Flash data %d\n", GaaReadStoreData[3]);
-  printf("Flash data %d\n", GaaReadStoreData[4]);
-  printf("Flash data %d\n", GaaReadStoreData[9]);
-  
   /* Read data from flash memory to get setpoint */
   //DataFlash_Read(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
   GslSetPoint = (uint16_t) GaaStoreData[DATA_FLS_SETPOINT_IDX];
@@ -554,13 +535,6 @@ void Led7segTest(void)
 #endif
 
 
-
-#if (WRITE_DATABASE_MODE == STD_ON)
-void SaveDataBase_to_Flash(void)
-{
-  const uint32_t LaaKp_DataBase[128];
-}
-#endif
 /*************    HardWare connection:    *************************************
 * LED-7Seg:   a <-> PB0
 *             f <-> PB1

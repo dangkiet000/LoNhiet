@@ -8,7 +8,6 @@
  * @note
  * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
-#include "NUC200Series.h"
 #include "Temperature_Conversion.h"
 
 /**
@@ -28,9 +27,9 @@
   
     => Temp_MT = ADCValue/10  
   */
-uint16_t Temp_LM35_Convert(uint16_t LusADCValue)
+uint16 Temp_LM35_Convert(uint16 LusADCValue)
 {
-  uint16_t LusADCLM35;
+  uint16 LusADCLM35;
   LusADCLM35 = LusADCValue;
   
   return (LusADCLM35/10);
@@ -43,15 +42,15 @@ uint16_t Temp_LM35_Convert(uint16_t LusADCValue)
   * @details  Convert milivolt of Thermo-couple to Thermo-couple temperature.
   * The equation is of the form:
     T = d_0 + d_1*E + d_2*E^2 + ... + d_n*E^n
-    Where:  E(mV), T(°C)
+    Where:  E(mV), T(Celsius)
     
     Reference:
     http://srdata.nist.gov/its90/type_k/kcoefficients_inverse.html
   */
-uint16_t Convert_mV_to_Temp(float Lfl_EmV)
+uint16 Convert_mV_to_Temp(float32 Lfl_EmV)
 {
-  uint16_t LusTemp;
-  float E;
+  uint16 LusTemp;
+  float32 E;
   
   E = Lfl_EmV;
   
@@ -61,7 +60,7 @@ uint16_t Convert_mV_to_Temp(float Lfl_EmV)
   }
   else if( E < 20.645)
   {
-    LusTemp = (uint16_t) 
+    LusTemp = (uint16) 
        (d1*E + 
         d2*E*E +
         d3*E*E*E +
@@ -76,7 +75,7 @@ uint16_t Convert_mV_to_Temp(float Lfl_EmV)
   
   else /* E(mV) >= 20.645 mV */
   {    
-    LusTemp = (uint16_t) 
+    LusTemp = (uint16) 
        (D0 +
         D1*E + 
         D2*E*E +
@@ -128,16 +127,17 @@ uint16_t Convert_mV_to_Temp(float Lfl_EmV)
     ma Vref_ADC*1000 = ADC_MAX_VALUE
     => V_TC (mV)= ADCValue/AMP_FACTOR
   */
-uint16_t Temp_ThermoCouple_Convert(uint16_t ADC_ThermoCouple, uint16_t ADC_Enviroment)
+uint16 Temp_ThermoCouple_Convert(uint16 ADC_ThermoCouple, \
+                                   uint16 ADC_Enviroment)
 {
-  uint16_t LusTemp_ThermoCouple; /* in °C */
-  float LflTC_mV = 0; /* Voltage of Thermo-couple in milivolt */
-  uint16_t Lus_LM35_Temp = 0;
-  uint16_t Lus_TC_TempNotCom = 0;
-  uint16_t LulADC_ThermoCouple = ADC_ThermoCouple;
-  uint16_t LulADC_Enviroment = ADC_Enviroment;
+  uint16 LusTemp_ThermoCouple; /* in Celsius */
+  float32 LflTC_mV = 0; /* Voltage of Thermo-couple in milivolt */
+  uint16 Lus_LM35_Temp = 0;
+  uint16 Lus_TC_TempNotCom = 0;
+  uint16 LulADC_ThermoCouple = ADC_ThermoCouple;
+  uint16 LulADC_Enviroment = ADC_Enviroment;
   
-  LflTC_mV = ((float)(LulADC_ThermoCouple))/ AMP_FACTOR;
+  LflTC_mV = ((float32)(LulADC_ThermoCouple))/ AMP_FACTOR;
 
   Lus_TC_TempNotCom = Convert_mV_to_Temp(LflTC_mV);
 
