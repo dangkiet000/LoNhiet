@@ -34,9 +34,9 @@
 #define BCONG_BIT          BIT2
 #define BTRU_BIT           BIT3
   
-#define BSET_INDEX         2U
-#define BCONG_INDEX        1U
-#define BTRU_INDEX         0U
+#define BSET_ID         2U
+#define BCONG_ID        1U
+#define BTRU_ID         0U
   
 #define NUM_BUTTON_EVENTS  3U
 
@@ -46,18 +46,18 @@
 /* Definition of event type */
 typedef enum ETag_Btn_EventType
 {
-  PRESS = 0,
-  RELEASE,
-  HOLD
+  BTN_PRESSED_EVENT = 0,
+  BTN_RELEASED_EVENT,
+  BTN_HOLD_EVENT
 } Btn_EventType;
  
 /* Definition of status type */
 typedef enum ETag_Btn_StatusType
 {
-  IDLE = 0,
-  JUST_RELEASED,
-  ONHOLD,
-  JUST_PRESSED
+  BTN_IDLE = 0,
+  BTN_RELEASED,
+  BTN_ONHOLD,
+  BTN_PRESSED
 } Btn_StatusType;
 //*****************************************************************************
 //
@@ -65,33 +65,26 @@ typedef enum ETag_Btn_StatusType
 //! periodically.
 //
 //*****************************************************************************
-typedef struct STag_tNotification
+typedef struct STag_Btn_ConfigType
 {
-   /* Tick count when this function was last called.  This field is updated
-    * by the scheduler.
-    */
+  /* To Store time at the moment which button have just been pressed */
   uint32_t ulStartHoldTime;
 
-  /* Miliseconds */
+  /* If button is hold longer this time, call-back pfnHoldFunction2 was called */
   uint16_t usHoldThresTime;
 
-  /* A flag indicating whether or not this task is active.  If true, the
-   * function will be called periodically.  If false, the function is
-   * disabled and will not be called.
-   */
+  /* This type of button event */
   Btn_EventType enEventType;
   
+  /* State of button */
   Btn_StatusType enStatus;
   
-  /* A function pointer to the user function which is to be called 
-   * periodically by the Btn_MainFunction function. 
-   */
+  /* Call-back function */
   void (*pfnFunction)(void);
-  /* A function pointer to the user function which is to be called 
-   * periodically by the Btn_MainFunction function. 
-   */
-  void (*pfnHoldFunction)(void);
-}tNotification;
+  
+  /* Call-back function was called if button is hold longer usHoldThresTime */
+  void (*pfnHoldFunction2)(void);
+}Btn_ConfigType;
 
 //*****************************************************************************
 //
@@ -99,12 +92,12 @@ typedef struct STag_tNotification
 //! on each function that the scheduler is to call.
 //
 //*****************************************************************************
-extern tNotification Gaa_NotificationTable[];
+extern Btn_ConfigType Btn_ConfigSet[];
 
 //*****************************************************************************
 //
 //! This global variable must be exported by the client.  It must contain the
-//! number of entries in the Gaa_NotificationTable array.
+//! number of entries in the Btn_ConfigSet array.
 //
 //*****************************************************************************
 

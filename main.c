@@ -69,7 +69,13 @@ typedef enum ETag_LoNhietStatusType
 {
   READING_INFO_SYSTEM = 0,
   LONHIET_IDLE,
-  STABLE
+  STABLE,
+  /* State which user is setting setpoint */
+  SETUP_SETPOINT,
+  /* State which user is setting date-time */
+  SETUP_DATETIME,
+  /* State which user is typing password */
+  ENTER_PASSWORD
 }LoNhietStatusType;
 
 
@@ -187,6 +193,7 @@ void StoringWorkingTime(void)
     GulWorkingTime += 30;
     
     /* To Store working-time in flash memory */
+    Fls_Write(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &GulWorkingTime, 1);
   }
   
 }
@@ -398,16 +405,17 @@ void GPIO_Init(void)
 
 void Buttons_Init(void)
 {
-  Gaa_NotificationTable[BTRU_INDEX].enEventType = RELEASE;
-  Gaa_NotificationTable[BTRU_INDEX].pfnFunction = &BTRU_Release;
+  Btn_ConfigSet[BTRU_ID].enEventType = BTN_RELEASED_EVENT;
+  Btn_ConfigSet[BTRU_ID].pfnFunction = &BTRU_Release;
   
-  Gaa_NotificationTable[BCONG_INDEX].enEventType = RELEASE;
-  Gaa_NotificationTable[BCONG_INDEX].pfnFunction = &BCONG_Release;
+  Btn_ConfigSet[BCONG_ID].enEventType = BTN_RELEASED_EVENT;
+  Btn_ConfigSet[BCONG_ID].pfnFunction = &BCONG_Release;
+  Btn_ConfigSet[BCONG_ID].usHoldThresTime = 3000;
   
-  Gaa_NotificationTable[BSET_INDEX].enEventType = HOLD;
-  Gaa_NotificationTable[BSET_INDEX].usHoldThresTime = 2000;
-  Gaa_NotificationTable[BSET_INDEX].pfnFunction = &BSET_HoldToThres;
-  Gaa_NotificationTable[BSET_INDEX].pfnHoldFunction = &BSET_Release;
+  Btn_ConfigSet[BSET_ID].enEventType = BTN_HOLD_EVENT;
+  Btn_ConfigSet[BSET_ID].usHoldThresTime = 3000;
+  Btn_ConfigSet[BSET_ID].pfnFunction = &BSET_HoldToThres;
+  Btn_ConfigSet[BSET_ID].pfnHoldFunction2 = &BSET_Release;
   
   Btn_Init();
 }

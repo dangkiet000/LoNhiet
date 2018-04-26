@@ -14,7 +14,7 @@
 /*******************************************************************************
 **                      Global Data Types                                    **
 *******************************************************************************/
-tNotification Gaa_NotificationTable[NUM_BUTTON_EVENTS];
+Btn_ConfigType Btn_ConfigSet[NUM_BUTTON_EVENTS];
 
 
 /*******************************************************************************
@@ -36,21 +36,21 @@ void Button_ISR(void)
     /* To check if BSET is pressed <=> falling edge */
     if(BSET == STD_LOW)
     {
-      Gaa_NotificationTable[BSET_INDEX].ulStartHoldTime = millis();
-      Gaa_NotificationTable[BSET_INDEX].enStatus = ONHOLD;
+      Btn_ConfigSet[BSET_ID].ulStartHoldTime = millis();
+      Btn_ConfigSet[BSET_ID].enStatus = BTN_ONHOLD;
     }
     /* To check if BSET is released <=> rising edge */
     else
     {
       /* To check if BSET Hold Event is happened or not yet */
-      if(Gaa_NotificationTable[BSET_INDEX].enStatus == ONHOLD)
+      if(Btn_ConfigSet[BSET_ID].enStatus == BTN_ONHOLD)
       {
-        Gaa_NotificationTable[BSET_INDEX].enStatus = JUST_RELEASED;
+        Btn_ConfigSet[BSET_ID].enStatus = BTN_RELEASED;
       }
       else 
       {
         /* Reset status */
-        Gaa_NotificationTable[BSET_INDEX].enStatus = IDLE;
+        Btn_ConfigSet[BSET_ID].enStatus = BTN_IDLE;
       }
     }
     
@@ -62,12 +62,22 @@ void Button_ISR(void)
     /* To check if BCONG is pressed <=> falling edge */
     if(BCONG == STD_LOW)
     {
-      
+      Btn_ConfigSet[BCONG_ID].ulStartHoldTime = millis();
+      Btn_ConfigSet[BCONG_ID].enStatus = BTN_ONHOLD;
     }
     /* To check if BCONG is released <=> rising edge */
     else
     {
-      Gaa_NotificationTable[BCONG_INDEX].enStatus = JUST_RELEASED;
+      /* To check if BCONG Hold Event is happened or not yet */
+      if(Btn_ConfigSet[BCONG_ID].enStatus == BTN_ONHOLD)
+      {
+        Btn_ConfigSet[BCONG_ID].enStatus = BTN_RELEASED;
+      }
+      else 
+      {
+        /* Reset status */
+        Btn_ConfigSet[BCONG_ID].enStatus = BTN_IDLE;
+      }
     }
     
     GPIO_CLR_INT_FLAG(ButtonBaseAddr, BCONG_BIT);
@@ -83,7 +93,7 @@ void Button_ISR(void)
     /* To check if BTRU is released <=> rising edge */
     else
     {
-      Gaa_NotificationTable[BTRU_INDEX].enStatus = JUST_RELEASED;
+      Btn_ConfigSet[BTRU_ID].enStatus = BTN_RELEASED;
     }
     
     GPIO_CLR_INT_FLAG(ButtonBaseAddr, BTRU_BIT);
@@ -126,15 +136,15 @@ void HW_Interrupt_GPIO_Init(void)
   */
 void Btn_Init(void)
 {
-  uint8_t LucNotifyIndex;
-  tNotification *pEvent;
+  uint8_t LucBtnID;
+  Btn_ConfigType *pEvent;
   
-  for(LucNotifyIndex = 0; LucNotifyIndex < NUM_BUTTON_EVENTS; LucNotifyIndex++)
+  for(LucBtnID = 0; LucBtnID < NUM_BUTTON_EVENTS; LucBtnID++)
   {
     /* Get a pointer to the task information. */
-    pEvent = &Gaa_NotificationTable[LucNotifyIndex];
+    pEvent = &Btn_ConfigSet[LucBtnID];
 
-    pEvent->enStatus = IDLE;
+    pEvent->enStatus = BTN_IDLE;
   }
   HW_Interrupt_GPIO_Init();
 }
@@ -148,37 +158,61 @@ void Btn_Init(void)
   */
 void Btn_MainFunction(void)
 {
-  uint8_t LucNotifyIndex;
   uint32_t LulNowTick;
-  tNotification *pEvent;
 
   /* Get current time */
   LulNowTick = millis();
-
-  /* Loop through each call-back function in the notification table */
-  for(LucNotifyIndex = 0; LucNotifyIndex < NUM_BUTTON_EVENTS; LucNotifyIndex++)
+  
+  if(Btn_ConfigSet[BTRU_ID].enStatus == BTN_RELEASED)
   {
-    /* Get a pointer to the notification information */
-    pEvent = &Gaa_NotificationTable[LucNotifyIndex];
-
-    /* To check event type and status button */
-    if((pEvent->enEventType == HOLD) && (pEvent->enStatus == ONHOLD) &&
-       (LulNowTick - pEvent->ulStartHoldTime > pEvent->usHoldThresTime) ||
-    ((pEvent->enStatus == JUST_RELEASED) && (pEvent->enEventType == RELEASE)) ||
-    ((pEvent->enStatus == JUST_PRESSED) && (pEvent->enEventType == PRESS)))
+    Btn_ConfigSet[BTRU_ID].pfnFunction();
+    /* Reset status */
+    Btn_ConfigSet[BTRU_ID].enStatus = BTN_IDLE;
+  }
+  else
+  {
+  
+  }
+  
+  if(Btn_ConfigSet[BCONG_ID].enStatus == BTN_RELEASED)
+  {
+    Btn_ConfigSet[BCONG_ID].pfnFunction();
+    /* Reset status */
+    Btn_ConfigSet[BCONG_ID].enStatus = BTN_IDLE;
+  }
+  else
+  {
+  
+  }
+  /* To check if BSET_ID pressed and on-hold for > usHoldThresTime */
+  if((BTN_ONHOLD == Btn_ConfigSet[BSET_ID].enStatus) && \
+         (LulNowTick - Btn_ConfigSet[BSET_ID].ulStartHoldTime > \
+                             Btn_ConfigSet[BSET_ID].usHoldThresTime))
+  {
+    if(BTN_ONHOLD != Btn_ConfigSet[BCONG_ID].enStatus)
+    {
+      Btn_ConfigSet[BSET_ID].pfnFunction();
+      /* Reset status */
+      Btn_ConfigSet[BSET_ID].enStatus = BTN_IDLE;
+    }
+    /* To check if BCONG_ID pressed and on-hold for > usHoldThresTime */
+    else if((BTN_ONHOLD == Btn_ConfigSet[BCONG_ID].enStatus) && \
+         (LulNowTick - Btn_ConfigSet[BCONG_ID].ulStartHoldTime > \
+                             Btn_ConfigSet[BCONG_ID].usHoldThresTime))
     {
       /* Call the event */
-      pEvent->pfnFunction();
+      Btn_ConfigSet[BSET_ID].pfnHoldFunction2();
       /* Reset status */
-      pEvent->enStatus = IDLE;
+      Btn_ConfigSet[BSET_ID].enStatus = BTN_IDLE;
     }
-    else if((pEvent->enEventType == HOLD) && (pEvent->enStatus == RELEASE))
+    else
     {
-      /* Call the event */
-      pEvent->pfnHoldFunction();
-      /* Reset status */
-      pEvent->enStatus = IDLE;
+      /* Do Nothing */
     }
+  }
+  else
+  {
+    /* Do Nothing */
   }
 }
 /*** (C) COPYRIGHT 2016 DangKiet Technology Corp. ***/
