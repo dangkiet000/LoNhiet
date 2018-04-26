@@ -93,7 +93,7 @@ void Timer0_Init(void);
 
 /* Button call-back function prototypes */
 void BSET_HoldToThres(void);
-void BSET_Release(void);
+void BSET_BCONG_HoldToThres(void);
 void BCONG_Release(void);
 void BTRU_Release(void);
 
@@ -130,7 +130,7 @@ uint8_t GucBlinkTimes;
 /* PID variables */
 int32_t GslSetPoint = 60; 
 uint16_t GusLastTempTHC;
-LoNhietStatusType GucLoNhietStatus;
+LoNhietStatusType GenLoNhietStatus;
 
 /* This variable store working-time (Unit: minute) */
 uint32_t GulWorkingTime;
@@ -228,16 +228,19 @@ void BTRU_Release(void)
 
 void BSET_HoldToThres(void)
 {
-  
+  GenLoNhietStatus = SETUP_SETPOINT;
 }
-void BSET_Release(void)
+void BSET_BCONG_HoldToThres(void)
 {
+  /*
   GaaStoreData[DATA_FLS_SETPOINT_ADDR] = (uint32_t) GslSetPoint;
   //Fls_Write(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
   GucBlinkTimes = 8;
   Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
   Sch_SetInterval(SCH_BlinkingLED_Task, 200);
   LED7Seg_Show(GslSetPoint);
+  */
+  GenLoNhietStatus = ENTER_PASSWORD;
   
 }
 /*******************************************************************************
@@ -299,8 +302,8 @@ int main()
   Fls_Read(FLS_PAGE_ONE, DATA_FLS_SETPOINT_ADDR, &GaaStoreData[0], 1);
   GslSetPoint = (sint16)GaaStoreData[0];
   
-  GucLoNhietStatus = READING_INFO_SYSTEM;
-  printf("STA %d\n", GucLoNhietStatus);
+  GenLoNhietStatus = READING_INFO_SYSTEM;
+  printf("STA %d\n", GenLoNhietStatus);
 
   /*---------------------------------------------------------------------------- 
     Waiting ADC get first value. TimeOut = 1s 
@@ -334,7 +337,7 @@ int main()
     }
   }
   
-  GucLoNhietStatus = LONHIET_IDLE;
+  GenLoNhietStatus = LONHIET_IDLE;
   Sch_TaskEnable(SCH_UpdateADC_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_StoringWorkingTime_Task, SCH_RUN_LATER);
@@ -415,7 +418,7 @@ void Buttons_Init(void)
   Btn_ConfigSet[BSET_ID].enEventType = BTN_HOLD_EVENT;
   Btn_ConfigSet[BSET_ID].usHoldThresTime = 3000;
   Btn_ConfigSet[BSET_ID].pfnFunction = &BSET_HoldToThres;
-  Btn_ConfigSet[BSET_ID].pfnHoldFunction2 = &BSET_Release;
+  Btn_ConfigSet[BSET_ID].pfnHoldFunction2 = &BSET_BCONG_HoldToThres;
   
   Btn_Init();
 }
