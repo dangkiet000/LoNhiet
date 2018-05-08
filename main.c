@@ -39,17 +39,30 @@
 typedef enum ETag_LoNhietStatusType
 {
   READING_INFO_SYSTEM = 0,
+  
+  /* State which LoNhiet doesn't any task, TRIAC is not working */
   LONHIET_IDLE,
-  STABLE,
+  /* State which LoNhiet is working, TRIAC is controlled by MCU */
+  LONHIET_BUSY,
   /* State which user is setting setpoint */
-  SETUP_SETPOINT,
+  LONHIET_UPDATE_SETPOINT,
   /* State which user is setting date-time */
-  SETUP_DATETIME,
+  LONHIET_SETUP_DATETIME,
   /* State which user is typing password */
-  ENTER_PASSWORD
+  LONHIET_ENTER_PASSWORD,
+  
 }LoNhietStatusType;
 
-
+/* Lo Nhiet Sale status */
+typedef enum ETag_LoNhietSaleStatusType
+{
+  /* State which LoNhiet is in trial time */
+  LONHIET_TRIAL = 0,
+  /* State which TRIAC is not working, user must correct password to UNLOCKED */
+  LONHIET_LOCKED,
+  /* State which user can use full feature. */
+  LONHIET_UNLOCKED
+}LoNhietSaleStatusType;
 
 /*******************************************************************************
 **                      Function Prototypes                                   **
@@ -95,15 +108,18 @@ uint16_t GusTempTHC = 30;  /* Nhiet do Thermo-couple */
 uint32_t GaaStoreData[DATA_FLS_LEN];
 uint32_t GaaReadStoreData[DATA_FLS_LEN];
 
-/* LED control variables */
+/* LED7 control variables */
 uint8_t GucBlinkTimes;
 
 /* PID variables */
 int32_t GslSetPoint = 60; 
 uint16_t GusLastTempTHC;
-LoNhietStatusType GenLoNhietStatus;
 
-/* This variable store working-time (Unit: minute) */
+/* Status variables */
+LoNhietStatusType GenLoNhietStatus;
+LoNhietSaleStatusType GenLoNhietSaleStatus;
+
+/* This variable store working-time of LoNhiet (Unit: minute) */
 uint32_t GulWorkingTime;
 
 
@@ -115,6 +131,15 @@ void TO_UpdateSetPoint(void)
 {
   printf("TimeOut Event = %d", millis());
 }
+void TO_SetDateTime(void)
+{
+
+}
+void TO_EnterPassword(void)
+{
+
+}
+
 /* Scheduler Events */
 
 void DisplayTask(void)
@@ -182,18 +207,16 @@ void StoringWorkingTime(void)
 /* Button processing events */
 void BCONG_Release(void)
 {
-  
+  /*
   TO_Clear(TO_UpdateSetPoint_Channel);
   printf("TimeOut Clear Event = %d", millis());
-  
-  /*
+  */
   GslSetPoint++;
   GslSetPoint = ((GslSetPoint > MAX_TEMP_TYPE_K) ? MAX_TEMP_TYPE_K : GslSetPoint);
   GucBlinkTimes = NUM_OF_BLINK;
   Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
   Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
   LED7Seg_Show(GslSetPoint);
-  */
 }
 
 void BTRU_Release(void)
@@ -210,7 +233,7 @@ void BTRU_Release(void)
 
 void BSET_HoldToThres(void)
 {
-  GenLoNhietStatus = SETUP_SETPOINT;
+  GenLoNhietStatus = LONHIET_UPDATE_SETPOINT;
 }
 void BSET_BCONG_HoldToThres(void)
 {
@@ -222,7 +245,7 @@ void BSET_BCONG_HoldToThres(void)
   Sch_SetInterval(SCH_BlinkingLED_Task, 200);
   LED7Seg_Show(GslSetPoint);
   */
-  GenLoNhietStatus = ENTER_PASSWORD;
+  GenLoNhietStatus = LONHIET_ENTER_PASSWORD;
   
 }
 /*******************************************************************************

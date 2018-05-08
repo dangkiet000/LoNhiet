@@ -17,8 +17,8 @@ TO_ChannelType TO_GaaChannels[] =
 {
   /* Index: 0 - TO_UpdateSetPoint_Channel */
   {
-    /* ulTimeOut */
-    4000,
+    /* ulTimeOut: miliseconds */
+    6000,
     
     /* ulStartTime */
     0,
@@ -28,6 +28,34 @@ TO_ChannelType TO_GaaChannels[] =
     
     /* pNotification */
     &TO_UpdateSetPoint
+  },
+  /* Index: 1 - TO_SetDateTime_Channel */
+  {
+    /* ulTimeOut: miliseconds */
+    6000,
+    
+    /* ulStartTime */
+    0,
+    
+    /* enStatus */
+    TO_IDLE,
+    
+    /* pNotification */
+    &TO_SetDateTime
+  },
+  /* Index: 2 - TO_EnterPassword_Channel */
+  {
+    /* ulTimeOut: miliseconds */
+    10000,
+    
+    /* ulStartTime */
+    0,
+    
+    /* enStatus */
+    TO_IDLE,
+    
+    /* pNotification */
+    &TO_EnterPassword
   }
 };
 

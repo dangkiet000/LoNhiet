@@ -17,12 +17,21 @@
 /*******************************************************************************
 **                      Define macro                                          **
 *******************************************************************************/
-#define MAX_TO_CHANNELS              1U
+#define MAX_TO_CHANNELS              3U
+
+
 #define TO_UpdateSetPoint_Channel    0U
-#define TIMEOUT_CONFIG               (&TO_GaaChannels[0])
+#define TO_SetDateTime_Channel       1U
+#define TO_EnterPassword_Channel     2U
+
 
 
 extern void TO_UpdateSetPoint(void);
+extern void TO_SetDateTime(void);
+extern void TO_EnterPassword(void);
+
+
+#define TIMEOUT_CONFIG               (&TO_GaaChannels[0])
 
 #endif //__TIMEOUT_CFG_H__
 

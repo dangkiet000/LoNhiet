@@ -34,7 +34,7 @@ typedef enum STag_TO_ChannelStatusType
 typedef struct STag_TO_ChannelType
 {
   /* Timeout of channel in miliseconds. */
-  uint32 ulTimeOut;
+  const uint32 ulTimeOut;
   
   /* ulStartTime of timeout channel */
   uint32 ulStartTime;
