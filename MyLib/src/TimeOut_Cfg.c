@@ -15,7 +15,7 @@
 
 TO_ChannelType TO_GaaChannels[] =
 {
-  /* Index: 0 - TO_UpdateSetPoint */
+  /* Index: 0 - TO_UpdateSetPoint_Channel */
   {
     /* ulTimeOut */
     4000,
@@ -27,7 +27,7 @@ TO_ChannelType TO_GaaChannels[] =
     TO_IDLE,
     
     /* pNotification */
-    NULL_PTR
+    &TO_UpdateSetPoint
   }
 };
 

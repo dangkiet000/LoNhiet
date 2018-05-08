@@ -4,9 +4,9 @@
  * $Revision: 1
  * $Date: 14/11/27
  * @brief    Initilize version
- *
+ * @Encoding: UTF-8 without signature.
  * @note
- *  1. Hàm printf: khi print \n se tu dong print them \n
+ *  1. Hàm printf: khi print \n sẽ tự động print thêm \n
  *     => Edit hàm SendChar_ToUART trong retarget.c
  *
  ******************************************************************************/
@@ -16,7 +16,7 @@
 *******************************************************************************/
 #include <stdio.h>
 #include "SystemTick_App.h"
-#include "LoNhiet_Cfg.h"
+
 #include "Temperature_Conversion.h"
 #include "Get_ADC_Value.h"
 #include "Scheduler.h"
@@ -25,41 +25,11 @@
 #include "Fls.h"
 #include "TimeOut.h"
 
+#include "LoNhiet_UserCfg.h"
+#include "LoNhiet_DevCfg.h"
 /*******************************************************************************
 **                      Define macro                                          **
 *******************************************************************************/
-
-/* System define */
-#define PLLCON_SETTING            CLK_PLLCON_50MHz_HXT
-#define PLL_CLOCK                 50000000
-
-
-/* Led test define */
-#define LED_TEST                  PA13
-#define LED_TEST_PORT             PA
-#define LED_TEST_BIT              BIT13
-
-/* Triac control define */
-#define TRIAC_PORT                PA
-#define TRIAC_PIN                 PA12
-#define TRIAC_BIT                 BIT12
-#define TRIAC_ON                  0U
-#define TRIAC_OFF                 1U
-
-
-/* Speaker control define */
-#define SPEAKER_ON                0U
-#define SPEAKER_OFF               1U
-#define SPEAKER_PIN               PB8
-
-
-
-/* Data flash define */
-#define DATA_FLS_LEN              10U
-#define DATA_FLS_SETPOINT_ADDR     0U
-#define DATA_FLS_WORKINGTIME_ADDR  1U
-
-
 
 
 #define NUM_OF_BLINK              10U
@@ -140,6 +110,11 @@ uint32_t GulWorkingTime;
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
 *******************************************************************************/
+/* TimeOut Events */
+void TO_UpdateSetPoint(void)
+{
+  printf("TimeOut Event = %d", millis());
+}
 /* Scheduler Events */
 
 void DisplayTask(void)
@@ -207,12 +182,18 @@ void StoringWorkingTime(void)
 /* Button processing events */
 void BCONG_Release(void)
 {
+  
+  TO_Clear(TO_UpdateSetPoint_Channel);
+  printf("TimeOut Clear Event = %d", millis());
+  
+  /*
   GslSetPoint++;
   GslSetPoint = ((GslSetPoint > MAX_TEMP_TYPE_K) ? MAX_TEMP_TYPE_K : GslSetPoint);
   GucBlinkTimes = NUM_OF_BLINK;
   Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
   Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
   LED7Seg_Show(GslSetPoint);
+  */
 }
 
 void BTRU_Release(void)
@@ -349,17 +330,14 @@ int main()
   
   
   
-  
-  
-  
-  
-  
-  
+  printf("TriggerTime = %d", millis());
+  TO_Trigger(TO_UpdateSetPoint_Channel);
 
   while(1)
   { 
+    TO_MainFunction(); 
     //Sch_MainFunction(); 
-    //Btn_MainFunction();
+    Btn_MainFunction();
   }
 }
 

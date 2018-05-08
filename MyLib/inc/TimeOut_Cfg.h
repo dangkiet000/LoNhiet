@@ -18,7 +18,11 @@
 **                      Define macro                                          **
 *******************************************************************************/
 #define MAX_TO_CHANNELS              1U
+#define TO_UpdateSetPoint_Channel    0U
 #define TIMEOUT_CONFIG               (&TO_GaaChannels[0])
+
+
+extern void TO_UpdateSetPoint(void);
 
 #endif //__TIMEOUT_CFG_H__
 
