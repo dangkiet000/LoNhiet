@@ -23,6 +23,7 @@
 #include "LED7Segment.h"
 #include "Button_Processing.h"
 #include "Fls.h"
+#include "TimeOut.h"
 
 /*******************************************************************************
 **                      Define macro                                          **
@@ -268,6 +269,8 @@ int main()
   
   /* Init Button */
   Buttons_Init();
+  
+  TO_Init(TIMEOUT_CONFIG);
 
   #if (DEBUG_MODE == STD_ON)
   /* Init UART1 use for debug and testing */

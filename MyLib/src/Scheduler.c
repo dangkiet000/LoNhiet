@@ -51,7 +51,7 @@
 //*****************************************************************************
 void Sch_MainFunction(void)
 {
-  uint8_t LucTaskIndex;
+  uint8_t LucCnt;
   uint32_t LulNowTick;
   tSchedulerTask *pTask;
   
@@ -62,7 +62,7 @@ void Sch_MainFunction(void)
   LulNowTick = millis();
   
   /* Loop through each task in the task table. */
-  for(LucTaskIndex = 0; LucTaskIndex < NUM_TASKS; LucTaskIndex++)
+  for(LucCnt = 0; LucCnt < MAX_TASKS; LucCnt++)
   {
     /* Is this task active and, if so, is it time to call it's function? */
     if((pTask->enStatus == TASK_ENABLE) && 
@@ -100,7 +100,7 @@ void Sch_MainFunction(void)
 Std_ReturnType Sch_TaskEnable(Sch_TaskIdType ucTaskId, boolean blRunNow)
 {
     /* Is the task index passed valid? */
-  if(ucTaskId < NUM_TASKS)
+  if(ucTaskId < MAX_TASKS)
   {
     /* Yes - mark the task as active. */
     Sch_GaaTable[ucTaskId].enStatus = TASK_ENABLE;
@@ -146,7 +146,7 @@ Std_ReturnType Sch_TaskEnable(Sch_TaskIdType ucTaskId, boolean blRunNow)
 Std_ReturnType Sch_TaskDisable(Sch_TaskIdType ucTaskId)
 {
   /* Is the task index passed valid? */
-  if(ucTaskId < NUM_TASKS)
+  if(ucTaskId < MAX_TASKS)
   {
     /* Yes - mark the task as inactive. */
     Sch_GaaTable[ucTaskId].enStatus = TASK_DISABLE;
@@ -162,7 +162,7 @@ Std_ReturnType Sch_TaskDisable(Sch_TaskIdType ucTaskId)
 Sch_TaskStatusType Sch_GetStatus(Sch_TaskIdType ucTaskId)
 {
   /* Is the task index passed valid? */
-  if(ucTaskId < NUM_TASKS)
+  if(ucTaskId < MAX_TASKS)
   {
     /* Yes - mark the task as inactive. */
     return Sch_GaaTable[ucTaskId].enStatus;
@@ -176,7 +176,7 @@ Sch_TaskStatusType Sch_GetStatus(Sch_TaskIdType ucTaskId)
 void Sch_SetInterval(Sch_TaskIdType ucTaskId, uint32_t ulIntervalTime)
 {
   /* Is the task index passed valid? */
-  if(ucTaskId < NUM_TASKS)
+  if(ucTaskId < MAX_TASKS)
   {
     /* Yes - set interval time. */
     Sch_GaaTable[ucTaskId].ulInterval = ulIntervalTime;

@@ -38,11 +38,17 @@
  *  MISRA Violations - Summary and analysis.
  ******************************************************************************/
 
-#if defined ( __ICCARM__ )
+#if defined ( __ICCARM__ ) /* IAR Embedded Workbench */
 
-#endif  /*  __ICCARM__ */
-#endif  /* COMPILER_H */
+#elif defined ( __CC_ARM ) /* KeilC */
+  #define INLINE         __inline                                   /*!< inline keyword for ARM Compiler       */
+  #define STATIC         static
+#endif
 
+#ifndef NULL_PTR
+  #define NULL_PTR  ((void *)0)
+#endif
+ 
 /*  ----------------------------------------------------------------------------
 *  REVISION HISTORY
 *  -----------------------------------------------------------------------------
@@ -50,6 +56,6 @@
 *  -----------------------------------------------------------------------------
 * 01.00.00     -      SD      	First Version
 * ----------------------------------------------------------------------------*/
-
+#endif /* COMPILER_H */
 /*---------------------- End of File -----------------------------------------*/
 

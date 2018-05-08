@@ -12,7 +12,7 @@
 #ifndef __SCHEDULER_CFG_H__
 #define __SCHEDULER_CFG_H__
 
-#define NUM_TASKS   5U
+#define MAX_TASKS   5U
 
 /* Define Name's Tasks */
 #define SCH_UpdateADC_Task            0U
