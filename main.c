@@ -68,7 +68,7 @@ typedef enum ETag_LoNhietSaleStatusType
 **                      Function Prototypes                                   **
 *******************************************************************************/
 void SYS_Init(void);
-void GPIO_Init(void);
+void PORT_Init(void);
 void Buttons_Init(void);
 void Timer0_Init(void);
 
@@ -156,12 +156,12 @@ void BlinkingLed(void)
 {
   if(GucBlinkTimes == 0)
   {
-    BlinkingLED(STD_OFF);
+
     Sch_TaskDisable(SCH_BlinkingLED_Task);
   }
   else
   {
-    BlinkingLED(STD_ON);
+
     GucBlinkTimes--;
   }
 }
@@ -201,12 +201,10 @@ void StoringWorkingTime(void)
 
 
 
-
-
-
 /* Button processing events */
 void BCONG_Release(void)
 {
+  LED7_DisableBlinking();
   /*
   TO_Clear(TO_UpdateSetPoint_Channel);
   printf("TimeOut Clear Event = %d", millis());
@@ -266,7 +264,7 @@ int main()
   SYS_LockReg();
 
   /* Init GPIO */
-  GPIO_Init();
+  PORT_Init();
  
   /* Init to control 4 LED-7seg */
   LED_7Seg_Init();
@@ -349,17 +347,13 @@ int main()
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_StoringWorkingTime_Task, SCH_RUN_LATER);
   
-  
-  
-  
-  
-  printf("TriggerTime = %d", millis());
-  TO_Trigger(TO_UpdateSetPoint_Channel);
-
+  //printf("TriggerTime = %d", millis());
+  //TO_Trigger(TO_UpdateSetPoint_Channel);
+  LED7_EnableBlinking(LED7_3 | LED7_2, 400);
   while(1)
   { 
-    TO_MainFunction(); 
-    //Sch_MainFunction(); 
+    //TO_MainFunction(); 
+    Sch_MainFunction(); 
     Btn_MainFunction();
   }
 }
@@ -367,7 +361,7 @@ int main()
 /*******************************************************************************
 **                      Function                                              **
 *******************************************************************************/
-/* Init System, peripheral clock and multi-function I/O */
+/* Init System, peripheral clock and multi-function I/O. */
 void SYS_Init(void)
 {
   /*--------------------------------------------------------------------------*/
@@ -398,7 +392,10 @@ void SYS_Init(void)
 }
 
 
-void GPIO_Init(void)
+
+
+/* Configure port pin as alternative function. */
+void PORT_Init(void)
 {
   /* Cau hinh chan DIEU KHIEN LED_TEST */
   GPIO_SetMode(LED_TEST_PORT, LED_TEST_BIT, GPIO_PMD_OUTPUT);
@@ -407,9 +404,20 @@ void GPIO_Init(void)
   /* Cau hinh chan DIEU KHIEN TRIAC */
   GPIO_SetMode(TRIAC_PORT, TRIAC_BIT, GPIO_PMD_OUTPUT);
   TRIAC_PIN = TRIAC_OFF;
+  
+  /* Set GPB multi-function pins for UART0 RXD and TXD */
+  SYS->GPB_MFP &= ~(SYS_GPB_MFP_PB4_Msk | SYS_GPB_MFP_PB5_Msk);
+  SYS->GPB_MFP |= SYS_GPB_MFP_PB4_UART1_RXD | SYS_GPB_MFP_PB5_UART1_TXD;
+  
+  /* Disable the GPA0 - GPA1 digital input path to avoid the leakage current. */
+  GPIO_DISABLE_DIGITAL_PATH(PA, (1 << ADC_LM35_CH)|(1 << ADC_THC_CH));
+
+  /* Configure the GPA0 - GPA1 ADC analog input pins */
+  SYS->GPA_MFP &= ~(SYS_GPA_MFP_PA0_Msk | SYS_GPA_MFP_PA1_Msk);
+  SYS->GPA_MFP |= SYS_GPA_MFP_PA0_ADC0 | SYS_GPA_MFP_PA1_ADC1;
+  SYS->ALT_MFP1 &= ~(SYS_ALT_MFP1_PA0_Msk| SYS_ALT_MFP1_PA1_Msk);
 }
-
-
+/* Initialize button processing events. */
 void Buttons_Init(void)
 {
   Btn_ConfigSet[BTRU_ID].enEventType = BTN_RELEASED_EVENT;
@@ -426,11 +434,6 @@ void Buttons_Init(void)
   
   Btn_Init();
 }
-/*****************************************************************************
- * In this project, we use PWM0 (PA.12) to generate PWM 
- * => Timer0 will be disable!                            
- * PWMA group is used.
-******************************************************************************/
 
 #if (DEBUG_MODE == STD_ON)
 /* This function check the system reset source and report */
@@ -490,10 +493,6 @@ void UART1_Init(void)
 
   /* Select UART module clock source */
   CLK_SetModuleClock(UART1_MODULE, CLK_CLKSEL1_UART_S_HXT, CLK_CLKDIV_UART(1));
-
-  /* Set GPB multi-function pins for UART0 RXD and TXD */
-  SYS->GPB_MFP &= ~(SYS_GPB_MFP_PB4_Msk | SYS_GPB_MFP_PB5_Msk);
-  SYS->GPB_MFP |= SYS_GPB_MFP_PB4_UART1_RXD | SYS_GPB_MFP_PB5_UART1_TXD;
 
   /*------------------------------------------------------------------------*/
   /* Init UART                                                              */

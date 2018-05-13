@@ -116,14 +116,6 @@ void ADC_Init(void)
   /* 2. ADC clock source is 50MHz, set divider to 16, ADC clock is 3.125MHz*/
   CLK_SetModuleClock(ADC_MODULE, CLK_CLKSEL1_ADC_S_PLL, CLK_CLKDIV_ADC(16));
 
-  /* 3. Disable the GPA0 - GPA1 digital input path to avoid the leakage current. */
-  GPIO_DISABLE_DIGITAL_PATH(PA, (1 << ADC_LM35_CH)|(1 << ADC_THC_CH));
-
-  /* 4. Configure the GPA0 - GPA1 ADC analog input pins */
-  SYS->GPA_MFP &= ~(SYS_GPA_MFP_PA0_Msk | SYS_GPA_MFP_PA1_Msk);
-  SYS->GPA_MFP |= SYS_GPA_MFP_PA0_ADC0 | SYS_GPA_MFP_PA1_ADC1;
-  SYS->ALT_MFP1 &= ~(SYS_ALT_MFP1_PA0_Msk| SYS_ALT_MFP1_PA1_Msk);
-
   /* 5. Set the ADC operation mode as continuous scan, input mode as single-end and
      enable the analog input channel 0 and 1 */
   ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_CONTINUOUS, (1 << ADC_LM35_CH));

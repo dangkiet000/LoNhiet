@@ -14,9 +14,32 @@
 /*******************************************************************************
 **                      Global Data Types                                    **
 *******************************************************************************/
-uint8_t GaaLEDValue[NoOfLED];
+uint8 GaaLED7Value[MAX_NUM_LED7];
 boolean GblAllLedIsOff = FALSE;
-static uint8_t Guccount = 0;
+static uint8 Guccount = 0;
+
+const LED7_IdType GaaMapNumberToLEDPos[MAX_NUM_LED7] = {
+  LED7_0, 
+  LED7_1,
+  LED7_2, 
+  LED7_3
+};
+
+/* Global struct: LED7 driver */
+LED7_DriverType LED7_GstDriver =
+{
+  /* enDriverStatus */
+  LED7_UNINIT,
+  /* ucBlinkLED */
+  0,
+  /* ucBlinkLEDStatus */
+  LED7_BLINK_IS_OFF,
+  /* ulBlinkTime */
+  0,
+  /* ulStartTick */
+  0
+};
+
 /*******************************************************************************
 **                      Internal Functions                                    **
 *******************************************************************************/
@@ -28,26 +51,53 @@ static uint8_t Guccount = 0;
   */
 void TimerLED_ISR(void)
 {
+  LED7_IdType LEDPos;
   if(TIMER_GetIntFlag(TimerBaseAddr) == 1)
   {
-    if(GblAllLedIsOff == FALSE)
+    LEDPos = GaaMapNumberToLEDPos[Guccount];
+
+    /* Turn off all LEDs first. */
+    TurnOffLED(LED7_ALL);
+
+    if(LED7_GstDriver.enDriverStatus == LED7_NORMAL)
     {
-      Switch_to_LED(Guccount);
-      
-      LED_7Seg_Decode(GaaLEDValue[Guccount]);
-      
-      if(Guccount >= NoOfLED-1)
+      /* Turn on LED */
+      TurnOnLED(LEDPos);
+    }
+    else if(LED7_GstDriver.enDriverStatus == LED7_BLINKING)
+    {
+      /* To check if this LED7 is blink LED or not. */
+      if((LEDPos & LED7_GstDriver.ucBlinkLED) == 0)
       {
-        Guccount = 0;
+        /* No. Turn on LED */
+        TurnOnLED(LEDPos);
       }
-      else
+      else /* Yes. This is blink LED. */
       {
-        Guccount++;
+        if(LED7_GstDriver.ucBlinkLEDStatus == LED7_BLINK_IS_ON)
+        {
+          /* NO. Turn on LED */
+          TurnOnLED(LEDPos);
+        }
+        else
+        {
+          
+        }
       }
+      /* This LED7 is enabled blinking */
+      LED7_MainFunction();
+    }
+    
+    LED_7Seg_Decode(GaaLED7Value[Guccount]);
+    
+    /* Check to reset count. */
+    if(Guccount >= (MAX_NUM_LED7 - 1))
+    {
+      Guccount = 0;
     }
     else
     {
-      TurnOffLED();
+      Guccount++;
     }
     
     /* Clear TimerLED time-out interrupt flag */
@@ -59,13 +109,13 @@ void TimerLED_ISR(void)
 /**
   * @brief  Init LED-7seg.
   * @param[in] LusFrequence: 0-9.
-  * @return E_OK/E_NOT_OK.
+  * @return  E_OK/E_NOT_OK.
   * @details  Decode LED-7seg to display digits.
   */
-Std_ReturnType Timer_LED_Init(uint16_t LusFrequence)
+Std_ReturnType Timer_LED_Init(uint16 LusFrequence)
 {
   uint32_t LulCompareValue;
-  uint8_t  LucPrescaler;
+  uint8  LucPrescaler;
   
   /* 1. Enable Timer 3 module IP clock */
   CLK_EnableModuleClock(TMR3_MODULE);
@@ -126,23 +176,19 @@ Std_ReturnType Timer_LED_Init(uint16_t LusFrequence)
 /**
   * @brief  Decode LED-7seg.
   * @param[in] LucLedNumber: 0-9.
-  * @return None.
+  * @return  None.
   * @details  Decode LED-7seg to display digits.
   */
-Std_ReturnType LED_7Seg_Decode(uint8_t LedNumber)
+void LED_7Seg_Decode(uint8 LedNumber)
 {
-  uint8_t LucLedNumber;
-  
-  LucLedNumber= LedNumber;
-  
-  switch(LucLedNumber)
+  switch(LedNumber)
   {
     case 0:
     {
       PB->DOUT |=  (BIT3);
       PB->DOUT &=~ (BIT0|BIT1|BIT2);
       PC->DOUT &=~ (BIT0|BIT2|BIT3);
-      return E_OK;
+      break;
     }
     case 1:
     {
@@ -150,7 +196,7 @@ Std_ReturnType LED_7Seg_Decode(uint8_t LedNumber)
       PB->DOUT &=~ (BIT2);
       PC->DOUT |=  (BIT2|BIT3);
       PC->DOUT &=~ (BIT0);
-      return E_OK;
+      break;
     }
     case 2:
     {
@@ -158,7 +204,7 @@ Std_ReturnType LED_7Seg_Decode(uint8_t LedNumber)
       PB->DOUT &=~ (BIT0|BIT2|BIT3);
       PC->DOUT |=  (BIT0);
       PC->DOUT &=~ (BIT2|BIT3);
-      return E_OK;
+      break;
     }
     case 3:
     {
@@ -166,7 +212,7 @@ Std_ReturnType LED_7Seg_Decode(uint8_t LedNumber)
       PB->DOUT &=~ (BIT0|BIT2|BIT3);
       PC->DOUT |=  (BIT2);
       PC->DOUT &=~ (BIT0|BIT3);
-      return E_OK;
+      break;
     }
     case 4:
     {
@@ -174,7 +220,7 @@ Std_ReturnType LED_7Seg_Decode(uint8_t LedNumber)
       PB->DOUT &=~ (BIT1|BIT2|BIT3);
       PC->DOUT |=  (BIT2|BIT3);
       PC->DOUT &=~ (BIT0);
-      return E_OK;
+      break;
     }
     case 5:
     {
@@ -182,14 +228,14 @@ Std_ReturnType LED_7Seg_Decode(uint8_t LedNumber)
       PB->DOUT &=~ (BIT0|BIT1|BIT3);
       PC->DOUT |=  (BIT2);
       PC->DOUT &=~ (BIT0|BIT3);
-      return E_OK;
+      break;
     }
     case 6:
     {
       PB->DOUT |=  (BIT2);
       PB->DOUT &=~ (BIT0|BIT1|BIT3);
       PC->DOUT &=~ (BIT0|BIT3|BIT2);
-      return E_OK;
+      break;
     }
     case 7:
     {
@@ -197,66 +243,46 @@ Std_ReturnType LED_7Seg_Decode(uint8_t LedNumber)
       PB->DOUT &=~ (BIT0|BIT2);
       PC->DOUT |=  (BIT2|BIT3);
       PC->DOUT &=~ (BIT0);
-      return E_OK;
+      break;
     }
     case 8:
     {
       PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
       PC->DOUT &=~ (BIT0|BIT2|BIT3);
-      return E_OK;
+      break;
     }
     case 9:
     {
       PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
       PC->DOUT &=~ (BIT0|BIT2|BIT3);
       PC->DOUT |=  (BIT2);
-      return E_OK;
+      break;
     }
     case LED_OFF_VALUE:
     {
       /* No display */
       PB->DOUT |= (BIT0|BIT1|BIT2|BIT3);
       PC->DOUT |= (BIT0|BIT2|BIT3);
+      break;
     }
-    default: return E_NOT_OK;
+    default: break;
   }
 }
 
-/**
-  * @brief  Display one LED-7seg and turn off the others.
-  * @param[in] LucLedPosition: 0 -> (NoOfLED - 1).
-  * @return E_OK/E_NOT_OK.
-  * @details  Display one LED-7seg and turn off the others.
-  */
-Std_ReturnType Switch_to_LED(uint8_t LucLedPosition)
-{
-  if(LucLedPosition < NoOfLED)
-  {
-    /* Turn off all LEDs */
-    PA->DOUT &=~ 0x0F00;
-    /* Turn on only one LED */
-    PA->DOUT |= (1 << (LucLedPosition + 8));
-    return E_OK;
-  }
-  else
-  {
-    return E_NOT_OK;
-  }
-}
 
 
 /**
   * @brief  Convert int to character array.
   * @param[in] LusNumber: integer.
   * @param[in] *LpLEDValue: pointer point to character array.
-  * @return None.
+  * @return  None.
   * @details  Ham tach so nguyen (khong dau) thanh ung chu 
   * so rieng bietva luu vao mang.
   */
-void Int_to_Array(uint16_t  LusIntNumber, uint8_t *LpLEDValue)
+void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue)
 {
-  uint16_t LusNumber;
-  uint8_t LED0, LED1, LED2, LED3;
+  uint16 LusNumber;
+  uint8 LED0, LED1, LED2, LED3;
   
   LusNumber = LusIntNumber;
   LED0 = LpLEDValue[0];
@@ -268,25 +294,25 @@ void Int_to_Array(uint16_t  LusIntNumber, uint8_t *LpLEDValue)
   {
     LED0 = 10;
     LED1 = 10;
-    LED2 = (uint8_t) (LusNumber/10);
-    LED3 = (uint8_t) (LusNumber%10);
+    LED2 = (uint8) (LusNumber/10);
+    LED3 = (uint8) (LusNumber%10);
   }
   else if(LusNumber < 1000)  //So Number co 3 chu so
   {
     LED0 = 10;
-    LED1 = (uint8_t) (LusNumber/100);
+    LED1 = (uint8) (LusNumber/100);
     LusNumber = (LusNumber - (LED1*100));
-    LED2 = (uint8_t) (LusNumber/10);
-    LED3 = (uint8_t) (LusNumber%10);
+    LED2 = (uint8) (LusNumber/10);
+    LED3 = (uint8) (LusNumber%10);
   }
   else if(LusNumber < 9999)  //So Number co 4 chu so
   {
-    LED0 = (uint8_t) (LusNumber/1000);
+    LED0 = (uint8) (LusNumber/1000);
     LusNumber = LusNumber - (LED0*1000);
-    LED1 = (uint8_t) (LusNumber/100);
+    LED1 = (uint8) (LusNumber/100);
     LusNumber = LusNumber - (LED1*100);
-    LED2 = (uint8_t) (LusNumber/10);
-    LED3 = (uint8_t) (LusNumber%10);
+    LED2 = (uint8) (LusNumber/10);
+    LED3 = (uint8) (LusNumber%10);
   }
   else
   { 
@@ -322,66 +348,123 @@ void LED_7Seg_Init(void)
   
   /* Configure Time 150Hz use for display LED7-Seg */
   Timer_LED_Init(200);
+  
+  LED7_GstDriver.enDriverStatus = LED7_NORMAL;
 }
 
 
 /**
   * @brief  Display value by LED7segment.
-  * @param[in] LusDisplayValue: 0 -> (2^NoOfLED-1).
+  * @param[in] LusDisplayValue: 0 -> (2^MAX_NUM_LED7-1).
   * @return None.
   * @details  Display value by LED7segment.
   */
-void LED7Seg_Show(uint16_t  LusDisplayValue)
+void LED7Seg_Show(uint16  LusDisplayValue)
 {
-  uint16_t Lus_DisplayValue;
+  uint16 Lus_DisplayValue;
   
   Lus_DisplayValue = LusDisplayValue;
   
-  Int_to_Array(Lus_DisplayValue, GaaLEDValue);
+  Int_to_Array(Lus_DisplayValue, GaaLED7Value);
 }
 /**
-  * @brief  Turn off all LED7segment.
-  * @param[in] None.
+  * @brief  Turn off LED7segment without effect another LED7s.
+  * @param[in] LEDpos: bit0 <=> LEd7seg 0
+  *            LED7-3 | LED7-2 | LED7-1 | LED7-0
+  *            BIT3   | BIT2   | BIT1   | BIT0
   * @return None.
   * @details  Turn off all LED7segment.
   */
-void TurnOffLED(void)
+void TurnOffLED(LED7_IdType LEDpos)
 {
-  /* Turn off all LEDs */
-  PA->DOUT &=~ 0x0F00;
-  LED_7Seg_Decode(LED_OFF_VALUE);
-  GblAllLedIsOff = TRUE;
+  /* Turn off LED7s */
+  PA->DOUT &=~ (LEDpos << 8);
+
 }
 /**
-  * @brief  Turn on all LED7segment.
-  * @param[in] None.
+  * @brief  Turn on LED7segment without effect another LED7s.
+  * @param[in] LEDpos: bit0 <=> LEd7seg 0
+  *            LED7-3 | LED7-2 | LED7-1 | LED7-0
+  *            BIT3   | BIT2   | BIT1   | BIT0
   * @return None.
   * @details  Turn on all LED7segment.
   */
-void TurnOnLED(void)
+void TurnOnLED(LED7_IdType LEDpos)
 {
-  GblAllLedIsOff = FALSE;
+  PA->DOUT |= (LEDpos << 8);
 }
-void BlinkingLED(boolean LblEnable)
+
+/**
+  * @brief  Toogle LED7segment without effect another LED7s.
+  * @param[in] LEDpos: bit0 <=> LEd7seg 0
+  *            LED7-3 | LED7-2 | LED7-1 | LED7-0
+  *            BIT3   | BIT2   | BIT1   | BIT0
+  * @return None.
+  */
+void ToogleLED(LED7_IdType LEDpos)
 {
-  static uint8_t LucBlink = 0;
-  if(LblEnable == STD_ON)
+  PA->DOUT ^= (LEDpos << 8);
+}
+
+/**
+  * @brief  Enable blinking LED7s.
+  * @param[in] LEDpos: position of Toogle LED.
+  *            bit0 <=> LEd7seg 0
+  *            LED7-3 | LED7-2 | LED7-1 | LED7-0
+  *            BIT3   | BIT2   | BIT1   | BIT0
+  * @param[in] Blinktime: in milliseconds.
+  * @return None.
+  * @details 
+  */
+void LED7_EnableBlinking(LED7_IdType LEDpos, uint32 Blinktime)
+{
+  LED7_GstDriver.ucBlinkLED = LEDpos;
+  
+  LED7_GstDriver.enDriverStatus = LED7_BLINKING;
+  
+  LED7_GstDriver.ulBlinkTime = Blinktime;
+  
+  LED7_GstDriver.ulStartTick = millis();
+}
+
+/**
+  * @brief  Disable blinking LED7s.
+  * @param[in] None.
+  * @return None.
+  * @details 
+  */
+void LED7_DisableBlinking(void)
+{
+  LED7_GstDriver.ucBlinkLED = 0;
+  
+  LED7_GstDriver.enDriverStatus = LED7_NORMAL;
+}
+
+void LED7_MainFunction(void)
+{
+  uint32_t LulNowTick;
+  
+  LulNowTick =  millis();
+  
+  if((LulNowTick - LED7_GstDriver.ulStartTick) > LED7_GstDriver.ulBlinkTime)
   {
-    if(LucBlink != 0)
+    /* Change new state of blink LED */
+    if(LED7_GstDriver.ucBlinkLEDStatus == LED7_BLINK_IS_ON)
     {
-      TurnOnLED();
+      LED7_GstDriver.ucBlinkLEDStatus = LED7_BLINK_IS_OFF;
     }
     else
     {
-      TurnOffLED();
+      LED7_GstDriver.ucBlinkLEDStatus = LED7_BLINK_IS_ON;
     }
-    LucBlink ^= 1;
+    
+    /* Reset Start Tick time */
+    LED7_GstDriver.ulStartTick = LulNowTick;
   }
   else
   {
-    TurnOnLED();
-    LucBlink = 0;
-  } 
+    /* Do Nothing. */
+  }
 }
 /*** (C) COPYRIGHT 2016 DangKiet Technology Corp. ***/
 

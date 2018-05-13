@@ -146,6 +146,8 @@ void Btn_Init(void)
 
     pEvent->enStatus = BTN_IDLE;
   }
+  
+  /* Enable interrupt by rising and falling edge trigger. */
   HW_Interrupt_GPIO_Init();
 }
 
