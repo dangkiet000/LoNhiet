@@ -25,6 +25,7 @@
 #include "Fls.h"
 #include "TimeOut.h"
 
+#include "Heater_Types.h"
 #include "LoNhiet_UserCfg.h"
 #include "LoNhiet_DevCfg.h"
 /*******************************************************************************
@@ -34,35 +35,6 @@
 
 #define NUM_OF_BLINK              10U
 #define BLINK_TIME                400U
-
-/* Lo Nhiet status */
-typedef enum ETag_LoNhietStatusType
-{
-  READING_INFO_SYSTEM = 0,
-  
-  /* State which LoNhiet doesn't any task, TRIAC is not working */
-  LONHIET_IDLE,
-  /* State which LoNhiet is working, TRIAC is controlled by MCU */
-  LONHIET_BUSY,
-  /* State which user is setting setpoint */
-  LONHIET_UPDATE_SETPOINT,
-  /* State which user is setting date-time */
-  LONHIET_SETUP_DATETIME,
-  /* State which user is typing password */
-  LONHIET_ENTER_PASSWORD,
-  
-}LoNhietStatusType;
-
-/* Lo Nhiet Sale status */
-typedef enum ETag_LoNhietSaleStatusType
-{
-  /* State which LoNhiet is in trial time */
-  LONHIET_TRIAL = 0,
-  /* State which TRIAC is not working, user must correct password to UNLOCKED */
-  LONHIET_LOCKED,
-  /* State which user can use full feature. */
-  LONHIET_UNLOCKED
-}LoNhietSaleStatusType;
 
 /*******************************************************************************
 **                      Function Prototypes                                   **
@@ -111,17 +83,11 @@ uint32_t GaaReadStoreData[DATA_FLS_LEN];
 /* LED7 control variables */
 uint8_t GucBlinkTimes;
 
-/* PID variables */
-int32_t GslSetPoint = 60; 
+
 uint16_t GusLastTempTHC;
 
-/* Status variables */
-LoNhietStatusType GenLoNhietStatus;
-LoNhietSaleStatusType GenLoNhietSaleStatus;
-
-/* This variable store working-time of LoNhiet (Unit: minute) */
-uint32_t GulWorkingTime;
-
+/* Lo Nhiet Global structure */
+LoNhietType Heater;
 
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
@@ -167,7 +133,7 @@ void BlinkingLed(void)
 }
 void Send_SetPoint_to_PC(void)
 {
-  printf("SP %d\n", GslSetPoint);
+  printf("SP %d\n", Heater.slSetPoint);
 }
 
 void UpdateADCValue(void)
@@ -183,7 +149,7 @@ void UpdateADCValue(void)
 void StoringWorkingTime(void)
 {
   /* To check if working-time is over Trial time */
-  if(GulWorkingTime > TRIAL_TIME_IN_MIN)
+  if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
   {
     /* Yes. Disable LoNhiet */
   
@@ -191,10 +157,10 @@ void StoringWorkingTime(void)
   else /* No */
   {
     /* Accumulate working time */
-    GulWorkingTime += 30;
+    Heater.ulWorkingTime += 30;
     
     /* To Store working-time in flash memory */
-    Fls_Write(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &GulWorkingTime, 1);
+    Fls_Write(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &Heater.ulWorkingTime, 1);
   }
   
 }
@@ -209,29 +175,29 @@ void BCONG_Release(void)
   TO_Clear(TO_UpdateSetPoint_Channel);
   printf("TimeOut Clear Event = %d", millis());
   */
-  GslSetPoint++;
-  GslSetPoint = ((GslSetPoint > MAX_TEMP_TYPE_K) ? MAX_TEMP_TYPE_K : GslSetPoint);
+  Heater.slSetPoint++;
+  Heater.slSetPoint = ((Heater.slSetPoint > MAX_TEMP_TYPE_K) ? MAX_TEMP_TYPE_K : Heater.slSetPoint);
   GucBlinkTimes = NUM_OF_BLINK;
   Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
   Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
-  LED7Seg_Show(GslSetPoint);
+  LED7Seg_Show(Heater.slSetPoint);
 }
 
 void BTRU_Release(void)
 {
-  if(GslSetPoint > 0)
+  if(Heater.slSetPoint > 0)
   {
-    GslSetPoint--;
+    Heater.slSetPoint--;
     GucBlinkTimes = NUM_OF_BLINK;
     Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
     Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
   }
-  LED7Seg_Show(GslSetPoint);
+  LED7Seg_Show(Heater.slSetPoint);
 }
 
 void BSET_HoldToThres(void)
 {
-  GenLoNhietStatus = LONHIET_UPDATE_SETPOINT;
+  Heater.enOpStatus = LONHIET_UPDATE_SETPOINT;
 }
 void BSET_BCONG_HoldToThres(void)
 {
@@ -243,7 +209,7 @@ void BSET_BCONG_HoldToThres(void)
   Sch_SetInterval(SCH_BlinkingLED_Task, 200);
   LED7Seg_Show(GslSetPoint);
   */
-  GenLoNhietStatus = LONHIET_ENTER_PASSWORD;
+  Heater.enOpStatus = LONHIET_ENTER_PASSWORD;
   
 }
 /*******************************************************************************
@@ -290,10 +256,10 @@ int main()
   #endif
   
   /* Read data from flash memory to get working-time of LoNhiet */
-  Fls_Read(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &GulWorkingTime, 1);
+  Fls_Read(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &Heater.ulWorkingTime, 1);
   
   /* To check if working-time is over Trial time */
-  if(GulWorkingTime > TRIAL_TIME_IN_MIN)
+  if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
   {
     /* Yes. Disable LoNhiet */
   
@@ -305,10 +271,10 @@ int main()
   
   /* Read data from flash memory to get setpoint */
   Fls_Read(FLS_PAGE_ONE, DATA_FLS_SETPOINT_ADDR, &GaaStoreData[0], 1);
-  GslSetPoint = (sint16)GaaStoreData[0];
+  Heater.slSetPoint = (sint16)GaaStoreData[0];
   
-  GenLoNhietStatus = READING_INFO_SYSTEM;
-  printf("STA %d\n", GenLoNhietStatus);
+  Heater.enOpStatus = READING_INFO_SYSTEM;
+  printf("STA %d\n", Heater.enOpStatus);
 
   /*---------------------------------------------------------------------------- 
     Waiting ADC get first value. TimeOut = 1s 
@@ -323,7 +289,7 @@ int main()
     }
   } 
   GusLastTempTHC = GetTemp_ThermoCouple();
-  LED7Seg_Show(GslSetPoint);
+  LED7Seg_Show(Heater.slSetPoint);
   
   /* Blinking LED to display */
   GucBlinkTimes = 6;
@@ -342,7 +308,7 @@ int main()
     }
   }
   
-  GenLoNhietStatus = LONHIET_IDLE;
+  Heater.enOpStatus = LONHIET_IDLE;
   Sch_TaskEnable(SCH_UpdateADC_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_StoringWorkingTime_Task, SCH_RUN_LATER);
