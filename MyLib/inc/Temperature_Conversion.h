@@ -23,16 +23,16 @@
 *******************************************************************************/
 #define  MAX_TEMP_TYPE_K       1350U
 
-#define  ADC_MAX_VALUE         4096U
-#define  VREF_ADC              4.096F
-#define  VREF_ADC_X1000        4096U
-  
-#define  MAX_TEMP_TYPE_K 1350U
+#define  MAX_ADC_VALUE         4096U
+#define  VREF_ADC_IN_VOLT      4.096F /* 4.096V <=> 4096mV */
+#define  VREF_ADC_IN_MILIVOLT  4096U
   
 /* Opamp amplifier factor */
-#define  AMP_FACTOR (float32) 63.29
+#define  AMP_FACTOR   (float32)63.29
   
-#define  TEMP_ERROR 8888U
+#define  TEMP_ERROR            8888U
+
+
 /* Dinh nghia cac he so cho cong thuc noi suy nhiet do cho Thermo-couple 
    type-K */
 /* 0 - 500 Celsius */
@@ -59,14 +59,14 @@
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
-uint16 Convert_mV_to_Temp(float32 Lfl_EmV);
-
+uint16 ThermoCouple_mV_To_Temp(float32 Lfl_EmV);
+uint16 ThermoCouple_ADCToAmbientTemp(uint16 LusADCValue);
 /*******************************************************************************
 **                      API Functions                                         **
 *******************************************************************************/
-extern uint16 Temp_ThermoCouple_Convert(uint16 ADC_ThermoCouple, 
-                                          uint16 ADC_Enviroment);
-uint16 Temp_LM35_Convert(uint16 LusADCValue);
+extern uint16 ThermoCouple_ADCToTemp(uint16 ADC_ThermoCouple, 
+                                     uint16 ADC_Enviroment);
+
 
 #endif //__TEMPERATURE_CONVERSION_H__
 

@@ -25,25 +25,23 @@
 *******************************************************************************/
 
 /* Lo Nhiet status */
-typedef enum ETag_LoNhietStatusType
+typedef enum ETag_Heater_StatusType
 {
-  READING_INFO_SYSTEM = 0,
-  
   /* State which LoNhiet doesn't any task, TRIAC is not working */
-  LONHIET_IDLE,
+  HEATER_IDLE = 0,
   /* State which LoNhiet is working, TRIAC is controlled by MCU */
-  LONHIET_BUSY,
+  HEATER_BUSY,
   /* State which user is setting setpoint */
-  LONHIET_UPDATE_SETPOINT,
+  HEATER_UPDATE_SETPOINT,
   /* State which user is setting date-time */
-  LONHIET_SETUP_DATETIME,
+  HEATER_SETUP_DATETIME,
   /* State which user is typing password */
-  LONHIET_ENTER_PASSWORD,
+  HEATER_ENTER_PASSWORD,
   
-}LoNhietStatusType;
+}Heater_StatusType;
 
 /* Definition of LoNhiet Activation Lock Status */
-typedef enum ETag_LoNhiet_ActivationLockStatusType
+typedef enum ETag_Heater_ActiLockStatusType
 {
   /* State which LoNhiet is in trial time */
   LONHIET_TRIAL = 0,
@@ -51,23 +49,23 @@ typedef enum ETag_LoNhiet_ActivationLockStatusType
   LONHIET_LOCKED,
   /* State which user can use full feature. */
   LONHIET_UNLOCKED
-}LoNhiet_ActiLockStatusType;
+}Heater_ActiLockStatusType;
 
-typedef struct STag_LoNhietType
+typedef struct STag_HeaterType
 {
   /* Working-time of LoNhiet (Unit: minutes) */
   uint32 ulWorkingTime;
   
   /* LoNhiet operation status */
-  LoNhietStatusType enOpStatus;
+  Heater_StatusType enOpStatus;
   
   /* LoNhiet Activation Lock Status */
-  LoNhiet_ActiLockStatusType enActiLockStatus;
+  Heater_ActiLockStatusType enActiLockStatus;
   
   /* Set-point of temperature */
   sint32 slSetPoint; 
   
-}LoNhietType;
+}HeaterType;
 
 
 

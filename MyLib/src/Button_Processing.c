@@ -193,7 +193,7 @@ void Btn_MainFunction(void)
   {
     if(BTN_ONHOLD != Btn_ConfigSet[BCONG_ID].enStatus)
     {
-      Btn_ConfigSet[BSET_ID].pfnFunction();
+      Btn_ConfigSet[BSET_ID].pfnHoldFunction1();
       /* Reset status */
       Btn_ConfigSet[BSET_ID].enStatus = BTN_IDLE;
     }

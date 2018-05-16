@@ -129,9 +129,6 @@ void ADC_Init(void)
   /* 8. Clear the A/D interrupt flag for safe */
   ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
 
-  /* 9. Start A/D conversion */
-  //ADC_START_CONV(ADC);
-
 }
 
 /**
@@ -184,7 +181,7 @@ void PDMA_Init(void)
   NVIC_DisableIRQ(ADC_IRQn);
 
   /* 9. Trigger the selected channel */
-  PDMA_Trigger(PDMA_CHANNEL_ADC);
+  //PDMA_Trigger(PDMA_CHANNEL_ADC);
 
   /* 10. Enable PDMA transfer */
   ADC_ENABLE_PDMA(ADC);
@@ -262,11 +259,11 @@ uint16_t Get_ADC_Value(boolean LblChannelType)
   {
     if(LblChannelType == ADC_THC_CH)
     {
-      return (uint16_t) GulADC_THC_TB;
+      return (uint16_t)GulADC_THC_TB;
     }
     else
     {
-      return (uint16_t) GulADC_LM35_TB;
+      return (uint16_t)GulADC_LM35_TB;
     }
   }
   else
@@ -278,7 +275,7 @@ uint16_t Get_ADC_Value(boolean LblChannelType)
 /* Temperature convert function */
 uint16_t GetTemp_ThermoCouple(void)
 {
-  return Temp_ThermoCouple_Convert(GulADC_THC_TB, GulADC_LM35_TB);
+  return ThermoCouple_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
 }
 
 ADCStatusType ADC_GetStatus(void)

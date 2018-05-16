@@ -36,6 +36,7 @@
 #define NUM_OF_BLINK              10U
 #define BLINK_TIME                400U
 
+#define LIMIT_MAX_SETPOINT(SPvar)  ((SPvar > MAX_TEMP_TYPE_K) ? MAX_TEMP_TYPE_K : SPvar)
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
@@ -44,14 +45,19 @@ void PORT_Init(void);
 void Buttons_Init(void);
 void Timer0_Init(void);
 
+/* Read all data which store in data flash memory. */
+void Heater_ReadAllFlsData(HeaterType *pHeater);
 
+/* Blinking LED7-Seg in milisecond synchronously. */
+void BlinkingLED7_Synchronous(uint32 duration);
 
 
 /* Button call-back function prototypes */
-void BSET_HoldToThres(void);
-void BSET_BCONG_HoldToThres(void);
-void BCONG_Release(void);
-void BTRU_Release(void);
+void BSET_HoldToThres_Event(void);
+void BSET_BCONG_HoldToThres_Event(void);
+void BCONG_Release_Event(void);
+void BTRU_Release_Event(void);
+void BSET_Release_Event(void);
 
 
 #if (DEBUG_MODE == STD_ON)
@@ -87,12 +93,12 @@ uint8_t GucBlinkTimes;
 uint16_t GusLastTempTHC;
 
 /* Lo Nhiet Global structure */
-LoNhietType Heater;
+HeaterType Heater;
 
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
 *******************************************************************************/
-/* TimeOut Events */
+/*------------------------- TimeOut Events -----------------------------------*/
 void TO_UpdateSetPoint(void)
 {
   printf("TimeOut Event = %d", millis());
@@ -106,7 +112,7 @@ void TO_EnterPassword(void)
 
 }
 
-/* Scheduler Events */
+/*------------------------- Scheduler Events ---------------------------------*/
 
 void DisplayTask(void)
 {
@@ -167,8 +173,8 @@ void StoringWorkingTime(void)
 
 
 
-/* Button processing events */
-void BCONG_Release(void)
+/*------------------------- Button processing events -------------------------*/
+void BCONG_Release_Event(void)
 {
   LED7_DisableBlinking();
   /*
@@ -176,14 +182,15 @@ void BCONG_Release(void)
   printf("TimeOut Clear Event = %d", millis());
   */
   Heater.slSetPoint++;
-  Heater.slSetPoint = ((Heater.slSetPoint > MAX_TEMP_TYPE_K) ? MAX_TEMP_TYPE_K : Heater.slSetPoint);
+  Heater.slSetPoint = LIMIT_MAX_SETPOINT(Heater.slSetPoint);
+
   GucBlinkTimes = NUM_OF_BLINK;
   Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
   Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
   LED7Seg_Show(Heater.slSetPoint);
 }
 
-void BTRU_Release(void)
+void BTRU_Release_Event(void)
 {
   if(Heater.slSetPoint > 0)
   {
@@ -195,11 +202,16 @@ void BTRU_Release(void)
   LED7Seg_Show(Heater.slSetPoint);
 }
 
-void BSET_HoldToThres(void)
+
+void BSET_Release_Event(void)
 {
-  Heater.enOpStatus = LONHIET_UPDATE_SETPOINT;
+
 }
-void BSET_BCONG_HoldToThres(void)
+void BSET_HoldToThres_Event(void)
+{
+  Heater.enOpStatus = HEATER_UPDATE_SETPOINT;
+}
+void BSET_BCONG_HoldToThres_Event(void)
 {
   /*
   GaaStoreData[DATA_FLS_SETPOINT_ADDR] = (uint32_t) GslSetPoint;
@@ -209,7 +221,7 @@ void BSET_BCONG_HoldToThres(void)
   Sch_SetInterval(SCH_BlinkingLED_Task, 200);
   LED7Seg_Show(GslSetPoint);
   */
-  Heater.enOpStatus = LONHIET_ENTER_PASSWORD;
+  Heater.enOpStatus = HEATER_ENTER_PASSWORD;
   
 }
 /*******************************************************************************
@@ -248,77 +260,46 @@ int main()
   /* Init ADC use for temperature sensor and thermo-couple 
      and PDMA use for tranfering ADC data */
   Get_ADC_Init();
-  ADC_StartConvert();
+
   
   #if (DEBUG_MODE == STD_ON)
   /* Check the system reset source and report */
   SYS_CheckResetSrc();
   #endif
   
-  /* Read data from flash memory to get working-time of LoNhiet */
-  Fls_Read(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &Heater.ulWorkingTime, 1);
+  Heater_ReadAllFlsData(&Heater);
+  
+
   
   /* To check if working-time is over Trial time */
   if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
   {
     /* Yes. Disable LoNhiet */
-  
+    Heater.enActiLockStatus = LONHIET_LOCKED;
   }
   else /* No. Do nothing */
   {
   
   }
-  
-  /* Read data from flash memory to get setpoint */
-  Fls_Read(FLS_PAGE_ONE, DATA_FLS_SETPOINT_ADDR, &GaaStoreData[0], 1);
-  Heater.slSetPoint = (sint16)GaaStoreData[0];
-  
-  Heater.enOpStatus = READING_INFO_SYSTEM;
-  printf("STA %d\n", Heater.enOpStatus);
-
-  /*---------------------------------------------------------------------------- 
-    Waiting ADC get first value. TimeOut = 1s 
-  ----------------------------------------------------------------------------*/
-  while(ADC_GetStatus() != ADC_IDLE)
-  {
-    if(millis() > 1000)
-    {
-      /* Report ADC ERROR */
-      printf("\nADC_ERROR\n");
-      break;
-    }
-  } 
-  GusLastTempTHC = GetTemp_ThermoCouple();
+ 
   LED7Seg_Show(Heater.slSetPoint);
   
-  /* Blinking LED to display */
-  GucBlinkTimes = 6;
-  Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
-  /*---------------------------------------------------------------------------- 
-    Waiting LED blink done. TimeOut = 5s
-  ----------------------------------------------------------------------------*/
-  while(Sch_GetStatus(SCH_BlinkingLED_Task) == TASK_ENABLE)   
-  {
-    Sch_MainFunction(); 
-    if(millis() > 5000)
-    {
-      /* Report BLINKING LED ERROR */
-      printf("\nBLINKING_LED_ERROR\n");
-      break;
-    }
-  }
+  /* Blinking LED7Seg_Show to inform that STARTUP is finished! */
+  BlinkingLED7_Synchronous(2000);
+
+  /* Set haeter status as IDLE. */
+  Heater.enOpStatus = HEATER_IDLE;
   
-  Heater.enOpStatus = LONHIET_IDLE;
   Sch_TaskEnable(SCH_UpdateADC_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_StoringWorkingTime_Task, SCH_RUN_LATER);
   
-  //printf("TriggerTime = %d", millis());
-  //TO_Trigger(TO_UpdateSetPoint_Channel);
-  LED7_EnableBlinking(LED7_3 | LED7_2, 400);
+  /* Start convert ADC to get temperature. */
+  ADC_StartConvert();
+  
   while(1)
   { 
-    //TO_MainFunction(); 
+    TO_MainFunction(); 
     Sch_MainFunction(); 
     Btn_MainFunction();
   }
@@ -327,6 +308,29 @@ int main()
 /*******************************************************************************
 **                      Function                                              **
 *******************************************************************************/
+/* Read all data which store in data flash memory. */
+void Heater_ReadAllFlsData(HeaterType *pHeater)
+{
+  /* Read Working-time. */
+  Fls_Read(FLS_PAGE_ONE, DATA_FLS_ACTILOCKSTATUS_ADDR, \
+                        (Fls_DataType *)&pHeater->enActiLockStatus, 1);
+                        
+  /* Read Activation Lock Status. */
+  Fls_Read(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &pHeater->ulWorkingTime, 1);
+  
+  /* Read Setpoint. */
+  Fls_Read(FLS_PAGE_ONE, DATA_FLS_SETPOINT_ADDR, \
+                        (Fls_DataType *)&pHeater->slSetPoint, 1);
+
+}
+/* Blinking LED7-Seg in milisecond synchronously. */
+void BlinkingLED7_Synchronous(uint32 duration)
+{
+  LED7_EnableBlinking(LED7_ALL, 300);
+  DelaySystemTick_ms(duration);
+  LED7_DisableBlinking();
+}
+
 /* Init System, peripheral clock and multi-function I/O. */
 void SYS_Init(void)
 {
@@ -387,16 +391,17 @@ void PORT_Init(void)
 void Buttons_Init(void)
 {
   Btn_ConfigSet[BTRU_ID].enEventType = BTN_RELEASED_EVENT;
-  Btn_ConfigSet[BTRU_ID].pfnFunction = &BTRU_Release;
+  Btn_ConfigSet[BTRU_ID].pfnFunction = &BTRU_Release_Event;
   
   Btn_ConfigSet[BCONG_ID].enEventType = BTN_RELEASED_EVENT;
-  Btn_ConfigSet[BCONG_ID].pfnFunction = &BCONG_Release;
+  Btn_ConfigSet[BCONG_ID].pfnFunction = &BCONG_Release_Event;
   Btn_ConfigSet[BCONG_ID].usHoldThresTime = 3000;
   
   Btn_ConfigSet[BSET_ID].enEventType = BTN_HOLD_EVENT;
   Btn_ConfigSet[BSET_ID].usHoldThresTime = 3000;
-  Btn_ConfigSet[BSET_ID].pfnFunction = &BSET_HoldToThres;
-  Btn_ConfigSet[BSET_ID].pfnHoldFunction2 = &BSET_BCONG_HoldToThres;
+  Btn_ConfigSet[BSET_ID].pfnFunction = &BSET_Release_Event;
+  Btn_ConfigSet[BSET_ID].pfnHoldFunction1 = &BSET_HoldToThres_Event;
+  Btn_ConfigSet[BSET_ID].pfnHoldFunction2 = &BSET_BCONG_HoldToThres_Event;
   
   Btn_Init();
 }

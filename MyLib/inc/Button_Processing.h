@@ -83,6 +83,9 @@ typedef struct STag_Btn_ConfigType
   void (*pfnFunction)(void);
   
   /* Call-back function was called if button is hold longer usHoldThresTime */
+  void (*pfnHoldFunction1)(void);
+  
+  /* Call-back function was called if button is hold longer usHoldThresTime */
   void (*pfnHoldFunction2)(void);
 }Btn_ConfigType;
 

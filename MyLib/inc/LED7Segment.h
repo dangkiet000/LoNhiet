@@ -51,6 +51,7 @@ typedef struct STag_LED7_DriverType
    * n = 0..3
    *   LED7-3 | LED7-2 | LED7-1 | LED7-0
    *   BIT3   | BIT2   | BIT1   | BIT0
+   *
    * BIT0 = 1 : LED7-0 is displayed normally.
    * BIT0 = 0 : LED7-0 is turned off.
    */

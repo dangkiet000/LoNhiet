@@ -44,6 +44,7 @@
 #define DATA_FLS_LEN              10U
 #define DATA_FLS_SETPOINT_ADDR     0U
 #define DATA_FLS_WORKINGTIME_ADDR  1U
+#define DATA_FLS_ACTILOCKSTATUS_ADDR  2U
 
 
 __INLINE void LED_TEST_ON(void)

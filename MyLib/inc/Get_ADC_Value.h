@@ -64,7 +64,7 @@ void ADC_Init(void);
 void PDMA_Init(void);
 void Switch_PDMA_Channel(uint32_t LulChannel);
 
-extern uint16_t Temp_ThermoCouple_Convert(uint16_t ADC_ThermoCouple, 
+extern uint16_t ThermoCouple_ADCToTemp(uint16_t ADC_ThermoCouple, 
                                           uint16_t ADC_Enviroment);
 
 /*******************************************************************************
