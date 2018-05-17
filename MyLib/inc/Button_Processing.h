@@ -70,7 +70,7 @@ typedef struct STag_Btn_ConfigType
   /* To Store time at the moment which button have just been pressed */
   uint32_t ulStartHoldTime;
 
-  /* If button is hold longer this time, call-back pfnHoldFunction2 was called */
+  /* If button is hold longer this time, call-back pfnHoldEvent2 was called */
   uint16_t usHoldThresTime;
 
   /* This type of button event */
@@ -83,10 +83,10 @@ typedef struct STag_Btn_ConfigType
   void (*pfnFunction)(void);
   
   /* Call-back function was called if button is hold longer usHoldThresTime */
-  void (*pfnHoldFunction1)(void);
+  void (*pfnHoldEvent1)(void);
   
   /* Call-back function was called if button is hold longer usHoldThresTime */
-  void (*pfnHoldFunction2)(void);
+  void (*pfnHoldEvent2)(void);
 }Btn_ConfigType;
 
 //*****************************************************************************

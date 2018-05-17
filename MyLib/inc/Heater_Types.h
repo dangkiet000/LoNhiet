@@ -63,7 +63,13 @@ typedef struct STag_HeaterType
   Heater_ActiLockStatusType enActiLockStatus;
   
   /* Set-point of temperature */
-  sint32 slSetPoint; 
+  uint16 usSetPoint; 
+  
+  /* Temperature of Thermo-Couple */
+  uint16 usTempTHC;
+  
+  /* Index of Blink LED7-Segment */
+  uint8 ucBlinkLED7Idx;
   
 }HeaterType;
 

@@ -18,6 +18,8 @@
 /*******************************************************************************
 **                      Developer configuration                               **
 *******************************************************************************/
+#define DATA_LOGGING              STD_OFF
+
 /* System clock define */
 #define PLL_CLOCK                 50000000
 
@@ -42,9 +44,9 @@
 
 /* Data flash define */
 #define DATA_FLS_LEN              10U
-#define DATA_FLS_SETPOINT_ADDR     0U
-#define DATA_FLS_WORKINGTIME_ADDR  1U
-#define DATA_FLS_ACTILOCKSTATUS_ADDR  2U
+#define DATA_FLS_SETPOINT_ADDR        1U
+#define DATA_FLS_WORKINGTIME_ADDR     2U
+#define DATA_FLS_ACTILOCKSTATUS_ADDR  3U
 
 
 __INLINE void LED_TEST_ON(void)

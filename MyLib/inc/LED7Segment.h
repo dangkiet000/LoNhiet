@@ -90,6 +90,7 @@ typedef struct STag_LED7_DriverType
 #define MAX_COMPARE_VALUE         0xFFFFFFUL
 #define MAX_PRESCALER_VALUE       0xFFU
 
+
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
@@ -122,6 +123,8 @@ void LED7_DisableBlinking(void);
 
 /* Scheduler function */
 void LED7_MainFunction(void);
+
+LED7_IdType NUMBER_TO_LEDID(uint8 num);
 
 #ifdef __cplusplus
 }

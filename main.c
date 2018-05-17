@@ -63,8 +63,12 @@ void BSET_Release_Event(void);
 #if (DEBUG_MODE == STD_ON)
 Std_ReturnType SYS_CheckResetSrc(void);
 void UART1_Init(void);
+
+#if (DATA_LOGGING == STD_ON)
 void Send_ADCtoPC(uint16_t *Data, uint16_t Len);
 void Send_TemptoPC(void);
+#endif
+
 #endif
 
 
@@ -79,7 +83,6 @@ void Led7segTest(void);
 *******************************************************************************/
 /* Temperature variables */
 uint8_t  Temp_MT = 29;   /* Nhiet do Moi Truong    */
-uint16_t GusTempTHC = 30;  /* Nhiet do Thermo-couple */
 
 /* Data flash variables */
 /* This array contains all data stored in flash memory */
@@ -89,6 +92,7 @@ uint32_t GaaReadStoreData[DATA_FLS_LEN];
 /* LED7 control variables */
 uint8_t GucBlinkTimes;
 
+uint8_t GucLEDIndex;
 
 uint16_t GusLastTempTHC;
 
@@ -120,8 +124,11 @@ void DisplayTask(void)
   
   if(Sch_GetStatus(SCH_BlinkingLED_Task) == TASK_DISABLE)
   {
-    LED7Seg_Show(GusTempTHC);
+    LED7Seg_Show(Heater.usTempTHC);
+    
+    #if (DATA_LOGGING == STD_ON)
     Send_TemptoPC();
+    #endif
   }
 }
 void BlinkingLed(void)
@@ -137,16 +144,21 @@ void BlinkingLed(void)
     GucBlinkTimes--;
   }
 }
+
+
 void Send_SetPoint_to_PC(void)
 {
-  printf("SP %d\n", Heater.slSetPoint);
+  #if (DATA_LOGGING == STD_ON)
+  printf("SP %d\n", Heater.usSetPoint);
+  #endif
 }
+
 
 void UpdateADCValue(void)
 {
   if(ADC_IDLE == ADC_GetStatus())
   {
-    GusTempTHC = GetTemp_ThermoCouple();
+    Heater.usTempTHC = GetTemp_ThermoCouple();
   }
   ADC_StartConvert();
 }
@@ -181,48 +193,83 @@ void BCONG_Release_Event(void)
   TO_Clear(TO_UpdateSetPoint_Channel);
   printf("TimeOut Clear Event = %d", millis());
   */
-  Heater.slSetPoint++;
-  Heater.slSetPoint = LIMIT_MAX_SETPOINT(Heater.slSetPoint);
+  Heater.usSetPoint++;
+  Heater.usSetPoint = LIMIT_MAX_SETPOINT(Heater.usSetPoint);
 
   GucBlinkTimes = NUM_OF_BLINK;
   Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
   Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
-  LED7Seg_Show(Heater.slSetPoint);
+  LED7Seg_Show(Heater.usSetPoint);
 }
 
 void BTRU_Release_Event(void)
 {
-  if(Heater.slSetPoint > 0)
+  if(Heater.usSetPoint > 0)
   {
-    Heater.slSetPoint--;
+    Heater.usSetPoint--;
     GucBlinkTimes = NUM_OF_BLINK;
     Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
     Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
   }
-  LED7Seg_Show(Heater.slSetPoint);
+  LED7Seg_Show(Heater.usSetPoint);
 }
 
 
 void BSET_Release_Event(void)
 {
+  if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
+  {
+    /* Blink next LED7seg. */
+    Heater.ucBlinkLED7Idx++;
+    LED7_EnableBlinking(NUMBER_TO_LEDID(GucLEDIndex), 300); 
+    LED7Seg_Show(Heater.usSetPoint);
 
+    if(GucLEDIndex > 3)
+    {
+      /* Store Set-point to memory. */
+      
+      /* Exit HEATER_UPDATE_SETPOINT mode */
+      Sch_TaskEnable(SCH_Display_Task, SCH_RUN_LATER);
+      GucLEDIndex = 0;
+      LED7_DisableBlinking();
+      Heater.enOpStatus = HEATER_IDLE;
+    }
+    else
+    {
+    
+    }
+  }
 }
 void BSET_HoldToThres_Event(void)
 {
-  Heater.enOpStatus = HEATER_UPDATE_SETPOINT;
+  if((Heater.enOpStatus != HEATER_UPDATE_SETPOINT) && \
+     (Heater.enOpStatus != HEATER_ENTER_PASSWORD))
+  {
+    /* Enter HEATER_UPDATE_SETPOINT mode. */
+    Sch_TaskDisable(SCH_Display_Task);
+    LED7Seg_Show(Heater.usSetPoint);
+    
+    Heater.ucBlinkLED7Idx = 0;
+    LED7_EnableBlinking(NUMBER_TO_LEDID(GucLEDIndex), 300); 
+
+    Heater.enOpStatus = HEATER_UPDATE_SETPOINT;
+  }
+  else
+  {
+  
+  }
 }
 void BSET_BCONG_HoldToThres_Event(void)
 {
-  /*
-  GaaStoreData[DATA_FLS_SETPOINT_ADDR] = (uint32_t) GslSetPoint;
-  //Fls_Write(DATA_FLS_PAGE_ONE, GaaStoreData, DATA_FLS_LEN);
-  GucBlinkTimes = 8;
-  Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
-  Sch_SetInterval(SCH_BlinkingLED_Task, 200);
-  LED7Seg_Show(GslSetPoint);
-  */
-  Heater.enOpStatus = HEATER_ENTER_PASSWORD;
+  if((Heater.enOpStatus != HEATER_UPDATE_SETPOINT) && \
+     (Heater.enOpStatus != HEATER_ENTER_PASSWORD))
+  {
+    Heater.enOpStatus = HEATER_ENTER_PASSWORD;
+  }
+  else
+  {
   
+  }
 }
 /*******************************************************************************
 **                     MAIN FUNCTION                                          **
@@ -269,7 +316,7 @@ int main()
   
   Heater_ReadAllFlsData(&Heater);
   
-
+  
   
   /* To check if working-time is over Trial time */
   if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
@@ -282,7 +329,7 @@ int main()
   
   }
  
-  LED7Seg_Show(Heater.slSetPoint);
+  LED7Seg_Show(Heater.usSetPoint);
   
   /* Blinking LED7Seg_Show to inform that STARTUP is finished! */
   BlinkingLED7_Synchronous(2000);
@@ -293,10 +340,15 @@ int main()
   Sch_TaskEnable(SCH_UpdateADC_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
   Sch_TaskEnable(SCH_StoringWorkingTime_Task, SCH_RUN_LATER);
+  Sch_TaskDisable(SCH_Display_Task);
   
   /* Start convert ADC to get temperature. */
   ADC_StartConvert();
   
+  
+  
+  //LED7_EnableBlinking(NUMBER_TO_LEDID(3), 300);
+  LED7Seg_Show(1234);
   while(1)
   { 
     TO_MainFunction(); 
@@ -320,8 +372,8 @@ void Heater_ReadAllFlsData(HeaterType *pHeater)
   
   /* Read Setpoint. */
   Fls_Read(FLS_PAGE_ONE, DATA_FLS_SETPOINT_ADDR, \
-                        (Fls_DataType *)&pHeater->slSetPoint, 1);
-
+                        (Fls_DataType *)&pHeater->usSetPoint, 1);
+  pHeater->usSetPoint = 1111;
 }
 /* Blinking LED7-Seg in milisecond synchronously. */
 void BlinkingLED7_Synchronous(uint32 duration)
@@ -400,8 +452,8 @@ void Buttons_Init(void)
   Btn_ConfigSet[BSET_ID].enEventType = BTN_HOLD_EVENT;
   Btn_ConfigSet[BSET_ID].usHoldThresTime = 3000;
   Btn_ConfigSet[BSET_ID].pfnFunction = &BSET_Release_Event;
-  Btn_ConfigSet[BSET_ID].pfnHoldFunction1 = &BSET_HoldToThres_Event;
-  Btn_ConfigSet[BSET_ID].pfnHoldFunction2 = &BSET_BCONG_HoldToThres_Event;
+  Btn_ConfigSet[BSET_ID].pfnHoldEvent1 = &BSET_HoldToThres_Event;
+  Btn_ConfigSet[BSET_ID].pfnHoldEvent2 = &BSET_BCONG_HoldToThres_Event;
   
   Btn_Init();
 }
@@ -488,7 +540,7 @@ void Send_ADCtoPC(uint16_t *Data, uint16_t Len)
 
 void Send_TemptoPC(void)
 {
-  printf("TC %d\n", GusTempTHC);
+  printf("TC %d\n", Heater.usTempTHC);
 }
 
 

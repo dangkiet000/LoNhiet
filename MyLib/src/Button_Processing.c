@@ -41,10 +41,11 @@ void Button_ISR(void)
     }
     /* To check if BSET is released <=> rising edge */
     else
-    {
+    {   
       /* To check if BSET Hold Event is happened or not yet */
       if(Btn_ConfigSet[BSET_ID].enStatus == BTN_ONHOLD)
       {
+        /* This is button released event */
         Btn_ConfigSet[BSET_ID].enStatus = BTN_RELEASED;
       }
       else 
@@ -193,7 +194,7 @@ void Btn_MainFunction(void)
   {
     if(BTN_ONHOLD != Btn_ConfigSet[BCONG_ID].enStatus)
     {
-      Btn_ConfigSet[BSET_ID].pfnHoldFunction1();
+      Btn_ConfigSet[BSET_ID].pfnHoldEvent1();
       /* Reset status */
       Btn_ConfigSet[BSET_ID].enStatus = BTN_IDLE;
     }
@@ -203,7 +204,7 @@ void Btn_MainFunction(void)
                              Btn_ConfigSet[BCONG_ID].usHoldThresTime))
     {
       /* Call the event */
-      Btn_ConfigSet[BSET_ID].pfnHoldFunction2();
+      Btn_ConfigSet[BSET_ID].pfnHoldEvent2();
       /* Reset status */
       Btn_ConfigSet[BSET_ID].enStatus = BTN_IDLE;
     }
@@ -211,6 +212,13 @@ void Btn_MainFunction(void)
     {
       /* Do Nothing */
     }
+  }
+  else if(BTN_RELEASED == Btn_ConfigSet[BSET_ID].enStatus)
+  {
+    /* Call the event */
+    Btn_ConfigSet[BSET_ID].pfnFunction();
+    /* Reset status */
+    Btn_ConfigSet[BSET_ID].enStatus = BTN_IDLE;
   }
   else
   {

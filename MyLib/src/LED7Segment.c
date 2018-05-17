@@ -466,6 +466,11 @@ void LED7_MainFunction(void)
     /* Do Nothing. */
   }
 }
+
+LED7_IdType NUMBER_TO_LEDID(uint8 num)
+{
+  return GaaMapNumberToLEDPos[num];
+}
 /*** (C) COPYRIGHT 2016 DangKiet Technology Corp. ***/
 
 
