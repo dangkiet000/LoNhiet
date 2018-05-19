@@ -79,7 +79,7 @@ typedef struct STag_tSchedulerTask
   /* A function pointer to the user function which is to be called 
    * periodically by the scheduler. 
    */
-  void (*pfnFunction)(void);
+  void (*const pfnFunction)(void);
 
   /* The parameter which is to be passed to this function when it is called. */
   //void *pvParam;
@@ -135,6 +135,7 @@ extern tSchedulerTask Sch_GaaTable[];
 //
 //*****************************************************************************
 extern void Sch_MainFunction(void);
+
 extern Std_ReturnType Sch_TaskEnable(Sch_TaskIdType ucTaskId, 
                                           boolean blRunNow);
 extern Std_ReturnType Sch_TaskDisable(Sch_TaskIdType ucTaskId);

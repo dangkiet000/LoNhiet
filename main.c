@@ -123,42 +123,49 @@ void TO_EnterPassword(void)
 }
 
 /*------------------------- Scheduler Events ---------------------------------*/
-
+/* Display LED7segment every 1000ms. */
 void DisplayTask(void)
 {
   LED_TEST ^= 1;
   
-  switch(Heater.enOpStatus)
+  if(Heater.enActiLockStatus == LONHIET_LOCKED)
   {
-    case HEATER_UPDATE_SETPOINT:
+    LED7_DisplayError(LED7_ERR9);
+  }
+  else
+  {
+    switch(Heater.enOpStatus)
     {
-      LED7_DisplayLeadingZeros(Heater.usSetPoint);
-      break;
+      case HEATER_UPDATE_SETPOINT:
+      {
+        LED7_DisplayLeadingZeros(Heater.usSetPoint);
+        break;
+      }
+      case HEATER_BUSY:
+      {
+        LED7_DisplayNumber(Heater.usTempTHC);
+        #if (DATA_LOGGING == STD_ON)
+        Send_TemptoPC();
+        #endif
+        break;
+      }
+      case HEATER_IDLE:
+      {
+        LED7_DisplayNumber(Heater.usTempTHC);
+        break;
+      }
+      case HEATER_ENTER_PASSWORD:
+      {
+        LED7_DisplayLeadingZeros(Heater.usSetPoint);
+        break;
+      }
+      case HEATER_SETUP_DATETIME:
+      {
+        LED7_DisplayLeadingZeros(Heater.usSetPoint);
+        break;
+      }
+      default: break;
     }
-    case HEATER_BUSY:
-    {
-      LED7_DisplayNumber(Heater.usTempTHC);
-      #if (DATA_LOGGING == STD_ON)
-      Send_TemptoPC();
-      #endif
-      break;
-    }
-    case HEATER_IDLE:
-    {
-      LED7_DisplayNumber(Heater.usTempTHC);
-      break;
-    }
-    case HEATER_ENTER_PASSWORD:
-    {
-      LED7_DisplayLeadingZeros(Heater.usSetPoint);
-      break;
-    }
-    case HEATER_SETUP_DATETIME:
-    {
-      LED7_DisplayLeadingZeros(Heater.usSetPoint);
-      break;
-    }
-    default: break;
   }
 }
 

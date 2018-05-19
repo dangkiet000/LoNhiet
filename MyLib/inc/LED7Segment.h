@@ -84,10 +84,18 @@ typedef struct STag_LED7_DriverType
 #define  LED7_ALL 0x0FU
 
 /* Maximum number of LED7segment */
-#define MAX_NUM_LED7      4U
+#define MAX_NUM_LED7          4U
 
 /* LED off value code. */
-#define LED7_NODISPLAY_CODE     10U
+#define LED7_NODISPLAY_CODE   10U
+#define LED7_E_CHAR           11U
+#define LED7_R_CHAR           12U
+
+/* Errors code. */
+#define LED7_ERR0             0U
+#define LED7_ERR1             1U
+#define LED7_ERR9             9U
+
 #define LEDDOT            PC1
 
 /* Timer Led define */  
@@ -124,6 +132,9 @@ void LED7_DisplayLeadingZeros(uint16 DisplayValue);
 /* Display number on LED7segment. */
 void LED7_DisplayNumber(uint16 DisplayValue);
 
+/* Display errors on LED7segment. */
+void LED7_DisplayError(uint8  ErrorCode);
+
 /* Turn off LED7segment without effect another LED7s. */
 void LED7_TurnOff(LED7_IdType LEDpos);
 
@@ -146,6 +157,7 @@ void LED7_IncreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue);
 
 /* Decrease value of the LED7. */
 void LED7_DecreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue);
+
 
 #ifdef __cplusplus
 }

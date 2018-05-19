@@ -265,6 +265,25 @@ void LED_7Seg_Decode(uint8 LedNumber)
       PC->DOUT |= (BIT0|BIT2|BIT3);
       break;
     }
+    case LED7_E_CHAR:
+    {
+      /* 'E' character */
+      PB->DOUT &=~ (BIT0|BIT1|BIT3);
+      PB->DOUT |= (BIT2);
+      
+      PC->DOUT &=~ (BIT2|BIT3);
+      PC->DOUT |= (BIT0);
+      break;
+    }
+    case LED7_R_CHAR:
+    {
+      /* 'R' character */
+      PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
+      
+      PC->DOUT &=~ (BIT0|BIT2);
+      PC->DOUT |= (BIT3);
+      break;
+    }
     default: break;
   }
 }
@@ -415,6 +434,40 @@ void LED7_DisplayLeadingZeros(uint16  DisplayValue)
 {
   Int_to_Array(DisplayValue, GaaLED7Value, \
                LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+}
+
+/**
+  * @brief  Display error on LED7segment.
+  * @param[in] ErrorCode: .
+  * @return None.
+  * @details  Display error on LED7segment.
+  */
+void LED7_DisplayError(uint8  ErrorCode)
+{
+  GaaLED7Value[0] = LED7_E_CHAR;
+  GaaLED7Value[1] = LED7_R_CHAR;
+  GaaLED7Value[2] = LED7_R_CHAR;
+  
+  switch(ErrorCode)
+  {
+    case LED7_ERR0:
+    {
+      GaaLED7Value[3] = 0;
+      break;
+    }
+    case LED7_ERR1:
+    {
+      GaaLED7Value[3] = 1;
+      break;
+    }
+    case LED7_ERR9:
+    {
+      GaaLED7Value[3] = 9;
+      break;
+    }
+    default: break;
+  }
+  
 }
 /**
   * @brief  Turn off LED7segment without effect another LED7s.

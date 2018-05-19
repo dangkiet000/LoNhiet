@@ -27,17 +27,20 @@
 /* Lo Nhiet status */
 typedef enum ETag_Heater_StatusType
 {
-  /* State which LoNhiet doesn't any task, TRIAC is not working */
+  /* State which LoNhiet doesn't any task, TRIAC is not working. */
   HEATER_IDLE = 0,
-  /* State which LoNhiet is working, TRIAC is controlled by MCU */
+  /* State which LoNhiet is working, TRIAC is controlled by MCU. */
   HEATER_BUSY,
-  /* State which user is setting setpoint */
+  /* State which user is setting setpoint. */
   HEATER_UPDATE_SETPOINT,
-  /* State which user is setting date-time */
+  /* State which user is setting date-time. */
   HEATER_SETUP_DATETIME,
-  /* State which user is typing password */
+  /* State which user is typing password. */
   HEATER_ENTER_PASSWORD,
-  
+  /* State which triac is died. */
+  HEATER_TRIAC_DIED,
+  /* State which thermal resistor is died. */
+  HEATER_RESISTOR_DIED
 }Heater_StatusType;
 
 /* Definition of LoNhiet Activation Lock Status */
