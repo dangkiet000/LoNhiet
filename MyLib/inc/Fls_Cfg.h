@@ -20,20 +20,6 @@
 /*******************************************************************************
  **                       Type definitions                                    **
  ******************************************************************************/
-/* Definition pages type. */
-typedef enum ETag_Fls_PageType
-{
-  FLS_PAGE_ONE = 0,
-  FLS_PAGE_TWO,
-  FLS_PAGE_THREE,
-  FLS_PAGE_FOUR,
-  FLS_PAGE_FIVE,
-  FLS_PAGE_SIX,
-  FLS_PAGE_SEVEN,
-  FLS_PAGE_EIGHT,
-  FLS_MAX_PAGE_NUMBER
-} Fls_PageType;
-
 /* Used as address offset from the configured flash base address to access a
    certain flash memory area. */
 typedef uint32 Fls_AddressType;
@@ -43,6 +29,21 @@ typedef uint32 Fls_LengthType;
 
 /* Definition flash data type(8/16/32). It depend on MCU platform */
 typedef uint32 Fls_DataType;
+
+/* Definition flash data ID */
+typedef uint8 Fls_DataIdType;
+
+typedef struct STag_Fls_DataConfigType
+{
+  /* Lenght of flash data. */
+  Fls_LengthType ddLen;
+  
+  /* Address offset of flash memory area. */
+  Fls_AddressType ddAddr; 
+  
+  /* Page Address. */
+  uint32 ulPageAddr;
+}Fls_DataConfigType;
 
 /*----------------------------------------------------------------------------*/
 /*                          USER CONFIGURATION                                */
@@ -69,6 +70,17 @@ typedef uint32 Fls_DataType;
 
 #define FLS_PAGE_DATASIZE     (FMC_FLASH_PAGE_SIZE/4U)
 
+
+
+/* Definition of Data flash index in configuration set. */
+#define FLS_SETPOINT        0U
+#define FLS_WORKINGTIME     1U
+#define FLS_ACTILOCKSTATUS  2U
+
+#define MAX_FLS_ID          3U
+
+/* Definition of configuration set ID */
+#define FLS_CONFIG               (&Fls_GaaConfig[0])
 
 #endif /* __FLS_CFG_H__ */
 

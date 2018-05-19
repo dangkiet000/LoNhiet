@@ -32,7 +32,6 @@
 **                      Define macro                                          **
 *******************************************************************************/
 
-
 #define NUM_OF_BLINK              10U
 #define BLINK_TIME                400U
 
@@ -45,11 +44,14 @@ void PORT_Init(void);
 void Buttons_Init(void);
 void Timer0_Init(void);
 
-/* Read all data which store in data flash memory. */
-void Heater_ReadAllFlsData(HeaterType *pHeater);
+/* Read Heater data which store in data flash memory. */
+void Heater_ReadFlsData(HeaterType *pHeater, Fls_DataIdType FlsId);
+
+/* Store Heater data to flash memory. */
+void Heater_StoreFlsData(HeaterType *pHeater, Fls_DataIdType FlsId);
 
 /* Blinking LED7-Seg in milisecond synchronously. */
-void BlinkingLED7_Synchronous(uint32 duration);
+void BlinkingAllLED7_Synchronous(uint32 duration);
 
 
 /* Button call-back function prototypes */
@@ -84,17 +86,6 @@ void Led7segTest(void);
 /* Temperature variables */
 uint8_t  Temp_MT = 29;   /* Nhiet do Moi Truong    */
 
-/* Data flash variables */
-/* This array contains all data stored in flash memory */
-uint32_t GaaStoreData[DATA_FLS_LEN];
-uint32_t GaaReadStoreData[DATA_FLS_LEN];
-
-/* LED7 control variables */
-uint8_t GucBlinkTimes;
-
-uint8_t GucLEDIndex;
-
-uint16_t GusLastTempTHC;
 
 /* Lo Nhiet Global structure */
 HeaterType Heater;
@@ -122,26 +113,37 @@ void DisplayTask(void)
 {
   LED_TEST ^= 1;
   
-  if(Sch_GetStatus(SCH_BlinkingLED_Task) == TASK_DISABLE)
+  switch(Heater.enOpStatus)
   {
-    LED7Seg_Show(Heater.usTempTHC);
-    
-    #if (DATA_LOGGING == STD_ON)
-    Send_TemptoPC();
-    #endif
-  }
-}
-void BlinkingLed(void)
-{
-  if(GucBlinkTimes == 0)
-  {
-
-    Sch_TaskDisable(SCH_BlinkingLED_Task);
-  }
-  else
-  {
-
-    GucBlinkTimes--;
+    case HEATER_UPDATE_SETPOINT:
+    {
+      LED7_DisplayLeadingZeros(Heater.usSetPoint);
+      break;
+    }
+    case HEATER_BUSY:
+    {
+      LED7_DisplayNumber(Heater.usTempTHC);
+      #if (DATA_LOGGING == STD_ON)
+      Send_TemptoPC();
+      #endif
+      break;
+    }
+    case HEATER_IDLE:
+    {
+      LED7_DisplayNumber(Heater.usTempTHC);
+      break;
+    }
+    case HEATER_ENTER_PASSWORD:
+    {
+      LED7_DisplayLeadingZeros(Heater.usSetPoint);
+      break;
+    }
+    case HEATER_SETUP_DATETIME:
+    {
+      LED7_DisplayLeadingZeros(Heater.usSetPoint);
+      break;
+    }
+    default: break;
   }
 }
 
@@ -178,7 +180,7 @@ void StoringWorkingTime(void)
     Heater.ulWorkingTime += 30;
     
     /* To Store working-time in flash memory */
-    Fls_Write(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &Heater.ulWorkingTime, 1);
+    Heater_StoreFlsData(&Heater, FLS_WORKINGTIME);
   }
   
 }
@@ -188,30 +190,38 @@ void StoringWorkingTime(void)
 /*------------------------- Button processing events -------------------------*/
 void BCONG_Release_Event(void)
 {
-  LED7_DisableBlinking();
-  /*
-  TO_Clear(TO_UpdateSetPoint_Channel);
-  printf("TimeOut Clear Event = %d", millis());
-  */
-  Heater.usSetPoint++;
-  Heater.usSetPoint = LIMIT_MAX_SETPOINT(Heater.usSetPoint);
+  if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
+  {
+    /* Clear timeout counter. */
+    TO_Clear(TO_UpdateSetPoint_Channel);
+    
+    /* Increase LED7 value. */
+    LED7_IncreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                      &Heater.usSetPoint);
+    LED7_DisplayNumber(Heater.usSetPoint);
+  }
+  else
+  {
 
-  GucBlinkTimes = NUM_OF_BLINK;
-  Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
-  Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
-  LED7Seg_Show(Heater.usSetPoint);
+  }
 }
 
 void BTRU_Release_Event(void)
 {
-  if(Heater.usSetPoint > 0)
+  if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
   {
-    Heater.usSetPoint--;
-    GucBlinkTimes = NUM_OF_BLINK;
-    Sch_TaskEnable(SCH_BlinkingLED_Task, SCH_RUN_LATER);
-    Sch_SetInterval(SCH_BlinkingLED_Task, BLINK_TIME);
+    /* Clear timeout counter. */
+    TO_Clear(TO_UpdateSetPoint_Channel);
+    
+    /* Decrease LED7 value. */
+    LED7_DecreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                      &Heater.usSetPoint);
+    LED7_DisplayNumber(Heater.usSetPoint);
   }
-  LED7Seg_Show(Heater.usSetPoint);
+  else
+  {
+
+  }
 }
 
 
@@ -221,17 +231,23 @@ void BSET_Release_Event(void)
   {
     /* Blink next LED7seg. */
     Heater.ucBlinkLED7Idx++;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(GucLEDIndex), 300); 
-    LED7Seg_Show(Heater.usSetPoint);
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
+    LED7_DisplayNumber(Heater.usSetPoint);
 
-    if(GucLEDIndex > 3)
+    if(Heater.ucBlinkLED7Idx > 3)
     {
-      /* Store Set-point to memory. */
-      
       /* Exit HEATER_UPDATE_SETPOINT mode */
-      Sch_TaskEnable(SCH_Display_Task, SCH_RUN_LATER);
-      GucLEDIndex = 0;
+      /* To Store set-point in flash memory */
+      Heater_StoreFlsData(&Heater, FLS_SETPOINT);
+      
+      /* Clear timeout counter. */
+      TO_Clear(TO_UpdateSetPoint_Channel);
+
+      Heater.ucBlinkLED7Idx = 0;
       LED7_DisableBlinking();
+      
+      /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
+      BlinkingAllLED7_Synchronous(1500);
       Heater.enOpStatus = HEATER_IDLE;
     }
     else
@@ -245,14 +261,21 @@ void BSET_HoldToThres_Event(void)
   if((Heater.enOpStatus != HEATER_UPDATE_SETPOINT) && \
      (Heater.enOpStatus != HEATER_ENTER_PASSWORD))
   {
-    /* Enter HEATER_UPDATE_SETPOINT mode. */
-    Sch_TaskDisable(SCH_Display_Task);
-    LED7Seg_Show(Heater.usSetPoint);
-    
-    Heater.ucBlinkLED7Idx = 0;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(GucLEDIndex), 300); 
-
+    /* Set Heater status as HEATER_UPDATE_SETPOINT. */
     Heater.enOpStatus = HEATER_UPDATE_SETPOINT;
+    
+    /* Blinking All LED7 to inform that Heater is in Update setpoint mode. */
+    BlinkingAllLED7_Synchronous(1500);
+    
+    /* Enter HEATER_UPDATE_SETPOINT mode. */
+    /* Assigned blinking LED7 first. */
+    Heater.ucBlinkLED7Idx = 0;
+    
+    /* Enable blinking LED7. */
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
+
+    /* Start timeout count-down. */
+    TO_Trigger(TO_UpdateSetPoint_Channel);
   }
   else
   {
@@ -297,6 +320,10 @@ int main()
   /* Init Button */
   Buttons_Init();
   
+  /* Init Flash module */
+  Fls_Init(FLS_CONFIG);
+  
+  /* Init TimeOut module */
   TO_Init(TIMEOUT_CONFIG);
 
   #if (DEBUG_MODE == STD_ON)
@@ -314,9 +341,10 @@ int main()
   SYS_CheckResetSrc();
   #endif
   
-  Heater_ReadAllFlsData(&Heater);
-  
-  
+  Heater_ReadFlsData(&Heater, FLS_SETPOINT);
+  Heater_ReadFlsData(&Heater, FLS_WORKINGTIME);
+  Heater_ReadFlsData(&Heater, FLS_ACTILOCKSTATUS);
+
   
   /* To check if working-time is over Trial time */
   if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
@@ -329,26 +357,22 @@ int main()
   
   }
  
-  LED7Seg_Show(Heater.usSetPoint);
+  /* Display St-Point at Startup time.*/
+  LED7_DisplayNumber(Heater.usSetPoint);
   
-  /* Blinking LED7Seg_Show to inform that STARTUP is finished! */
-  BlinkingLED7_Synchronous(2000);
+  /* Blinking LED7_DisplayNumber to inform that STARTUP is finished! */
+  BlinkingAllLED7_Synchronous(1500);
 
   /* Set haeter status as IDLE. */
   Heater.enOpStatus = HEATER_IDLE;
   
-  Sch_TaskEnable(SCH_UpdateADC_Task, SCH_RUN_LATER);
+  #if (DATA_LOGGING == STD_ON)
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
-  Sch_TaskEnable(SCH_StoringWorkingTime_Task, SCH_RUN_LATER);
-  Sch_TaskDisable(SCH_Display_Task);
+  #endif
   
   /* Start convert ADC to get temperature. */
   ADC_StartConvert();
   
-  
-  
-  //LED7_EnableBlinking(NUMBER_TO_LEDID(3), 300);
-  LED7Seg_Show(1234);
   while(1)
   { 
     TO_MainFunction(); 
@@ -360,25 +384,71 @@ int main()
 /*******************************************************************************
 **                      Function                                              **
 *******************************************************************************/
-/* Read all data which store in data flash memory. */
-void Heater_ReadAllFlsData(HeaterType *pHeater)
-{
-  /* Read Working-time. */
-  Fls_Read(FLS_PAGE_ONE, DATA_FLS_ACTILOCKSTATUS_ADDR, \
-                        (Fls_DataType *)&pHeater->enActiLockStatus, 1);
-                        
-  /* Read Activation Lock Status. */
-  Fls_Read(FLS_PAGE_ONE, DATA_FLS_WORKINGTIME_ADDR, &pHeater->ulWorkingTime, 1);
+/* Read Heater data which store in data flash memory. */
+void Heater_ReadFlsData(HeaterType *pHeater, Fls_DataIdType FlsId)
+{  
+  Fls_DataType Temp;
   
-  /* Read Setpoint. */
-  Fls_Read(FLS_PAGE_ONE, DATA_FLS_SETPOINT_ADDR, \
-                        (Fls_DataType *)&pHeater->usSetPoint, 1);
-  pHeater->usSetPoint = 1111;
+  /* Reset value as default value of flash memory. */
+  Temp = 0xFFFFFFFF;
+
+  switch(FlsId)
+  {
+    case FLS_SETPOINT: /* Read Setpoint. */
+    {
+      Fls_Read(FLS_SETPOINT, &Temp);
+      pHeater->usSetPoint = (uint16)Temp;
+      break;
+    }
+    case FLS_WORKINGTIME: /* Read Working-time. */
+    {
+      Fls_Read(FLS_WORKINGTIME, &Temp);
+      pHeater->ulWorkingTime = (uint32)Temp; 
+      break;
+    }
+    case FLS_ACTILOCKSTATUS: /* Read Activation Lock Status. */ 
+    {
+      Fls_Read(FLS_ACTILOCKSTATUS, &Temp);
+      pHeater->enActiLockStatus = (Heater_ActiLockStatusType)Temp; 
+      break;
+    }
+    default: break;
+  } 
 }
+
+/* Store Heater data to flash memory. */
+void Heater_StoreFlsData(HeaterType *pHeater, Fls_DataIdType FlsId)
+{  
+  Fls_DataType Temp;
+  
+  switch(FlsId)
+  {
+    case FLS_SETPOINT: /* Store Setpoint. */
+    {
+      Temp = (Fls_DataType)pHeater->usSetPoint;
+      Fls_Write(FLS_SETPOINT, &Temp);
+      break;
+    }
+    case FLS_WORKINGTIME: /* Store Working-time. */
+    {
+      Temp = (Fls_DataType)pHeater->ulWorkingTime;
+      Fls_Write(FLS_WORKINGTIME, &Temp);
+      break;
+    }
+    case FLS_ACTILOCKSTATUS: /* Store Activation Lock Status. */ 
+    {
+      Temp = (Fls_DataType)pHeater->enActiLockStatus;
+      Fls_Write(FLS_WORKINGTIME, &Temp);
+      break;
+    }
+    default: break;
+  } 
+}
+
 /* Blinking LED7-Seg in milisecond synchronously. */
-void BlinkingLED7_Synchronous(uint32 duration)
+void BlinkingAllLED7_Synchronous(uint32 duration)
 {
-  LED7_EnableBlinking(LED7_ALL, 300);
+  LED7_EnableBlinking(LED7_ALL, 150);
   DelaySystemTick_ms(duration);
   LED7_DisableBlinking();
 }
@@ -529,20 +599,25 @@ void UART1_Init(void)
   UART_Open(UART1, 115200);
 }
 
+#if (DATA_LOGGING == STD_ON)
 void Send_ADCtoPC(uint16_t *Data, uint16_t Len)
 {
+  
   uint16_t i=0;
   for(i=0; i<Len; i++)
   {
     printf("TC %d\n", Data[i]);
   }
+
 }
 
 void Send_TemptoPC(void)
 {
-  printf("TC %d\n", Heater.usTempTHC);
-}
 
+  printf("TC %d\n", Heater.usTempTHC);
+  
+}
+#endif
 
 #endif
 
@@ -567,7 +642,7 @@ void Led7segTest(void)
   uint8_t LucCount;
   for(LucCount = 0; LucCount< 10; LucCount++)
   {
-    LED7Seg_Show(LucCount++);
+    LED7_DisplayNumber(LucCount++);
     DelaySystemTick_ms(400);
   }
 }

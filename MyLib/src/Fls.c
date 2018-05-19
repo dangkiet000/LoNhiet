@@ -16,6 +16,12 @@
 #include "Fls.h"
 
 /*******************************************************************************
+**                      Global data                                           **
+*******************************************************************************/
+/* Global pointer point to constant flash configuration. */
+const Fls_DataConfigType *Fls_GpConfig;
+
+/*******************************************************************************
 **                      Internal Functions                                    **
 *******************************************************************************/
 /**
@@ -143,47 +149,35 @@ void FMC_Open(void)
 /**
  * @brief      Program 32-bit data into specified address of flash
  *
- * @param[in]  PageID: Flash address of Data Flash
- *             List values:  DATA_FLS_PAGE_ONE
- *                           ...
- *                           DATA_FLS_PAGE_EIGHT
- * @param[in]  TargetAddress: target address in PAGE flash memory. This address
- *             offset will be  added to the PAGE flash memory base address.
- *                           Min.: 0
- *                           Max.: FLS_PAGE_DATASIZE - 1
- * @param[in]  SourceAddressPtr: Pointer to source data buffer.
- * @param[in]  Lenght: lenght of source data array
+ * @param[in]  FlsId: ID of flash data in configuration.
+
+ * @param[out] *SourceAddressPtr: Pointer to source data buffer.
  * @retval     E_OK Success
  * @retval     E_NOT_OK Failed
  *
  * @details    Program 32-bit data into specified address of flash
  *             We only have 8 pages (512 bytes) t store data.
  */
-Std_ReturnType Fls_Write(Fls_PageType PageID, \
-                         Fls_AddressType TargetAddress, \
-                         const Fls_DataType *SourceAddressPtr, \
-                         Fls_LengthType Lenght)
+Std_ReturnType Fls_Write(Fls_DataIdType FlsId,
+                         const Fls_DataType *SourceAddressPtr)
 {
+  /* Pointer to constant */
+  const Fls_DataConfigType *pFlsData;
   Fls_LengthType LusCnt;
   Fls_DataType LaaPageData[FLS_PAGE_DATASIZE];
-  Fls_AddressType LddPageAddr;
+  
+  pFlsData = Fls_GpConfig + FlsId;
 
-  if(PageID >= FLS_MAX_PAGE_NUMBER)
+  if(pFlsData->ddAddr > (FLS_PAGE_DATASIZE - 1))
   {
     return E_NOT_OK;
   }
 
-  if(TargetAddress > (FLS_PAGE_DATASIZE - 1))
+  if(pFlsData->ddLen > (FLS_PAGE_DATASIZE - pFlsData->ddAddr))
   {
     return E_NOT_OK;
   }
 
-  if(Lenght > (FLS_PAGE_DATASIZE - TargetAddress))
-  {
-    return E_NOT_OK;
-  }
-
-  LddPageAddr = FLS_GET_PAGE_ADDR(PageID);
 
   /* Disable register write-protection function */
   SYS_UnlockReg();
@@ -194,23 +188,24 @@ Std_ReturnType Fls_Write(Fls_PageType PageID, \
   /* Read all data of page to backup */
   for(LusCnt = 0; LusCnt < FLS_PAGE_DATASIZE; LusCnt++)
   {
-    LaaPageData[LusCnt] = FMC_Read(LddPageAddr + LusCnt*4);
+    LaaPageData[LusCnt] = FMC_Read(pFlsData->ulPageAddr + LusCnt*4);
   }
 
   /* Write new data to LaaPageData */
-  for(LusCnt = TargetAddress; LusCnt < Lenght; LusCnt++)
+  for(LusCnt = pFlsData->ddAddr; \
+      LusCnt < (pFlsData->ddAddr + pFlsData->ddLen); LusCnt++)
   {
     LaaPageData[LusCnt] = *SourceAddressPtr;
     SourceAddressPtr++;
   }
 
   /* Erase all data in page (512 bytes) */
-  FMC_Erase(LddPageAddr);
+  FMC_Erase(pFlsData->ulPageAddr);
 
   /* Write whole LaaPageData to FLASH PAGE MEMORY */
   for(LusCnt = 0; LusCnt < FLS_PAGE_DATASIZE; LusCnt++)
   {
-    FMC_Write(LddPageAddr + (LusCnt*4), LaaPageData[LusCnt]);
+    FMC_Write(pFlsData->ulPageAddr + (LusCnt*4), LaaPageData[LusCnt]);
   }
 
   /* Disable FMC ISP function */
@@ -225,30 +220,24 @@ Std_ReturnType Fls_Write(Fls_PageType PageID, \
 /**
  * @brief      Read data flash from address of data flash to array
  *
- * @param[in]  PageID: Flash address of Data Flash
- *             List values:  DATA_FLS_PAGE_ONE
- *                           ...
- *                           DATA_FLS_PAGE_EIGHT
- * @param[in]  SourceAddress: data point to target data array.
- *             Range: 0..FLS_PAGE_DATASIZE - 1
+ * @param[in]  FlsId: ID of flash data in configuration.
  * @param[out] *TargetAddressPtr: Pointer to target data buffer.
- * @param[in]  Lenght: lenght of source data array.
- *             Range: 1..FLS_PAGE_DATASIZE - SourceAddress
  * @retval     E_OK Success
  * @retval     E_NOT_OK Failed
  *
  * @details    Read data flash from address of data flash
  *             We only have 8 pages (512 bytes) t store data.
  */
-Std_ReturnType Fls_Read(Fls_PageType PageID, \
-               Fls_AddressType SourceAddress, \
-               Fls_DataType* TargetAddressPtr, \
-               Fls_LengthType Lenght)
+Std_ReturnType Fls_Read(Fls_DataIdType FlsId, \
+                        Fls_DataType* TargetAddressPtr)
 {
+  /* Pointer to constant */
+  const Fls_DataConfigType *pFlsData;
   Fls_LengthType LusCnt;
-  Fls_AddressType LddPageAddr;
 
-  if(PageID >= FLS_MAX_PAGE_NUMBER)
+  pFlsData = Fls_GpConfig + FlsId;
+  
+  if(pFlsData->ddAddr > (FLS_PAGE_DATASIZE - 1))
   {
     return E_NOT_OK;
   }
@@ -257,7 +246,7 @@ Std_ReturnType Fls_Read(Fls_PageType PageID, \
     /* Do Nothing */
   }
 
-  if(SourceAddress > (FLS_PAGE_DATASIZE - 1))
+  if(pFlsData->ddLen > (FLS_PAGE_DATASIZE - pFlsData->ddAddr))
   {
     return E_NOT_OK;
   }
@@ -265,17 +254,6 @@ Std_ReturnType Fls_Read(Fls_PageType PageID, \
   {
     /* Do Nothing */
   }
-
-  if(Lenght > (FLS_PAGE_DATASIZE - SourceAddress))
-  {
-    return E_NOT_OK;
-  }
-  else
-  {
-    /* Do Nothing */
-  }
-
-  LddPageAddr = FLS_GET_PAGE_ADDR(PageID);
   
   /* Disable register write-protection function */
   SYS_UnlockReg();
@@ -283,9 +261,10 @@ Std_ReturnType Fls_Read(Fls_PageType PageID, \
   /* Enable FMC ISP functions */
   FMC_Open();
 
-  for(LusCnt = SourceAddress; LusCnt < Lenght; LusCnt++)
+  for(LusCnt = pFlsData->ddAddr; \
+      LusCnt < (pFlsData->ddAddr + pFlsData->ddLen); LusCnt++)
   {
-    *TargetAddressPtr = FMC_Read(LddPageAddr + LusCnt*4);
+    *TargetAddressPtr = FMC_Read(pFlsData->ulPageAddr + LusCnt*4);
     TargetAddressPtr++;
   }
 
@@ -296,6 +275,33 @@ Std_ReturnType Fls_Read(Fls_PageType PageID, \
   SYS_LockReg();
 
   return E_OK;
+}
+
+/**
+ * @brief      Initialize flash configuration.
+ *
+ * @param[in]  *Configset: Pointer to target data buffer.
+ * @param[out] None.
+ * @retval     None.
+ *
+ * @details    Initialize flash configuration.
+ */
+void Fls_Init(const Fls_DataConfigType *Configset)
+{
+  Fls_GpConfig = Configset;
+}
+/**
+ * @brief      DeInitialize flash configuration.
+ *
+ * @param[in]  None.
+ * @param[out] None.
+ * @retval     None.
+ *
+ * @details    Initialize flash configuration.
+ */
+void Fls_DeInit(void)
+{
+  Fls_GpConfig = NULL_PTR;
 }
 
 /*** (C) COPYRIGHT 2016 DangKiet Technology Corp. ***/

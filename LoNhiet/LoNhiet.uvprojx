@@ -441,6 +441,11 @@
               <FileType>1</FileType>
               <FilePath>..\MyLib\src\TimeOut_Cfg.c</FilePath>
             </File>
+            <File>
+              <FileName>Fls_Cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib\src\Fls_Cfg.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

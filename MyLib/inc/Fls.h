@@ -25,10 +25,7 @@ extern "C"
 /*******************************************************************************
  **                       Type definitions                                    **
  ******************************************************************************/
-
-/*----------------------------------------------------------------------------*/
-/*                          END CONFIGURATION                                 */
-/*----------------------------------------------------------------------------*/
+extern const Fls_DataConfigType Fls_GaaConfig[];
 
 /*----------------------------------------------------------------------------*/
 /*  ISPCON constant definitions                                               */
@@ -119,15 +116,13 @@ void FMC_Write(uint32_t u32addr, uint32_t u32data);
 /*******************************************************************************
 **                      API Functions                                         **
 *******************************************************************************/
-extern Std_ReturnType Fls_Write(Fls_PageType PageID, \
-                                Fls_AddressType TargetAddress, \
-                                const Fls_DataType *SourceAddressPtr, \
-                                Fls_LengthType Lenght);
+void Fls_Init(const Fls_DataConfigType *Configset);
+void Fls_DeInit(void);
+extern Std_ReturnType Fls_Write(Fls_DataIdType FlsId,
+                                const Fls_DataType *SourceAddressPtr);
 
-extern Std_ReturnType Fls_Read(Fls_PageType PageID, \
-                               Fls_AddressType SourceAddress, \
-                               Fls_DataType* TargetAddressPtr, \
-                               Fls_LengthType Lenght);
+extern Std_ReturnType Fls_Read(Fls_DataIdType FlsId, \
+                               Fls_DataType* TargetAddressPtr);
 
 #ifdef __cplusplus
 }

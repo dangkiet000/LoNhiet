@@ -57,12 +57,12 @@ void TimerLED_ISR(void)
     LEDPos = GaaMapNumberToLEDPos[Guccount];
 
     /* Turn off all LEDs first. */
-    TurnOffLED(LED7_ALL);
+    LED7_TurnOff(LED7_ALL);
 
     if(LED7_GstDriver.enDriverStatus == LED7_NORMAL)
     {
       /* Turn on LED */
-      TurnOnLED(LEDPos);
+      LED7_TurnOn(LEDPos);
     }
     else if(LED7_GstDriver.enDriverStatus == LED7_BLINKING)
     {
@@ -70,14 +70,14 @@ void TimerLED_ISR(void)
       if((LEDPos & LED7_GstDriver.ucBlinkLED) == 0)
       {
         /* No. Turn on LED */
-        TurnOnLED(LEDPos);
+        LED7_TurnOn(LEDPos);
       }
       else /* Yes. This is blink LED. */
       {
         if(LED7_GstDriver.ucBlinkLEDStatus == LED7_BLINK_IS_ON)
         {
           /* NO. Turn on LED */
-          TurnOnLED(LEDPos);
+          LED7_TurnOn(LEDPos);
         }
         else
         {
@@ -258,7 +258,7 @@ void LED_7Seg_Decode(uint8 LedNumber)
       PC->DOUT |=  (BIT2);
       break;
     }
-    case LED_OFF_VALUE:
+    case LED7_NODISPLAY_CODE:
     {
       /* No display */
       PB->DOUT |= (BIT0|BIT1|BIT2|BIT3);
@@ -277,9 +277,10 @@ void LED_7Seg_Decode(uint8 LedNumber)
   * @param[in] *LpLEDValue: pointer point to character array.
   * @return  None.
   * @details  Ham tach so nguyen (khong dau) thanh ung chu 
-  * so rieng bietva luu vao mang.
+  * so rieng biet va luu vao mang.
   */
-void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue)
+void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
+                                    LED7_DisplayType DisplayType)
 {
   uint16 LusNumber;
   uint8 LED0, LED1, LED2, LED3;
@@ -292,14 +293,30 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue)
   
   if(LusNumber < 100) //So Number co 2 chu so
   {
-    LED0 = 10;
-    LED1 = 10;
+    if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
+    {
+      LED0 = 0;
+      LED1 = 0;
+    }
+    else
+    {
+      LED0 = 10;
+      LED1 = 10;
+    }
+    
     LED2 = (uint8) (LusNumber/10);
     LED3 = (uint8) (LusNumber%10);
   }
   else if(LusNumber < 1000)  //So Number co 3 chu so
   {
-    LED0 = 10;
+    if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
+    {
+      LED0 = 0;
+    }
+    else
+    {
+      LED0 = 10;
+    }
     LED1 = (uint8) (LusNumber/100);
     LusNumber = (LusNumber - (LED1*100));
     LED2 = (uint8) (LusNumber/10);
@@ -316,10 +333,21 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue)
   }
   else
   { 
-    LED0 = 10;
-    LED1 = 10;
-    LED2 = 10;
-    LED3 = 10;
+    if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
+    {
+      LED0 = 0;
+      LED1 = 0;
+      LED2 = 0;
+      LED3 = 0;
+    }
+    else
+    {
+      LED0 = 10;
+      LED1 = 10;
+      LED2 = 10;
+      LED3 = 10;
+    }
+    
   }
   LpLEDValue[0] = LED0;
   LpLEDValue[1] = LED1;
@@ -327,6 +355,20 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue)
   LpLEDValue[3] = LED3;
 }
 
+/**
+  * @brief  Convert array to int.
+  * @param[in] *Array: pointer point to character array.
+  * @return  value of array as int.
+  * @details  None
+  */
+uint16 Array_To_Int(uint8 *Array)
+{
+  uint16 IntNumber;
+  
+  IntNumber = Array[0]*1000 + Array[1]*100 + Array[2]*10 + + Array[3];
+
+  return IntNumber;  
+}
 /*******************************************************************************
 **                      API Functions                                         **
 *******************************************************************************/
@@ -354,18 +396,25 @@ void LED_7Seg_Init(void)
 
 
 /**
-  * @brief  Display value by LED7segment.
+  * @brief  Display number on LED7segment.
   * @param[in] LusDisplayValue: 0 -> (2^MAX_NUM_LED7-1).
   * @return None.
-  * @details  Display value by LED7segment.
+  * @details  Display value on LED7segment.
   */
-void LED7Seg_Show(uint16  LusDisplayValue)
+void LED7_DisplayNumber(uint16  DisplayValue)
 {
-  uint16 Lus_DisplayValue;
-  
-  Lus_DisplayValue = LusDisplayValue;
-  
-  Int_to_Array(Lus_DisplayValue, GaaLED7Value);
+  Int_to_Array(DisplayValue, GaaLED7Value, LED7_DISPLAY_NUMBER);
+}
+/**
+  * @brief  Display number with adding zeros on LED7segment.
+  * @param[in] LusDisplayValue: 0 -> (2^MAX_NUM_LED7-1).
+  * @return None.
+  * @details  Display value on LED7segment.
+  */
+void LED7_DisplayLeadingZeros(uint16  DisplayValue)
+{
+  Int_to_Array(DisplayValue, GaaLED7Value, \
+               LED7_DISPLAY_NUMBER_LEADING_ZEROS);
 }
 /**
   * @brief  Turn off LED7segment without effect another LED7s.
@@ -375,7 +424,7 @@ void LED7Seg_Show(uint16  LusDisplayValue)
   * @return None.
   * @details  Turn off all LED7segment.
   */
-void TurnOffLED(LED7_IdType LEDpos)
+void LED7_TurnOff(LED7_IdType LEDpos)
 {
   /* Turn off LED7s */
   PA->DOUT &=~ (LEDpos << 8);
@@ -389,7 +438,7 @@ void TurnOffLED(LED7_IdType LEDpos)
   * @return None.
   * @details  Turn on all LED7segment.
   */
-void TurnOnLED(LED7_IdType LEDpos)
+void LED7_TurnOn(LED7_IdType LEDpos)
 {
   PA->DOUT |= (LEDpos << 8);
 }
@@ -471,6 +520,99 @@ LED7_IdType NUMBER_TO_LEDID(uint8 num)
 {
   return GaaMapNumberToLEDPos[num];
 }
+
+/**
+  * @brief  Increase value of the LED7.
+  * @param[in] LEDpos: position of LED77.
+  *            bit0 <=> LEd7seg 0
+  *            LED7-3 | LED7-2 | LED7-1 | LED7-0
+  *            BIT3   | BIT2   | BIT1   | BIT0
+  * @return Value of Number after increase.
+  * @details 
+  */
+void LED7_IncreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue)
+{
+  uint8  LaaLED7Value[4];
+  
+  Int_to_Array(*DisplayValue, LaaLED7Value, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+  
+  /* Increase LED7 value. */
+  switch(LEDpos)
+  {
+    case LED7_0: /* LED7_0(Nghìn) is blinking */
+    {
+      INCREASE_LED7VAL(LaaLED7Value[0]);
+      break;
+    }
+    case LED7_1: /* LED7_1(Trăm) is blinking */
+    {
+      INCREASE_LED7VAL(LaaLED7Value[1]);
+      break;
+    }
+    case LED7_2: /* LED7_2(Chục) is blinking */
+    {
+      INCREASE_LED7VAL(LaaLED7Value[2]);
+      break;
+    }
+    case LED7_3: /* LED7_3(Đơn vị) is blinking */
+    {
+      INCREASE_LED7VAL(LaaLED7Value[3]);
+      break;
+    }
+    default: break;
+  }
+  
+  *DisplayValue = Array_To_Int(LaaLED7Value);
+}
+
+
+/**
+  * @brief  Decrease value of the LED7.
+  * @param[in] LEDpos: position of LED7.
+  *            bit0 <=> LEd7seg 0
+  *            LED7-3 | LED7-2 | LED7-1 | LED7-0
+  *            BIT3   | BIT2   | BIT1   | BIT0
+  * @return Value of Number after decrease.
+  * @details 
+  */
+void LED7_DecreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue)
+{
+  uint8  LaaLED7Value[4];
+  
+  Int_to_Array(*DisplayValue, LaaLED7Value, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+  
+  /* Decrease LED7 value. */
+  switch(LEDpos)
+  {
+    case LED7_0: /* LED7_0(Nghìn) is blinking */
+    {
+      DECREASE_LED7VAL(LaaLED7Value[0]);
+      break;
+    }
+    case LED7_1: /* LED7_1(Trăm) is blinking */
+    {
+      DECREASE_LED7VAL(LaaLED7Value[1]);
+      break;
+    }
+    case LED7_2: /* LED7_2(Chục) is blinking */
+    {
+      DECREASE_LED7VAL(LaaLED7Value[2]);
+      break;
+    }
+    case LED7_3: /* LED7_3(Đơn vị) is blinking */
+    {
+      DECREASE_LED7VAL(LaaLED7Value[3]);
+      break;
+    }
+    default: break;
+  }
+  
+  *DisplayValue = Array_To_Int(LaaLED7Value);
+}
+
+
+
+
 /*** (C) COPYRIGHT 2016 DangKiet Technology Corp. ***/
 
 

@@ -41,6 +41,13 @@ typedef enum ETag_LED7_BlinkStateType
 } LED7_BlinkStateType;
 
 /* Definition of position LED */
+typedef enum ETag_LED7_DisplayType
+{
+  LED7_DISPLAY_NUMBER = 0,
+  LED7_DISPLAY_NUMBER_LEADING_ZEROS,
+} LED7_DisplayType;
+
+/* Definition of position LED */
 typedef struct STag_LED7_DriverType
 {
   /* This variable store status LED7 driver */
@@ -80,7 +87,7 @@ typedef struct STag_LED7_DriverType
 #define MAX_NUM_LED7      4U
 
 /* LED off value code. */
-#define LED_OFF_VALUE     10U
+#define LED7_NODISPLAY_CODE     10U
 #define LEDDOT            PC1
 
 /* Timer Led define */  
@@ -91,6 +98,10 @@ typedef struct STag_LED7_DriverType
 #define MAX_PRESCALER_VALUE       0xFFU
 
 
+
+#define INCREASE_LED7VAL(val)  ((val >= 9) ? (val = 0) : (val++))
+#define DECREASE_LED7VAL(val)  ((val == 0) ? (val = 9) : (val--))
+
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
@@ -98,22 +109,26 @@ extern uint32_t millis(void);
 
 void LED_7Seg_Decode(uint8 LedNumber);
 Std_ReturnType Timer_LED_Init(uint16 LusFrequence);
-void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue);
-
+void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
+                              LED7_DisplayType DisplayType);
+uint16 Array_To_Int(uint8 *Array);
 /*******************************************************************************
 **                      API Function Prototypes                               **
 *******************************************************************************/
 /* Initialize GPIO and Timer to control LED-7seg. */
 void LED_7Seg_Init(void);
 
-/* Display value by LED7segment. */
-void LED7Seg_Show(uint16  LusDisplayValue);
+/* Display number with adding zeros on LED7segment. */
+void LED7_DisplayLeadingZeros(uint16 DisplayValue);
+
+/* Display number on LED7segment. */
+void LED7_DisplayNumber(uint16 DisplayValue);
 
 /* Turn off LED7segment without effect another LED7s. */
-void TurnOffLED(LED7_IdType LEDpos);
+void LED7_TurnOff(LED7_IdType LEDpos);
 
 /* Turn on LED7segment without effect another LED7s. */
-void TurnOnLED(LED7_IdType LEDpos);
+void LED7_TurnOn(LED7_IdType LEDpos);
 
 /* Enable blinking LED7s. */
 void LED7_EnableBlinking(LED7_IdType LEDpos, uint32 Blinktime);
@@ -125,6 +140,12 @@ void LED7_DisableBlinking(void);
 void LED7_MainFunction(void);
 
 LED7_IdType NUMBER_TO_LEDID(uint8 num);
+
+/* Increase value of the LED7. */
+void LED7_IncreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue);
+
+/* Decrease value of the LED7. */
+void LED7_DecreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue);
 
 #ifdef __cplusplus
 }

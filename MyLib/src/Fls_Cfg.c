@@ -1,9 +1,9 @@
 /*******************************************************************************
- * @file     Scheduler_Cfg.c
+ * @file     Fls_Cfg.c
  * @version  V1.00
  * $Revision: 1
- * $Date: 11/04/2018
- * @brief    Đây là file cấu hình cho Scheduler.
+ * $Date: 19/05/2018
+ * @brief    Đây là file cấu hình cho Flash memory in application.
  *
  * @Encoding: UTF-8 without signature
  * @note
@@ -13,56 +13,39 @@
 /*******************************************************************************
 **                      Include Section                                       **
 *******************************************************************************/
-#include "Scheduler.h"
+#include "Fls_Cfg.h"
 
 /*******************************************************************************
 **                      Global Data                                           **
 *******************************************************************************/
-tSchedulerTask Sch_GaaTable[] =
+const Fls_DataConfigType Fls_GaaConfig[] =
 {
-  /* Index: 0 - SCH_UpdateADC_Task */
+  /* Index: 0 - FLS_SETPOINT */
   {
-    /* pfnFunction */
-    &UpdateADCValue,
-    /* ulInterval */
-    250,
-    /* ulLastTick */
-    0,
-    /* enStatus */
-    TASK_ENABLE
+    /* ddLen */
+    1,
+    /* ddAddr */
+    1,
+    /* enPage */
+    DATA_FLS_PAGE_ONE
   },
-  /* Index: 1 - SCH_Display_Task */
+  /* Index: 1 - FLS_WORKINGTIME */
   {
-    /* pfnFunction */
-    &DisplayTask,
-    /* ulInterval */
-    1000,
-    /* ulLastTick */
-    0,
-    /* enStatus */
-    TASK_ENABLE
+    /* ddLen */
+    1,
+    /* ddAddr */
+    2,
+    /* enPage */
+    DATA_FLS_PAGE_ONE
   },
-  /* Index: 2 - SCH_SendSetPoint_Task */
+  /* Index: 2 - FLS_ACTILOCKSTATUS */
   {
-    /* pfnFunction */
-    &Send_SetPoint_to_PC,
-    /* ulInterval */
-    20000,
-    /* ulLastTick */
-    0,
-    /* enStatus */
-    TASK_DISABLE
-  },
-  /* Index: 3 - SCH_StoringWorkingTime_Task */
-  {
-    /* pfnFunction */
-    &StoringWorkingTime,
-    /* ulInterval */
-    30*60*1000, /* 30 minutes */
-    /* ulLastTick */
-    0,
-    /* enStatus */
-    TASK_ENABLE
+    /* ddLen */
+    1,
+    /* ddAddr */
+    3,
+    /* enPage */
+    DATA_FLS_PAGE_ONE
   }
 };
 

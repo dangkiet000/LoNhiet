@@ -42,12 +42,6 @@
 #define SPEAKER_OFF               1U
 #define SPEAKER_PIN               PB8
 
-/* Data flash define */
-#define DATA_FLS_LEN              10U
-#define DATA_FLS_SETPOINT_ADDR        1U
-#define DATA_FLS_WORKINGTIME_ADDR     2U
-#define DATA_FLS_ACTILOCKSTATUS_ADDR  3U
-
 
 __INLINE void LED_TEST_ON(void)
 {
