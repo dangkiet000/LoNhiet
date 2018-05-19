@@ -55,7 +55,7 @@ Std_ReturnType TO_Trigger(uint8 Channel)
 }
 
 /**
-  * @brief  This function clear timeout counter .
+  * @brief  Clear timeout counter .
   * @param[in]  TO_Channel: Channel id.
   * @return  E_OK.
   *          E_NOT_OK.
@@ -174,6 +174,36 @@ Std_ReturnType TO_Init(TO_ChannelType *ConfigPtr)
 void TO_DeInit(void)
 {
   TO_GpConfig = NULL_PTR;
+}
+
+/**
+  * @brief  Reload timeout counter .
+  * @param[in]  TO_Channel: Channel id.
+  * @return  E_OK.
+  *          E_NOT_OK.
+  * @details 
+  */
+Std_ReturnType TO_Reload(uint8 Channel)
+{
+  TO_ChannelType *pTOChannel;
+  
+  if (Channel >= MAX_TO_CHANNELS)
+  {
+    return E_NOT_OK;
+  }
+  else
+  {
+    /* Get a pointer to the task information. */
+    pTOChannel = &TO_GaaChannels[Channel];
+    
+    if(pTOChannel->enStatus == TO_RUNNING)
+    {
+      /* Reload counter. */
+      pTOChannel->ulStartTime = millis();
+    }
+
+    return E_OK;
+  } 
 }
 /*******************************************************************************
 **                      Low Level Function                                    **

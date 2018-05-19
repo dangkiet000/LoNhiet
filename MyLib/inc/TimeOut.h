@@ -60,6 +60,8 @@ extern TO_ChannelType TO_GaaChannels[];
 **                      Function Prototypes                                   **
 *******************************************************************************/
 Std_ReturnType TO_Trigger(uint8 Channel);
+/* Reload timeout counter */
+Std_ReturnType TO_Reload(uint8 Channel);
 Std_ReturnType TO_Clear(uint8 Channel);
 Std_ReturnType TO_Init(TO_ChannelType *ConfigPtr);
 void TO_DeInit(void);

@@ -96,7 +96,22 @@ HeaterType Heater;
 /*------------------------- TimeOut Events -----------------------------------*/
 void TO_UpdateSetPoint(void)
 {
-  printf("TimeOut Event = %d", millis());
+  /* Exit HEATER_UPDATE_SETPOINT mode */
+  
+  /* Don't apply new set-point and read set-point in flash memory to restore set
+     point. */
+  Heater_ReadFlsData(&Heater, FLS_SETPOINT);
+  LED7_DisplayLeadingZeros(Heater.usSetPoint);
+  
+  /* Clear timeout counter. */
+  TO_Clear(TO_UpdateSetPoint_Channel);
+
+  Heater.ucBlinkLED7Idx = 0;
+  LED7_DisableBlinking();
+  
+  /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
+  BlinkingAllLED7_Synchronous(1500);
+  Heater.enOpStatus = HEATER_IDLE;
 }
 void TO_SetDateTime(void)
 {
@@ -156,6 +171,7 @@ void Send_SetPoint_to_PC(void)
 }
 
 
+/* Get temperature of Thermo-Couple every 250ms.*/
 void UpdateADCValue(void)
 {
   if(ADC_IDLE == ADC_GetStatus())
@@ -192,13 +208,13 @@ void BCONG_Release_Event(void)
 {
   if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
   {
-    /* Clear timeout counter. */
-    TO_Clear(TO_UpdateSetPoint_Channel);
-    
     /* Increase LED7 value. */
     LED7_IncreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
                       &Heater.usSetPoint);
     LED7_DisplayNumber(Heater.usSetPoint);
+    
+    /* Reload timeout counter. */
+    TO_Reload(TO_UpdateSetPoint_Channel);
   }
   else
   {
@@ -210,13 +226,13 @@ void BTRU_Release_Event(void)
 {
   if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
   {
-    /* Clear timeout counter. */
-    TO_Clear(TO_UpdateSetPoint_Channel);
-    
     /* Decrease LED7 value. */
     LED7_DecreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
                       &Heater.usSetPoint);
     LED7_DisplayNumber(Heater.usSetPoint);
+    
+    /* Reload timeout counter. */
+    TO_Reload(TO_UpdateSetPoint_Channel);
   }
   else
   {
