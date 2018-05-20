@@ -47,7 +47,7 @@ typedef enum ETag_Heater_StatusType
 typedef enum ETag_Heater_ActiLockStatusType
 {
   /* State which LoNhiet is in trial time */
-  LONHIET_TRIAL = 0,
+  LONHIET_TRIAL = 5,
   /* State which TRIAC is not working, user must correct password to UNLOCKED */
   LONHIET_LOCKED,
   /* State which user can use full feature. */
@@ -70,6 +70,9 @@ typedef struct STag_HeaterType
   
   /* Temperature of Thermo-Couple */
   uint16 usTempTHC;
+  
+  /* Store password which user type. */
+  uint16 usUserPassword;
   
   /* Index of Blink LED7-Segment */
   uint8 ucBlinkLED7Idx;

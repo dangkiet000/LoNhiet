@@ -76,8 +76,11 @@ typedef struct STag_Fls_DataConfigType
 #define FLS_SETPOINT        0U
 #define FLS_WORKINGTIME     1U
 #define FLS_ACTILOCKSTATUS  2U
+#define FLS_NGAY            3U
+#define FLS_THANG           4U
+#define FLS_NAM             5U
 
-#define MAX_FLS_ID          3U
+#define MAX_FLS_ID          6U
 
 /* Definition of configuration set ID */
 #define FLS_CONFIG               (&Fls_GaaConfig[0])

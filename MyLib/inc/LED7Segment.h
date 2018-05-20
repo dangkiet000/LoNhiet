@@ -86,15 +86,26 @@ typedef struct STag_LED7_DriverType
 /* Maximum number of LED7segment */
 #define MAX_NUM_LED7          4U
 
-/* LED off value code. */
+/* LED value code. */
 #define LED7_NODISPLAY_CODE   10U
 #define LED7_E_CHAR           11U
 #define LED7_R_CHAR           12U
+#define LED7_P_CHAR           13U
+#define LED7_A_CHAR           14U
+#define LED7_S_CHAR           15U
+#define LED7_F_CHAR           16U
+#define LED7_I_CHAR           17U
+#define LED7_L_CHAR           18U
 
 /* Errors code. */
 #define LED7_ERR0             0U
 #define LED7_ERR1             1U
 #define LED7_ERR9             9U
+
+/* Result code. */
+#define LED7_PASS             20U
+#define LED7_FAIL             21U
+
 
 #define LEDDOT            PC1
 
@@ -134,6 +145,9 @@ void LED7_DisplayNumber(uint16 DisplayValue);
 
 /* Display errors on LED7segment. */
 void LED7_DisplayError(uint8  ErrorCode);
+
+/* Display PASS/FAIL on LED7segment. */
+void LED7_DisplayResult(uint8  ResultCode);
 
 /* Turn off LED7segment without effect another LED7s. */
 void LED7_TurnOff(LED7_IdType LEDpos);

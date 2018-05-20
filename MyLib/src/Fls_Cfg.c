@@ -46,6 +46,33 @@ const Fls_DataConfigType Fls_GaaConfig[] =
     3,
     /* enPage */
     DATA_FLS_PAGE_ONE
+  },
+  /* Index: 3 - FLS_NGAY */
+  {
+    /* ddLen */
+    1,
+    /* ddAddr */
+    4,
+    /* enPage */
+    DATA_FLS_PAGE_ONE
+  },
+  /* Index: 4 - FLS_THANG */
+  {
+    /* ddLen */
+    1,
+    /* ddAddr */
+    5,
+    /* enPage */
+    DATA_FLS_PAGE_ONE
+  },
+  /* Index: 5 - FLS_NAM */
+  {
+    /* ddLen */
+    1,
+    /* ddAddr */
+    6,
+    /* enPage */
+    DATA_FLS_PAGE_ONE
   }
 };
 

@@ -42,6 +42,8 @@
 #define SPEAKER_OFF               1U
 #define SPEAKER_PIN               PB8
 
+#define HEATER_TIMEOUT_TRUE      TRUE
+#define HEATER_TIMEOUT_FALSE     FALSE
 
 __INLINE void LED_TEST_ON(void)
 {

@@ -284,6 +284,58 @@ void LED_7Seg_Decode(uint8 LedNumber)
       PC->DOUT |= (BIT3);
       break;
     }
+    case LED7_P_CHAR:
+    {
+      /* 'P' character */
+      PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
+      PC->DOUT &=~ (BIT2);
+      PC->DOUT |=  (BIT3|BIT0);
+      break;
+    }
+    case LED7_A_CHAR:
+    {
+      /* 'A' character */
+      PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
+      PC->DOUT &=~ (BIT0|BIT2);
+      PC->DOUT |=  (BIT3);
+      break;
+    }
+    case LED7_S_CHAR:
+    {
+      /* 'S' character */
+      PB->DOUT |=  (BIT2);
+      PB->DOUT &=~ (BIT0|BIT1|BIT3);
+      PC->DOUT |=  (BIT2);
+      PC->DOUT &=~ (BIT0|BIT3);
+      break;
+    }
+    case LED7_F_CHAR:
+    {
+      /* 'F' character */
+      PB->DOUT |= (BIT2);
+      PB->DOUT &=~ (BIT0|BIT1|BIT3);
+      PC->DOUT &=~ (BIT2);
+      PC->DOUT |=  (BIT3|BIT0);
+      break;
+    }
+    case LED7_I_CHAR:
+    {
+      /* 'I' character */
+      PB->DOUT |=  (BIT0|BIT3|BIT2);
+      PB->DOUT &=~ (BIT1);
+      PC->DOUT |=  (BIT0|BIT3);
+      PC->DOUT &=~ (BIT2);
+      break;
+    }
+    case LED7_L_CHAR:
+    {
+      /* 'L' character */
+      PB->DOUT |=  (BIT0|BIT3|BIT2);
+      PB->DOUT &=~ (BIT1);
+      PC->DOUT |=  (BIT0);
+      PC->DOUT &=~ (BIT3|BIT2);
+      break;
+    }
     default: break;
   }
 }
@@ -468,6 +520,36 @@ void LED7_DisplayError(uint8  ErrorCode)
     default: break;
   }
   
+}
+
+/**
+  * @brief  Display PASS/FAIL on LED7segment.
+  * @param[in] ErrorCode: .
+  * @return None.
+  * @details  Display PASS/FAIL on LED7segment.
+  */
+void LED7_DisplayResult(uint8  ResultCode)
+{
+  switch(ResultCode)
+  {
+    case LED7_PASS:
+    {
+      GaaLED7Value[0] = LED7_P_CHAR;
+      GaaLED7Value[1] = LED7_A_CHAR;
+      GaaLED7Value[2] = LED7_S_CHAR;
+      GaaLED7Value[3] = LED7_S_CHAR;
+      break;
+    }
+    case LED7_FAIL:
+    {
+      GaaLED7Value[0] = LED7_F_CHAR;
+      GaaLED7Value[1] = LED7_A_CHAR;
+      GaaLED7Value[2] = LED7_I_CHAR;
+      GaaLED7Value[3] = LED7_L_CHAR;
+      break;
+    }
+    default: break;
+  }
 }
 /**
   * @brief  Turn off LED7segment without effect another LED7s.

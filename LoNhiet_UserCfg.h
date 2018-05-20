@@ -30,7 +30,7 @@
 /* Đây là số đặc biệt của sản phẩm, hết hợp với số serial tạo thành mật khẩu */
 #define SPECIAL_NUMBER  2U
 
-#define PASSWORD        (SERIAL_NUMBER + SPECIAL_NUMBER)
+#define HEATER_PASSWORD   (SERIAL_NUMBER + SPECIAL_NUMBER)
 
 /* Đây là năm sản xuất của sản phẩm */
 #define MANUFACTURE_YEAR 2018U
