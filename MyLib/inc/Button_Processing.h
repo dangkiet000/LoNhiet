@@ -26,9 +26,9 @@
   
 #define ButtonBaseAddr     PA 
   
-#define BSET               PA4
-#define BCONG              PA2
-#define BTRU               PA3
+#define BSET_PIN               PA4
+#define BCONG_PIN              PA2
+#define BTRU_PIN               PA3
   
 #define BSET_BIT           BIT4
 #define BCONG_BIT          BIT2

@@ -18,6 +18,7 @@
 /*******************************************************************************
 **                      Define macro                                          **
 *******************************************************************************/
+#define HEATER_DATEPRODUCT_IS_CONFIGURED    24358UL
 
 
 /*******************************************************************************
@@ -33,14 +34,16 @@ typedef enum ETag_Heater_StatusType
   HEATER_BUSY,
   /* State which user is setting setpoint. */
   HEATER_UPDATE_SETPOINT,
-  /* State which user is setting date-time. */
-  HEATER_SETUP_DATETIME,
+  /* State which user is setting day. */
+  HEATER_SETUP_DAY,
+  /* State which user is setting month. */
+  HEATER_SETUP_MON,
   /* State which user is typing password. */
   HEATER_ENTER_PASSWORD,
   /* State which triac is died. */
   HEATER_TRIAC_DIED,
   /* State which thermal resistor is died. */
-  HEATER_RESISTOR_DIED
+  HEATER_RESISTOR_DIED,
 }Heater_StatusType;
 
 /* Definition of LoNhiet Activation Lock Status */
@@ -53,6 +56,29 @@ typedef enum ETag_Heater_ActiLockStatusType
   /* State which user can use full feature. */
   LONHIET_UNLOCKED
 }Heater_ActiLockStatusType;
+
+
+/* Definition of LoNhiet Activation Lock Status */
+typedef enum ETag_Heater_TriacStatusType
+{
+  /* State which LoNhiet is in trial time */
+  HEATER_TRIAC_ENABLE = 0,
+  /* State which TRIAC is not working, user must correct password to UNLOCKED */
+  HEATER_TRIAC_DISABLE
+}Heater_TriacStatusType;
+
+typedef struct STag_Heater_DateTimeType
+{
+  /* Date of product. */
+  uint8 ucDay;
+  
+  /* Month of product. */
+  uint8 ucMonth;
+  
+  /* Year of product. */
+  uint8 ucYear;
+}Heater_DateTimeType;
+
 
 typedef struct STag_HeaterType
 {
@@ -76,6 +102,12 @@ typedef struct STag_HeaterType
   
   /* Index of Blink LED7-Segment */
   uint8 ucBlinkLED7Idx;
+  
+  /* Manufacture date. */
+  Heater_DateTimeType MDate;
+  
+  /* Heater status is disable or enable. */
+  Heater_TriacStatusType enTriacStatus;
   
 }HeaterType;
 

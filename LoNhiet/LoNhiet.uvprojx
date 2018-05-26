@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS\Include;..\..\NUC220LC2AN;..\MyLib\inc;..\Device\Nuvoton\NUC200Series\Include;..\StdDriver\inc;..\Common;..\Common\Compiler\IAR</IncludePath>
+              <IncludePath>..\CMSIS\Include;..\..\NUC220LC2AN;..\MyLib\inc;..\Device\Nuvoton\NUC200Series\Include;..\StdDriver\inc;..\Common;..\Common\Compiler\IAR;..\..\LoNhiet</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -445,6 +445,16 @@
               <FileName>Fls_Cfg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\MyLib\src\Fls_Cfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>Heater_App.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib\src\Heater_App.c</FilePath>
+            </File>
+            <File>
+              <FileName>DateTime_Validation.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib\src\DateTime_Validation.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -551,6 +551,33 @@ void LED7_DisplayResult(uint8  ResultCode)
     default: break;
   }
 }
+
+/**
+  * @brief  Display Day on LED7segment.
+  * @param[in] Day: Day value.
+  * @return None.
+  * @details  None.
+  */
+void LED7_DisplayDay(uint8  Day)
+{
+  GaaLED7Value[0] = LED7_NODISPLAY_CODE;
+  GaaLED7Value[1] = LED7_NODISPLAY_CODE;
+  GaaLED7Value[2] = Day/10;
+  GaaLED7Value[3] = Day%10;
+}
+/**
+  * @brief  Display Month on LED7segment.
+  * @param[in] Mon: Month value.
+  * @return None.
+  * @details  None.
+  */
+void LED7_DisplayMon(uint8  Mon)
+{
+  GaaLED7Value[0] = LED7_NODISPLAY_CODE;
+  GaaLED7Value[1] = LED7_NODISPLAY_CODE;
+  GaaLED7Value[2] = Mon/10;
+  GaaLED7Value[3] = Mon%10;
+}
 /**
   * @brief  Turn off LED7segment without effect another LED7s.
   * @param[in] LEDpos: bit0 <=> LEd7seg 0

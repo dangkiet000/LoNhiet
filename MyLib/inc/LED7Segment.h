@@ -137,6 +137,7 @@ uint16 Array_To_Int(uint8 *Array);
 /* Initialize GPIO and Timer to control LED-7seg. */
 void LED_7Seg_Init(void);
 
+/*----------------------- Display API ----------------------------------------*/
 /* Display number with adding zeros on LED7segment. */
 void LED7_DisplayLeadingZeros(uint16 DisplayValue);
 
@@ -149,6 +150,10 @@ void LED7_DisplayError(uint8  ErrorCode);
 /* Display PASS/FAIL on LED7segment. */
 void LED7_DisplayResult(uint8  ResultCode);
 
+void LED7_DisplayDay(uint8  Day);
+void LED7_DisplayMon(uint8  Mon);
+
+/*----------------------- Blinking API ---------------------------------------*/
 /* Turn off LED7segment without effect another LED7s. */
 void LED7_TurnOff(LED7_IdType LEDpos);
 
@@ -161,6 +166,7 @@ void LED7_EnableBlinking(LED7_IdType LEDpos, uint32 Blinktime);
 /* Disable blinking LED7s. */
 void LED7_DisableBlinking(void);
 
+/*----------------------- Scheduler API --------------------------------------*/
 /* Scheduler function */
 void LED7_MainFunction(void);
 

@@ -8,7 +8,7 @@
  * @note
  * Copyright (C) 2016 DangKiet Technology Corp. All rights reserved.
 *****************************************************************************/
-
+#include <stdio.h>
 #include "Button_Processing.h"
 
 /*******************************************************************************
@@ -33,16 +33,16 @@ void Button_ISR(void)
   /* To check if Button SET interrupt occurred */
   if(GPIO_GET_INT_FLAG(ButtonBaseAddr, BSET_BIT))
   {
-    /* To check if BSET is pressed <=> falling edge */
-    if(BSET == STD_LOW)
+    /* To check if BSET_PIN is pressed <=> falling edge */
+    if(BSET_PIN == STD_LOW)
     {
       Btn_ConfigSet[BSET_ID].ulStartHoldTime = millis();
       Btn_ConfigSet[BSET_ID].enStatus = BTN_ONHOLD;
     }
-    /* To check if BSET is released <=> rising edge */
+    /* To check if BSET_PIN is released <=> rising edge */
     else
     {   
-      /* To check if BSET Hold Event is happened or not yet */
+      /* To check if BSET_PIN Hold Event is happened or not yet */
       if(Btn_ConfigSet[BSET_ID].enStatus == BTN_ONHOLD)
       {
         /* This is button released event */
@@ -60,16 +60,16 @@ void Button_ISR(void)
   /* To check if Button CONG interrupt occurred */
   else if(GPIO_GET_INT_FLAG(ButtonBaseAddr, BCONG_BIT))
   {
-    /* To check if BCONG is pressed <=> falling edge */
-    if(BCONG == STD_LOW)
+    /* To check if BCONG_PIN is pressed <=> falling edge */
+    if(BCONG_PIN == STD_LOW)
     {
       Btn_ConfigSet[BCONG_ID].ulStartHoldTime = millis();
       Btn_ConfigSet[BCONG_ID].enStatus = BTN_ONHOLD;
     }
-    /* To check if BCONG is released <=> rising edge */
+    /* To check if BCONG_PIN is released <=> rising edge */
     else
     {
-      /* To check if BCONG Hold Event is happened or not yet */
+      /* To check if BCONG_PIN Hold Event is happened or not yet */
       if(Btn_ConfigSet[BCONG_ID].enStatus == BTN_ONHOLD)
       {
         Btn_ConfigSet[BCONG_ID].enStatus = BTN_RELEASED;
@@ -86,15 +86,25 @@ void Button_ISR(void)
   /* To check if Button TRU interrupt occurred */
   else if(GPIO_GET_INT_FLAG(ButtonBaseAddr, BTRU_BIT))
   {
-    /* To check if BTRU is pressed <=> falling edge */
-    if(BTRU == STD_LOW)
-    {
-      
+    /* To check if BTRU_PIN is pressed <=> falling edge */
+    if(BTRU_PIN == STD_LOW)
+    {  
+      Btn_ConfigSet[BTRU_ID].ulStartHoldTime = millis();
+      Btn_ConfigSet[BTRU_ID].enStatus = BTN_ONHOLD;
     }
-    /* To check if BTRU is released <=> rising edge */
+    /* To check if BTRU_PIN is released <=> rising edge */
     else
     {
-      Btn_ConfigSet[BTRU_ID].enStatus = BTN_RELEASED;
+      /* To check if BTRU_PIN Hold Event is happened or not yet */
+      if(Btn_ConfigSet[BTRU_ID].enStatus == BTN_ONHOLD)
+      {
+        Btn_ConfigSet[BTRU_ID].enStatus = BTN_RELEASED;
+      }
+      else 
+      {
+        /* Reset status */
+        Btn_ConfigSet[BTRU_ID].enStatus = BTN_IDLE;
+      }
     }
     
     GPIO_CLR_INT_FLAG(ButtonBaseAddr, BTRU_BIT);
@@ -192,7 +202,8 @@ void Btn_MainFunction(void)
          (LulNowTick - Btn_ConfigSet[BSET_ID].ulStartHoldTime > \
                              Btn_ConfigSet[BSET_ID].usHoldThresTime))
   {
-    if(BTN_ONHOLD != Btn_ConfigSet[BCONG_ID].enStatus)
+    if((BTN_ONHOLD != Btn_ConfigSet[BCONG_ID].enStatus) && \
+       (BTN_ONHOLD != Btn_ConfigSet[BTRU_ID].enStatus))
     {
       Btn_ConfigSet[BSET_ID].pfnHoldEvent1();
       /* Reset status */
@@ -204,9 +215,23 @@ void Btn_MainFunction(void)
                              Btn_ConfigSet[BCONG_ID].usHoldThresTime))
     {
       /* Call the event */
-      Btn_ConfigSet[BSET_ID].pfnHoldEvent2();
+      Btn_ConfigSet[BCONG_ID].pfnHoldEvent1();
       /* Reset status */
       Btn_ConfigSet[BSET_ID].enStatus = BTN_IDLE;
+      
+      Btn_ConfigSet[BCONG_ID].enStatus = BTN_IDLE;
+    }
+    /* To check if BCONG_ID pressed and on-hold for > usHoldThresTime */
+    else if((BTN_ONHOLD == Btn_ConfigSet[BTRU_ID].enStatus) && \
+         (LulNowTick - Btn_ConfigSet[BTRU_ID].ulStartHoldTime > \
+                             Btn_ConfigSet[BTRU_ID].usHoldThresTime))
+    {
+      /* Call the event */
+      Btn_ConfigSet[BTRU_ID].pfnHoldEvent1();
+      /* Reset status */
+      Btn_ConfigSet[BSET_ID].enStatus = BTN_IDLE;
+      
+      Btn_ConfigSet[BTRU_ID].enStatus = BTN_IDLE;
     }
     else
     {

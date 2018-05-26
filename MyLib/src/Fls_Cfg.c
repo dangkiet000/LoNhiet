@@ -73,6 +73,15 @@ const Fls_DataConfigType Fls_GaaConfig[] =
     6,
     /* enPage */
     DATA_FLS_PAGE_ONE
+  },
+  /* Index: 6 - FLS_DATEPRODUCTSTATUS */
+  {
+    /* ddLen */
+    1,
+    /* ddAddr */
+    7,
+    /* enPage */
+    DATA_FLS_PAGE_ONE
   }
 };
 
