@@ -55,6 +55,9 @@ void PORT_Init(void);
 void Buttons_Init(void);
 void Timer0_Init(void);
 
+/* Display heater information at startup time. */
+void Heater_DisplayInfoAtStartup(void);
+
 /* Checking this is first time Heater startup or not.
    Yes: Write essential data to flash memory.
    No: Do

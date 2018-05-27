@@ -25,7 +25,7 @@
 #define TRIAL_TIME		  240U
 
 /* Đây là số serial của sản phẩm, số này phải là số có bốn chữ số */
-#define SERIAL_NUMBER		9000U
+#define SERIAL_NUMBER		8020U
 
 /* Đây là số đặc biệt của sản phẩm, hết hợp với số serial tạo thành mật khẩu */
 #define SPECIAL_NUMBER  2U

@@ -59,7 +59,7 @@ void TO_EnterPassword(void)
 void DisplayTask(void)
 {
   LED_TEST ^= 1;
-  
+
   switch(Heater.enOpStatus)
   {
     case HEATER_UPDATE_SETPOINT:
@@ -130,17 +130,17 @@ void StoringWorkingTime(void)
   if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
   {
     /* Yes. Disable LoNhiet */
-  
+
   }
   else /* No */
   {
     /* Accumulate working time */
     Heater.ulWorkingTime += 30;
-    
+
     /* To Store working-time in flash memory */
     Heater_StoreFlsData(&Heater, FLS_WORKINGTIME);
   }
-  
+
 }
 
 
@@ -154,7 +154,7 @@ void BCONG_Release_Event(void)
     LED7_IncreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
                       &Heater.usSetPoint);
     LED7_DisplayLeadingZeros(Heater.usSetPoint);
-    
+
     /* Reload timeout counter. */
     TO_Reload(TO_UpdateSetPoint_Channel);
   }
@@ -164,7 +164,7 @@ void BCONG_Release_Event(void)
     LED7_IncreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
                       &Heater.usUserPassword);
     LED7_DisplayLeadingZeros(Heater.usUserPassword);
-    
+
     /* Reload timeout counter. */
     TO_Reload(TO_EnterPassword_Channel);
   }
@@ -177,9 +177,9 @@ void BCONG_Release_Event(void)
       case 3: {  Heater_MonPlus(&Heater.MDate, ONES); break;  }
       default: break;
     }
-    
+
     LED7_DisplayMon(Heater.MDate.ucMonth);
-    
+
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
   }
@@ -192,9 +192,9 @@ void BCONG_Release_Event(void)
       case 3: {  Heater_DayPlus(&Heater.MDate, ONES); break;  }
       default: break;
     }
-    
+
     LED7_DisplayMon(Heater.MDate.ucDay);
-    
+
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
   }
@@ -212,7 +212,7 @@ void BTRU_Release_Event(void)
     LED7_DecreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
                       &Heater.usSetPoint);
     LED7_DisplayLeadingZeros(Heater.usSetPoint);
-    
+
     /* Reload timeout counter. */
     TO_Reload(TO_UpdateSetPoint_Channel);
   }
@@ -221,9 +221,9 @@ void BTRU_Release_Event(void)
     /* Decrease LED7 value. */
     LED7_DecreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
                       &Heater.usUserPassword);
- 
+
     LED7_DisplayLeadingZeros(Heater.usUserPassword);
-    
+
     /* Reload timeout counter. */
     TO_Reload(TO_EnterPassword_Channel);
   }
@@ -236,9 +236,9 @@ void BTRU_Release_Event(void)
       case 3: {  Heater_MonMinus(&Heater.MDate, ONES); break;  }
       default: break;
     }
-    
+
     LED7_DisplayMon(Heater.MDate.ucMonth);
-    
+
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
   }
@@ -251,9 +251,9 @@ void BTRU_Release_Event(void)
       case 3: {  Heater_DayMinus(&Heater.MDate, ONES); break;  }
       default: break;
     }
-    
+
     LED7_DisplayMon(Heater.MDate.ucDay);
-    
+
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
   }
@@ -273,27 +273,27 @@ void BSET_Release_Event(void)
 
     /* Blink next LED7seg. */
     Heater.ucBlinkLED7Idx++;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
     LED7_DisplayLeadingZeros(Heater.usSetPoint);
 
     if(Heater.ucBlinkLED7Idx > 3)
     {
       /* Exit HEATER_UPDATE_SETPOINT mode */
-      Exit_HEATER_UPDATE_SETPOINT_mode(HEATER_TIMEOUT_FALSE);      
+      Exit_HEATER_UPDATE_SETPOINT_mode(HEATER_TIMEOUT_FALSE);
     }
     else
     {
-    
+
     }
   }
   else if(Heater.enOpStatus == HEATER_ENTER_PASSWORD)
   {
     /* Reload timeout counter. */
     TO_Reload(TO_EnterPassword_Channel);
-    
+
     /* Blink next LED7seg. */
     Heater.ucBlinkLED7Idx++;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
     LED7_DisplayLeadingZeros(Heater.usUserPassword);
 
     if(Heater.ucBlinkLED7Idx > 3)
@@ -303,18 +303,18 @@ void BSET_Release_Event(void)
     }
     else
     {
-    
+
     }
   }
   else if(Heater.enOpStatus == HEATER_SETUP_MON)
   {
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
-    
+
     /* Blink next LED7seg. */
     Heater.ucBlinkLED7Idx++;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
-    
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+
     LED7_DisplayMon(Heater.MDate.ucMonth);
 
     if(Heater.ucBlinkLED7Idx > 3)
@@ -324,18 +324,18 @@ void BSET_Release_Event(void)
     }
     else
     {
-    
+
     }
   }
   else if(Heater.enOpStatus == HEATER_SETUP_DAY)
   {
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
-    
+
     /* Blink next LED7seg. */
     Heater.ucBlinkLED7Idx++;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
-    
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+
     LED7_DisplayDay(Heater.MDate.ucDay);
 
     if(Heater.ucBlinkLED7Idx > 3)
@@ -345,14 +345,14 @@ void BSET_Release_Event(void)
     }
     else
     {
-    
+
     }
   }
   else
   {
-  
+
   }
-    
+
 }
 void BSET_HoldToThres_Event(void)
 {
@@ -363,7 +363,7 @@ void BSET_HoldToThres_Event(void)
   }
   else
   {
-  
+
   }
 }
 void BSET_BCONG_HoldToThres_Event(void)
@@ -376,7 +376,7 @@ void BSET_BCONG_HoldToThres_Event(void)
   }
   else
   {
-  
+
   }
 }
 
@@ -393,6 +393,39 @@ void BSET_BTRU_HoldToThres_Event(void)
 
 *******************************************************************************/
 /**
+  * @brief Display heater information at startup time.
+  * @param[in] None.
+  * @return  None.
+  * @details 1. Display day in 1s.
+             2. Display month in 1s.
+             3. Display year in 1s.
+             4. Display serial number in 1s.
+             5. Display set point in 1s.
+  * @note None.
+  */
+void Heater_DisplayInfoAtStartup(void)
+{
+  LED7_DisplayDay(Heater.MDate.ucDay);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+  
+  LED7_DisplayMon(Heater.MDate.ucMonth);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+  
+  LED7_DisplayLeadingZeros(Heater.MDate.usYear);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+  
+  LED7_DisplayLeadingZeros(SERIAL_NUMBER);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+  
+  LED7_DisplayNumber(Heater.usSetPoint);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+}
+/**
   * @brief Checking Activation Lock status and return heater is disable or
            enable.
   * @param[in] None.
@@ -405,9 +438,9 @@ void BSET_BTRU_HoldToThres_Event(void)
 Heater_ActiStatusType Heater_CheckActivationLock(void)
 {
   Heater_ActiStatusType LddRetVal;
-  
+
   Heater_ReadFlsData(&Heater, FLS_ACTILOCKSTATUS);
-  
+
   if(Heater.enActiLockStatus == LONHIET_LOCKED)
   {
     LddRetVal = HEATER_DISABLE;
@@ -424,7 +457,7 @@ Heater_ActiStatusType Heater_CheckActivationLock(void)
       /* Yes. Disable LoNhiet */
       Heater.enActiLockStatus = LONHIET_LOCKED;
       Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
-      
+
       LddRetVal = HEATER_DISABLE;
     }
     else /* No. */
@@ -432,7 +465,7 @@ Heater_ActiStatusType Heater_CheckActivationLock(void)
       LddRetVal = HEATER_ENABLE;
     }
   }
-  else 
+  else
   {
     /* Do Nothing */
   }
@@ -453,7 +486,7 @@ void Heater_CheckFlashData(void)
   Fls_DataType LddFlsData;
 
   Fls_Read(FLS_SERIAL_NUMBER, &LddFlsData);
- 
+
   /* Checking SERIAL_NUMBER is equal serial number in the flash memory. */
   if(LddFlsData == SERIAL_NUMBER)
   {
@@ -464,27 +497,27 @@ void Heater_CheckFlashData(void)
     /* Write Startup data to memory. */
     /* 1. Flash SERIAL_NUMBER. */
     Heater_StoreFlsData(&Heater, FLS_SERIAL_NUMBER);
-    
+
     /* 2. Flash date product status. */
     LddFlsData = HEATER_DATEPRODUCT_IS_NOT_CONFIGURED;
-    Fls_Write(FLS_DATEPRODUCTSTATUS, &LddFlsData); 
-    
+    Fls_Write(FLS_DATEPRODUCTSTATUS, &LddFlsData);
+
     /* 3. Flash activation lock status. */
     Heater.enActiLockStatus = LONHIET_TRIAL;
     Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
-    
+
     /* 4. Flash working time as 0. */
     Heater.ulWorkingTime = 0;
     Heater_StoreFlsData(&Heater, FLS_WORKINGTIME);
-    
+
     /* 5. Flash year of heater. */
     Heater.MDate.usYear = MANUFACTURE_YEAR;
     Heater_StoreFlsData(&Heater, FLS_NAM);
-    
+
     /* 6. Flash default setpoint as 70. */
     Heater.usSetPoint = 70;
     Heater_StoreFlsData(&Heater, FLS_SETPOINT);
-    
+
     /* Reset MCU. */
   }
 
@@ -504,20 +537,44 @@ void Heater_Startup(void)
     Heater.enActiStatus = HEATER_DISABLE;
     Heater.enOpStatus = HEATER_WAIITING_USER_SETUP_DATETIME;
   }
-  else
+  else /* DateTime is configured. */
   {
     /* Checking Activation Lock status. */
     Heater.enActiStatus = Heater_CheckActivationLock();
+
+    /* Read all information. */
+    Heater_ReadFlsData(&Heater, FLS_SETPOINT);
+    Heater_ReadFlsData(&Heater, FLS_WORKINGTIME);
+
+    Heater_ReadFlsData(&Heater, FLS_NGAY);
+    Heater_ReadFlsData(&Heater, FLS_THANG);
+    Heater_ReadFlsData(&Heater, FLS_NAM);
+    
+    Heater_DisplayInfoAtStartup();
+    
+    #if (DEBUG_MODE == STD_ON)
+    printf("Ngay: %d\r\n", Heater.MDate.ucDay);
+    printf("Thang: %d\r\n", Heater.MDate.ucMonth);
+    printf("Nam: %d\r\n", Heater.MDate.usYear);
+    printf("Working Time: %d minutes\r\n", Heater.ulWorkingTime*30);
+    printf("SetPoint: %d\r\n", Heater.usSetPoint);
+    printf("Activation Lock Status: ");
+    switch(Heater.enActiLockStatus)
+    {
+      case LONHIET_LOCKED: { printf("LOCKED \r\n"); break;  }
+      case LONHIET_UNLOCKED: { printf("UNLOCKED \r\n"); break;  }
+      case LONHIET_TRIAL: {  printf("TRIAL \r\n"); break;  }
+      default: break;
+    }
+    #endif
+  
   }
-  
-  
-  
 
 }
 /**
   * @brief Check date of product is configured or not.
   * @param[in] None.
-  * @return  TRUE: Date product of heater is congigured. Otherwise, return 
+  * @return  TRUE: Date product of heater is congigured. Otherwise, return
   *          is FALSE.
   * @details None.
   * @note None.
@@ -526,9 +583,9 @@ boolean Heater_DateProductIsConfigured(void)
 {
   Fls_DataType LddDPStatus;
   boolean Lblretval;
-  
+
   Fls_Read(FLS_DATEPRODUCTSTATUS, &LddDPStatus);
-  
+
   if(LddDPStatus == HEATER_DATEPRODUCT_IS_CONFIGURED)
   {
     /* Date product of heater is congigured. */
@@ -539,7 +596,7 @@ boolean Heater_DateProductIsConfigured(void)
     /* Date product of heater has not congigured yet. */
     Lblretval = FALSE;
   }
-  
+
   return Lblretval;
 }
 
@@ -547,17 +604,17 @@ void Enter_HEATER_SETUP_DAY_mode(void)
 {
     /* Set Heater status as HEATER_SETUP_DATETIME. */
   Heater.enOpStatus = HEATER_SETUP_DAY;
-  
+
   Heater.MDate.ucDay = 1;
-  
+
   /* Blinking All LED7 to inform that Heater is in setup datetime mode. */
   BlinkingAllLED7_Synchronous(1500);
-  
+
   /* Blinking LED7_2 first. */
   Heater.ucBlinkLED7Idx = 2;
-  
+
   /* Enable blinking LED7. */
-  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
+  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
 
   /* Start timeout count-down. */
   TO_Trigger(TO_SetDateTime_Channel);
@@ -566,7 +623,7 @@ void Exit_HEATER_SETUP_DAY_mode(boolean IsTimeOut)
 {
   /* Clear timeout counter. */
   TO_Clear(TO_SetDateTime_Channel);
-  
+
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
     /* Don't apply new datetime. */
@@ -577,16 +634,18 @@ void Exit_HEATER_SETUP_DAY_mode(boolean IsTimeOut)
     /* Store DateTime to memory. */
     Heater_StoreFlsData(&Heater, FLS_NGAY);
     Heater_StoreFlsData(&Heater, FLS_THANG);
-    
+    Heater.MDate.usYear = MANUFACTURE_YEAR;
+    Heater_StoreFlsData(&Heater, FLS_NAM);
+
     /* Mark that user is configured datetime completely. */
     Heater_StoreFlsData(&Heater, FLS_DATEPRODUCTSTATUS);
   }
   /* Reset varibales. */
   Heater.ucBlinkLED7Idx = 0;
-  
+
   /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
   BlinkingAllLED7_Synchronous(1500);
-  
+
   /* Set heater status. */
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
@@ -602,17 +661,17 @@ void Enter_HEATER_SETUP_MON_mode(void)
 {
   /* Set Heater status as HEATER_SETUP_DATETIME. */
   Heater.enOpStatus = HEATER_SETUP_MON;
-  
+
   Heater.MDate.ucMonth = 1;
-  
+
   /* Blinking All LED7 to inform that Heater is in setup datetime mode. */
   BlinkingAllLED7_Synchronous(1500);
-  
+
   /* Blinking LED7_2 first. */
   Heater.ucBlinkLED7Idx = 2;
-  
+
   /* Enable blinking LED7. */
-  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
+  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
 
   /* Start timeout count-down. */
   TO_Trigger(TO_SetDateTime_Channel);
@@ -621,10 +680,10 @@ void Exit_HEATER_SETUP_MON_mode(boolean IsTimeOut)
 {
   /* Clear timeout counter. */
   TO_Clear(TO_SetDateTime_Channel);
-  
+
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
-    /* Don't apply new set-point and read set-point in flash memory to restore 
+    /* Don't apply new set-point and read set-point in flash memory to restore
      set point. */
     LED7_DisplayResult(LED7_FAIL);
 
@@ -632,15 +691,15 @@ void Exit_HEATER_SETUP_MON_mode(boolean IsTimeOut)
   }
   else
   {
-    
+
   }
   /* Reset varibales. */
   Heater.ucBlinkLED7Idx = 0;
-  
-  
+
+
   /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
   BlinkingAllLED7_Synchronous(1500);
-  
+
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
     /* Set heater status. */
@@ -656,15 +715,15 @@ void Enter_HEATER_UPDATE_SETPOINT_mode(void)
 {
   /* Set Heater status as HEATER_UPDATE_SETPOINT. */
   Heater.enOpStatus = HEATER_UPDATE_SETPOINT;
-  
+
   /* Blinking All LED7 to inform that Heater is in Update setpoint mode. */
   BlinkingAllLED7_Synchronous(1500);
-  
+
   /* Blinking LED7_0 first. */
   Heater.ucBlinkLED7Idx = 0;
-  
+
   /* Enable blinking LED7. */
-  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
+  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
 
   /* Start timeout count-down. */
   TO_Trigger(TO_UpdateSetPoint_Channel);
@@ -673,7 +732,7 @@ void Exit_HEATER_UPDATE_SETPOINT_mode(boolean IsTimeOut)
 {
   /* Clear timeout counter. */
   TO_Clear(TO_UpdateSetPoint_Channel);
-  
+
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
     /* Don't apply new set-point and read set-point in flash memory to restore set
@@ -697,7 +756,7 @@ void Exit_HEATER_UPDATE_SETPOINT_mode(boolean IsTimeOut)
   }
   /* Reset varibales. */
   Heater.ucBlinkLED7Idx = 0;
-  
+
   /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
   BlinkingAllLED7_Synchronous(1500);
   Heater.enOpStatus = HEATER_IDLE;
@@ -706,18 +765,18 @@ void Enter_HEATER_ENTER_PASSWORD_mode(void)
 {
   /* Reset user password. */
   Heater.usUserPassword = 0;
-  
+
   /* Display [0000] first. */
   LED7_DisplayLeadingZeros(Heater.usUserPassword);
-  
+
   /* Blinking All LED7 to inform that Heater is in Enter password mode. */
   BlinkingAllLED7_Synchronous(1500);
-  
+
   /* Blinking LED7_0 first. */
   Heater.ucBlinkLED7Idx = 0;
-  
+
   /* Enable blinking LED7. */
-  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
+  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
 
   /* Start timeout count-down. */
   TO_Trigger(TO_EnterPassword_Channel);
@@ -727,7 +786,7 @@ void Exit_HEATER_ENTER_PASSWORD_mode(boolean IsTimeOut)
 {
   /* Clear timeout counter. */
   TO_Clear(TO_EnterPassword_Channel);
-  
+
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
     LED7_DisplayResult(LED7_FAIL);
@@ -738,9 +797,9 @@ void Exit_HEATER_ENTER_PASSWORD_mode(boolean IsTimeOut)
     if(Heater.usUserPassword == HEATER_PASSWORD)
     {
       Heater.enActiLockStatus = LONHIET_UNLOCKED;
-      
+
       Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
-      
+
       LED7_DisplayResult(LED7_PASS);
     }
     else
@@ -748,22 +807,22 @@ void Exit_HEATER_ENTER_PASSWORD_mode(boolean IsTimeOut)
       LED7_DisplayResult(LED7_FAIL);
     }
   }
-  
+
   /* Blinking all LED7 to inform that Enter-password is finished. */
   BlinkingAllLED7_Synchronous(2500);
 
   /* Reset variables. */
   Heater.ucBlinkLED7Idx = 0;
   Heater.usUserPassword = 0;
-  
+
   Heater.enOpStatus = HEATER_IDLE;
 }
 
 /* Read Heater data which store in data flash memory. */
 void Heater_ReadFlsData(HeaterType *pHeater, Fls_DataIdType FlsId)
-{  
+{
   Fls_DataType Temp;
-  
+
   /* Reset value as default value of flash memory. */
   Temp = 0xFFFFFFFF;
 
@@ -778,42 +837,42 @@ void Heater_ReadFlsData(HeaterType *pHeater, Fls_DataIdType FlsId)
     case FLS_WORKINGTIME: /* Read Working-time. */
     {
       Fls_Read(FLS_WORKINGTIME, &Temp);
-      pHeater->ulWorkingTime = (uint32)Temp; 
+      pHeater->ulWorkingTime = (uint32)Temp;
       break;
     }
-    case FLS_ACTILOCKSTATUS: /* Read Activation Lock Status. */ 
+    case FLS_ACTILOCKSTATUS: /* Read Activation Lock Status. */
     {
       Fls_Read(FLS_ACTILOCKSTATUS, &Temp);
-      pHeater->enActiLockStatus = (Heater_ActiLockStatusType)Temp; 
+      pHeater->enActiLockStatus = (Heater_ActiLockStatusType)Temp;
       break;
     }
-    case FLS_NGAY: /* Read Date product. */ 
+    case FLS_NGAY: /* Read Date product. */
     {
       Fls_Read(FLS_NGAY, &Temp);
-      pHeater->MDate.ucDay = (uint8)Temp; 
+      pHeater->MDate.ucDay = (uint8)Temp;
       break;
     }
-    case FLS_THANG: /* Read Month product. */ 
+    case FLS_THANG: /* Read Month product. */
     {
       Fls_Read(FLS_THANG, &Temp);
-      pHeater->MDate.ucMonth = (uint8)Temp; 
+      pHeater->MDate.ucMonth = (uint8)Temp;
       break;
     }
-    case FLS_NAM: /* Read Year product. */ 
+    case FLS_NAM: /* Read Year product. */
     {
       Fls_Read(FLS_NAM, &Temp);
-      pHeater->MDate.usYear = (uint8)Temp;  
+      pHeater->MDate.usYear = (uint16)Temp;
       break;
     }
     default: break;
-  } 
+  }
 }
 
 /* Store Heater data to flash memory. */
 void Heater_StoreFlsData(HeaterType *pHeater, Fls_DataIdType FlsId)
-{  
+{
   Fls_DataType Temp;
-  
+
   switch(FlsId)
   {
     case FLS_SETPOINT: /* Store Setpoint. */
@@ -828,44 +887,44 @@ void Heater_StoreFlsData(HeaterType *pHeater, Fls_DataIdType FlsId)
       Fls_Write(FLS_WORKINGTIME, &Temp);
       break;
     }
-    case FLS_ACTILOCKSTATUS: /* Store Activation Lock Status. */ 
+    case FLS_ACTILOCKSTATUS: /* Store Activation Lock Status. */
     {
       Temp = (Fls_DataType)pHeater->enActiLockStatus;
       Fls_Write(FLS_ACTILOCKSTATUS, &Temp);
       break;
     }
-    case FLS_NGAY: /* Read Date product. */ 
+    case FLS_NGAY: /* Read Date product. */
     {
       Temp = (Fls_DataType)pHeater->MDate.ucDay;
       Fls_Write(FLS_NGAY, &Temp);
       break;
     }
-    case FLS_THANG: /* Read Month product. */ 
+    case FLS_THANG: /* Read Month product. */
     {
       Temp = (Fls_DataType)pHeater->MDate.ucMonth;
       Fls_Write(FLS_THANG, &Temp);
       break;
     }
-    case FLS_NAM: /* Read Year product. */ 
+    case FLS_NAM: /* Read Year product. */
     {
       Temp = (Fls_DataType)pHeater->MDate.usYear;
-      Fls_Write(FLS_NAM, &Temp);  
+      Fls_Write(FLS_NAM, &Temp);
       break;
     }
-    case FLS_DATEPRODUCTSTATUS: /* Read DateTime product status. */ 
+    case FLS_DATEPRODUCTSTATUS: /* Read DateTime product status. */
     {
       Temp = (Fls_DataType)HEATER_DATEPRODUCT_IS_CONFIGURED;
-      Fls_Write(FLS_DATEPRODUCTSTATUS, &Temp);  
+      Fls_Write(FLS_DATEPRODUCTSTATUS, &Temp);
       break;
     }
-    case FLS_SERIAL_NUMBER: /* Read DateTime product status. */ 
+    case FLS_SERIAL_NUMBER: /* Read DateTime product status. */
     {
       Temp = (Fls_DataType)SERIAL_NUMBER;
-      Fls_Write(FLS_SERIAL_NUMBER, &Temp);  
+      Fls_Write(FLS_SERIAL_NUMBER, &Temp);
       break;
     }
     default: break;
-  } 
+  }
 }
 
 /* Blinking LED7-Seg in milisecond synchronously. */
@@ -903,7 +962,7 @@ void SYS_Init(void)
 
   /* Disable clock Watchdog */
   CLK_DisableModuleClock(WDT_MODULE);
-  
+
 }
 
 
@@ -915,15 +974,15 @@ void PORT_Init(void)
   /* Cau hinh chan DIEU KHIEN LED_TEST */
   GPIO_SetMode(LED_TEST_PORT, LED_TEST_BIT, GPIO_PMD_OUTPUT);
   LED_TEST = 0;
-  
+
   /* Cau hinh chan DIEU KHIEN TRIAC */
   GPIO_SetMode(TRIAC_PORT, TRIAC_BIT, GPIO_PMD_OUTPUT);
   TRIAC_PIN = TRIAC_OFF;
-  
+
   /* Set GPB multi-function pins for UART0 RXD and TXD */
   SYS->GPB_MFP &= ~(SYS_GPB_MFP_PB4_Msk | SYS_GPB_MFP_PB5_Msk);
   SYS->GPB_MFP |= SYS_GPB_MFP_PB4_UART1_RXD | SYS_GPB_MFP_PB5_UART1_TXD;
-  
+
   /* Disable the GPA0 - GPA1 digital input path to avoid the leakage current. */
   GPIO_DISABLE_DIGITAL_PATH(PA, (1 << ADC_LM35_CH)|(1 << ADC_THC_CH));
 
@@ -939,17 +998,17 @@ void Buttons_Init(void)
   Btn_ConfigSet[BTRU_ID].pfnFunction = &BTRU_Release_Event;
   Btn_ConfigSet[BTRU_ID].pfnHoldEvent1 = &BSET_BTRU_HoldToThres_Event;
   Btn_ConfigSet[BTRU_ID].usHoldThresTime = 3000;
-  
+
   Btn_ConfigSet[BCONG_ID].enEventType = BTN_RELEASED_EVENT;
   Btn_ConfigSet[BCONG_ID].pfnFunction = &BCONG_Release_Event;
   Btn_ConfigSet[BCONG_ID].pfnHoldEvent1 = &BSET_BCONG_HoldToThres_Event;
   Btn_ConfigSet[BCONG_ID].usHoldThresTime = 3000;
-  
+
   Btn_ConfigSet[BSET_ID].enEventType = BTN_HOLD_EVENT;
   Btn_ConfigSet[BSET_ID].usHoldThresTime = 3000;
   Btn_ConfigSet[BSET_ID].pfnFunction = &BSET_Release_Event;
   Btn_ConfigSet[BSET_ID].pfnHoldEvent1 = &BSET_HoldToThres_Event;
-  
+
   Btn_Init();
 }
 /*******************************************************************************
@@ -961,7 +1020,7 @@ Std_ReturnType SYS_CheckResetSrc(void)
 {
   uint32_t LulResetValue = 0;
   Std_ReturnType LddReturnValue = E_OK;
-  
+
   /* Get reset source from last operation */
   LulResetValue = SYS_GetResetSrc();
 
@@ -998,10 +1057,10 @@ Std_ReturnType SYS_CheckResetSrc(void)
     LddReturnValue = E_NOT_OK;
     return LddReturnValue;
   }
-  
+
   /* Clear reset source */
   SYS_ClearResetSrc(LulResetValue);
-  
+
   return LddReturnValue;
 }
 
@@ -1029,7 +1088,7 @@ void UART1_Init(void)
 #if (DATA_LOGGING == STD_ON)
 void Send_ADCtoPC(uint16_t *Data, uint16_t Len)
 {
-  
+
   uint16_t i=0;
   for(i=0; i<Len; i++)
   {
@@ -1042,7 +1101,7 @@ void Send_TemptoPC(void)
 {
 
   printf("TC %d\n", Heater.usTempTHC);
-  
+
 }
 #endif
 
