@@ -79,9 +79,18 @@ const Fls_DataConfigType Fls_GaaConfig[] =
     /* ddLen */
     1,
     /* ddAddr */
-    7,
+    1,
     /* enPage */
-    DATA_FLS_PAGE_ONE
+    DATA_FLS_PAGE_TWO
+  },
+  /* Index: 7 - FLS_SERIAL_NUMBER */
+  {
+    /* ddLen */
+    1,
+    /* ddAddr */
+    2,
+    /* enPage */
+    DATA_FLS_PAGE_TWO
   }
 };
 

@@ -95,6 +95,11 @@ void DisplayTask(void)
       LED7_DisplayDay(Heater.MDate.ucMonth);
       break;
     }
+    case HEATER_WAIITING_USER_SETUP_DATETIME:
+    {
+      LED7_DisplayNumber(Heater.usTempTHC);
+      break;
+    }
     default: break;
   }
 }
@@ -178,6 +183,21 @@ void BCONG_Release_Event(void)
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
   }
+  else if(Heater.enOpStatus == HEATER_SETUP_DAY)
+  {
+    /* Increase day value. */
+    switch(Heater.ucBlinkLED7Idx)
+    {
+      case 2: {  Heater_DayPlus(&Heater.MDate, TENS); break;  }
+      case 3: {  Heater_DayPlus(&Heater.MDate, ONES); break;  }
+      default: break;
+    }
+    
+    LED7_DisplayMon(Heater.MDate.ucDay);
+    
+    /* Reload timeout counter. */
+    TO_Reload(TO_SetDateTime_Channel);
+  }
   else
   {
 
@@ -218,6 +238,21 @@ void BTRU_Release_Event(void)
     }
     
     LED7_DisplayMon(Heater.MDate.ucMonth);
+    
+    /* Reload timeout counter. */
+    TO_Reload(TO_SetDateTime_Channel);
+  }
+  else if(Heater.enOpStatus == HEATER_SETUP_DAY)
+  {
+    /* Decrease Day value. */
+    switch(Heater.ucBlinkLED7Idx)
+    {
+      case 2: {  Heater_DayMinus(&Heater.MDate, TENS); break;  }
+      case 3: {  Heater_DayMinus(&Heater.MDate, ONES); break;  }
+      default: break;
+    }
+    
+    LED7_DisplayMon(Heater.MDate.ucDay);
     
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
@@ -292,6 +327,27 @@ void BSET_Release_Event(void)
     
     }
   }
+  else if(Heater.enOpStatus == HEATER_SETUP_DAY)
+  {
+    /* Reload timeout counter. */
+    TO_Reload(TO_SetDateTime_Channel);
+    
+    /* Blink next LED7seg. */
+    Heater.ucBlinkLED7Idx++;
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300); 
+    
+    LED7_DisplayDay(Heater.MDate.ucDay);
+
+    if(Heater.ucBlinkLED7Idx > 3)
+    {
+      /* Exit HEATER_SETUP_DAY mode */
+      Exit_HEATER_SETUP_DAY_mode(HEATER_TIMEOUT_FALSE);
+    }
+    else
+    {
+    
+    }
+  }
   else
   {
   
@@ -334,7 +390,130 @@ void BSET_BTRU_HoldToThres_Event(void)
 }
 /*******************************************************************************
 **                      Function                                              **
+
 *******************************************************************************/
+/**
+  * @brief Checking Activation Lock status and return heater is disable or
+           enable.
+  * @param[in] None.
+  * @return  HEATER_ENABLE: Heater is enabled triac controlling.
+             HEATER_DISABLE: Heater is disabled triac controlling.
+  * @details Checking Activation Lock status and return heater is disable or
+           enable.
+  * @note None.
+  */
+Heater_ActiStatusType Heater_CheckActivationLock(void)
+{
+  Heater_ActiStatusType LddRetVal;
+  
+  Heater_ReadFlsData(&Heater, FLS_ACTILOCKSTATUS);
+  
+  if(Heater.enActiLockStatus == LONHIET_LOCKED)
+  {
+    LddRetVal = HEATER_DISABLE;
+  }
+  else if(Heater.enActiLockStatus == LONHIET_UNLOCKED)
+  {
+    LddRetVal = HEATER_ENABLE;
+  }
+  else if(Heater.enActiLockStatus == LONHIET_TRIAL)
+  {
+    /* To check if working-time is over Trial time */
+    if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
+    {
+      /* Yes. Disable LoNhiet */
+      Heater.enActiLockStatus = LONHIET_LOCKED;
+      Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
+      
+      LddRetVal = HEATER_DISABLE;
+    }
+    else /* No. */
+    {
+      LddRetVal = HEATER_ENABLE;
+    }
+  }
+  else 
+  {
+    /* Do Nothing */
+  }
+
+  return LddRetVal;
+}
+/**
+  * @brief Checking SERIAL_NUMBER is equal serial number in the flash memory.
+  * @param[in] None.
+  * @return  None.
+  * @details Checking SERIAL_NUMBER is equal serial number in the flash memory.
+             Yes: Nothing to do.
+             No: write essential data(startup data) to flash memory.
+  * @note Heater need some mandatory data to startup correctly.
+  */
+void Heater_CheckFlashData(void)
+{
+  Fls_DataType LddFlsData;
+
+  Fls_Read(FLS_SERIAL_NUMBER, &LddFlsData);
+ 
+  /* Checking SERIAL_NUMBER is equal serial number in the flash memory. */
+  if(LddFlsData == SERIAL_NUMBER)
+  {
+    /* Startup data is configured. */
+  }
+  else
+  {
+    /* Write Startup data to memory. */
+    /* 1. Flash SERIAL_NUMBER. */
+    Heater_StoreFlsData(&Heater, FLS_SERIAL_NUMBER);
+    
+    /* 2. Flash date product status. */
+    LddFlsData = HEATER_DATEPRODUCT_IS_NOT_CONFIGURED;
+    Fls_Write(FLS_DATEPRODUCTSTATUS, &LddFlsData); 
+    
+    /* 3. Flash activation lock status. */
+    Heater.enActiLockStatus = LONHIET_TRIAL;
+    Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
+    
+    /* 4. Flash working time as 0. */
+    Heater.ulWorkingTime = 0;
+    Heater_StoreFlsData(&Heater, FLS_WORKINGTIME);
+    
+    /* 5. Flash year of heater. */
+    Heater.MDate.usYear = MANUFACTURE_YEAR;
+    Heater_StoreFlsData(&Heater, FLS_NAM);
+    
+    /* 6. Flash default setpoint as 70. */
+    Heater.usSetPoint = 70;
+    Heater_StoreFlsData(&Heater, FLS_SETPOINT);
+    
+    /* Reset MCU. */
+  }
+
+}
+/**
+  * @brief Startup heater.
+  * @param[in] None.
+  * @return  None.
+  * @details None.
+  * @note None.
+  */
+void Heater_Startup(void)
+{
+  /* To check that heater is configured datetime or not. */
+  if(FALSE == Heater_DateProductIsConfigured())
+  {
+    Heater.enActiStatus = HEATER_DISABLE;
+    Heater.enOpStatus = HEATER_WAIITING_USER_SETUP_DATETIME;
+  }
+  else
+  {
+    /* Checking Activation Lock status. */
+    Heater.enActiStatus = Heater_CheckActivationLock();
+  }
+  
+  
+  
+
+}
 /**
   * @brief Check date of product is configured or not.
   * @param[in] None.
@@ -390,15 +569,17 @@ void Exit_HEATER_SETUP_DAY_mode(boolean IsTimeOut)
   
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
-    /* Don't apply new set-point and read set-point in flash memory to restore 
-     set point. */
-    LED7_DisplayResult(LED7_FAIL);  
+    /* Don't apply new datetime. */
+    LED7_DisplayResult(LED7_FAIL);
   }
   else
   {
     /* Store DateTime to memory. */
     Heater_StoreFlsData(&Heater, FLS_NGAY);
     Heater_StoreFlsData(&Heater, FLS_THANG);
+    
+    /* Mark that user is configured datetime completely. */
+    Heater_StoreFlsData(&Heater, FLS_DATEPRODUCTSTATUS);
   }
   /* Reset varibales. */
   Heater.ucBlinkLED7Idx = 0;
@@ -406,7 +587,15 @@ void Exit_HEATER_SETUP_DAY_mode(boolean IsTimeOut)
   /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
   BlinkingAllLED7_Synchronous(1500);
   
-  Heater.enOpStatus = HEATER_IDLE;
+  /* Set heater status. */
+  if(IsTimeOut == HEATER_TIMEOUT_TRUE)
+  {
+    Heater.enOpStatus = HEATER_WAIITING_USER_SETUP_DATETIME;
+  }
+  else
+  {
+    Heater.enOpStatus = HEATER_IDLE;
+  }
 }
 
 void Enter_HEATER_SETUP_MON_mode(void)
@@ -443,13 +632,24 @@ void Exit_HEATER_SETUP_MON_mode(boolean IsTimeOut)
   }
   else
   {
-    Enter_HEATER_SETUP_DAY_mode();
+    
   }
   /* Reset varibales. */
   Heater.ucBlinkLED7Idx = 0;
   
+  
   /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
   BlinkingAllLED7_Synchronous(1500);
+  
+  if(IsTimeOut == HEATER_TIMEOUT_TRUE)
+  {
+    /* Set heater status. */
+    Heater.enOpStatus = HEATER_WAIITING_USER_SETUP_DATETIME;
+  }
+  else
+  {
+    Enter_HEATER_SETUP_DAY_mode();
+  }
 }
 
 void Enter_HEATER_UPDATE_SETPOINT_mode(void)
@@ -602,7 +802,7 @@ void Heater_ReadFlsData(HeaterType *pHeater, Fls_DataIdType FlsId)
     case FLS_NAM: /* Read Year product. */ 
     {
       Fls_Read(FLS_NAM, &Temp);
-      pHeater->MDate.ucYear = (uint8)Temp;  
+      pHeater->MDate.usYear = (uint8)Temp;  
       break;
     }
     default: break;
@@ -648,8 +848,20 @@ void Heater_StoreFlsData(HeaterType *pHeater, Fls_DataIdType FlsId)
     }
     case FLS_NAM: /* Read Year product. */ 
     {
-      Temp = (Fls_DataType)pHeater->MDate.ucYear;
+      Temp = (Fls_DataType)pHeater->MDate.usYear;
       Fls_Write(FLS_NAM, &Temp);  
+      break;
+    }
+    case FLS_DATEPRODUCTSTATUS: /* Read DateTime product status. */ 
+    {
+      Temp = (Fls_DataType)HEATER_DATEPRODUCT_IS_CONFIGURED;
+      Fls_Write(FLS_DATEPRODUCTSTATUS, &Temp);  
+      break;
+    }
+    case FLS_SERIAL_NUMBER: /* Read DateTime product status. */ 
+    {
+      Temp = (Fls_DataType)SERIAL_NUMBER;
+      Fls_Write(FLS_SERIAL_NUMBER, &Temp);  
       break;
     }
     default: break;

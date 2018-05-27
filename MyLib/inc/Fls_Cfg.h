@@ -80,8 +80,9 @@ typedef struct STag_Fls_DataConfigType
 #define FLS_THANG           4U
 #define FLS_NAM             5U
 #define FLS_DATEPRODUCTSTATUS      6U
+#define FLS_SERIAL_NUMBER   7U
 
-#define MAX_FLS_ID          7U
+#define MAX_FLS_ID          8U
 
 /* Definition of configuration set ID */
 #define FLS_CONFIG               (&Fls_GaaConfig[0])

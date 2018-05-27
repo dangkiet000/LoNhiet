@@ -80,20 +80,14 @@ int main()
   SYS_CheckResetSrc();
   #endif
   
-  if(FALSE == Heater_DateProductIsConfigured())
-  {
-    Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
-  }
-  else
-  {
-    Heater.enTriacStatus = HEATER_TRIAC_ENABLE;
-  }
+  /* Checking startup date is configured or not. */
+  Heater_CheckFlashData();
   
-  Heater.enOpStatus = HEATER_IDLE;
+  Heater_Startup();
   
   Heater_ReadFlsData(&Heater, FLS_SETPOINT);
   Heater_ReadFlsData(&Heater, FLS_WORKINGTIME);
-  Heater_ReadFlsData(&Heater, FLS_ACTILOCKSTATUS);
+  
   
   Heater_ReadFlsData(&Heater, FLS_NGAY);
   Heater_ReadFlsData(&Heater, FLS_THANG);
@@ -104,41 +98,7 @@ int main()
   printf("SetPoint: %d\r\n", Heater.usSetPoint);
   #endif
   
-  if(Heater.enActiLockStatus == LONHIET_LOCKED)
-  {
-    /* Disable TRIAC controlling. */
-    Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
-  }
-  else if(Heater.enActiLockStatus == LONHIET_UNLOCKED)
-  {
-    /* Do nothing. */
-    Heater.enTriacStatus = HEATER_TRIAC_ENABLE;
-  }
-  else if(Heater.enActiLockStatus == LONHIET_TRIAL)
-  {
-    /* To check if working-time is over Trial time */
-    if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
-    {
-      /* Yes. Disable LoNhiet */
-      Heater.enActiLockStatus = LONHIET_LOCKED;
-      Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
-    }
-    else /* No. */
-    {
-      Heater.enTriacStatus = HEATER_TRIAC_ENABLE;
-    }
-  }
-  else /* Đây là lần đầu tiên nạp code. */
-  {
-    /* Default lúc mới nạp code thì ActiLockStatus là TRIAL.
-       Lúc này, gán workingtime = 0.
-    */
-    Heater.enActiLockStatus = LONHIET_TRIAL;
-    Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
-    
-    Heater.ulWorkingTime = 0;
-    Heater_StoreFlsData(&Heater, FLS_WORKINGTIME);
-  }
+  
  
   #if (DEBUG_MODE == STD_ON)
   printf("Activation Lock Status: ");

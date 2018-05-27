@@ -56,7 +56,7 @@ uint8 Heater_GetMaxDay(Heater_DateTimeType DateTime)
     case 2:
     {
       /* Checking leap year. */
-      if (DateTime_CheckLeapYear(DateTime.ucYear) == TRUE)
+      if (DateTime_CheckLeapYear(DateTime.usYear) == TRUE)
           LucMaxDay = 29;
       else 
           LucMaxDay = 28;
@@ -273,7 +273,18 @@ void Heater_DayPlus(Heater_DateTimeType *DateTime, uint8 Place)
     {
       case 0: {  LucMaxValue = 9; break;  }
       case 1: {  LucMaxValue = 9; break;  }
-      case 2: {  LucMaxValue = LucMaxDay%10; break;  }
+      case 2: 
+      {  
+        if(DateTime->ucMonth == 2)
+        {
+          LucMaxValue = LucMaxDay%10;  
+        }
+        else
+        {
+          LucMaxValue = 9;
+        }
+        break;
+      }
       case 3: {  LucMaxValue = LucMaxDay%10; break;  }
       default: break;
     }

@@ -55,6 +55,21 @@ void PORT_Init(void);
 void Buttons_Init(void);
 void Timer0_Init(void);
 
+/* Checking this is first time Heater startup or not.
+   Yes: Write essential data to flash memory.
+   No: Do
+*/
+void Heater_CheckFlashData(void);
+
+/* Checking Activation Lock status and return heater is disable or enable. */
+Heater_ActiStatusType Heater_CheckActivationLock(void);
+
+/* Startup heater. */
+void Heater_Startup(void);
+
+/* Check date of product is configured or not. */
+boolean Heater_DateProductIsConfigured(void);
+
 /* Read Heater data which store in data flash memory. */
 void Heater_ReadFlsData(HeaterType *pHeater, Fls_DataIdType FlsId);
 
@@ -64,8 +79,7 @@ void Heater_StoreFlsData(HeaterType *pHeater, Fls_DataIdType FlsId);
 /* Blinking LED7-Seg in milisecond synchronously. */
 void BlinkingAllLED7_Synchronous(uint32 duration);
 
-/* Check date of product is configured or not. */
-boolean Heater_DateProductIsConfigured(void);
+
 
 
 void Enter_HEATER_UPDATE_SETPOINT_mode(void);

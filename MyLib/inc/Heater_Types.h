@@ -18,7 +18,8 @@
 /*******************************************************************************
 **                      Define macro                                          **
 *******************************************************************************/
-#define HEATER_DATEPRODUCT_IS_CONFIGURED    24358UL
+#define HEATER_DATEPRODUCT_IS_CONFIGURED       24358UL
+#define HEATER_DATEPRODUCT_IS_NOT_CONFIGURED   0xFFFFFFFFUL
 
 
 /*******************************************************************************
@@ -38,6 +39,8 @@ typedef enum ETag_Heater_StatusType
   HEATER_SETUP_DAY,
   /* State which user is setting month. */
   HEATER_SETUP_MON,
+  /* State which Heater is waiting user setting DateTime. */
+  HEATER_WAIITING_USER_SETUP_DATETIME,
   /* State which user is typing password. */
   HEATER_ENTER_PASSWORD,
   /* State which triac is died. */
@@ -58,14 +61,14 @@ typedef enum ETag_Heater_ActiLockStatusType
 }Heater_ActiLockStatusType;
 
 
-/* Definition of LoNhiet Activation Lock Status */
-typedef enum ETag_Heater_TriacStatusType
+/* Definition of LoNhiet Active Status Type. */
+typedef enum ETag_Heater_ActiStatusType
 {
   /* State which LoNhiet is in trial time */
-  HEATER_TRIAC_ENABLE = 0,
+  HEATER_ENABLE = 0,
   /* State which TRIAC is not working, user must correct password to UNLOCKED */
-  HEATER_TRIAC_DISABLE
-}Heater_TriacStatusType;
+  HEATER_DISABLE
+}Heater_ActiStatusType;
 
 typedef struct STag_Heater_DateTimeType
 {
@@ -76,7 +79,7 @@ typedef struct STag_Heater_DateTimeType
   uint8 ucMonth;
   
   /* Year of product. */
-  uint8 ucYear;
+  uint16 usYear;
 }Heater_DateTimeType;
 
 
@@ -107,7 +110,7 @@ typedef struct STag_HeaterType
   Heater_DateTimeType MDate;
   
   /* Heater status is disable or enable. */
-  Heater_TriacStatusType enTriacStatus;
+  Heater_ActiStatusType enActiStatus;
   
 }HeaterType;
 

@@ -33,7 +33,7 @@
 #define HEATER_PASSWORD   (SERIAL_NUMBER + SPECIAL_NUMBER)
 
 /* Đây là năm sản xuất của sản phẩm */
-#define MANUFACTURE_YEAR 2018U
+#define MANUFACTURE_YEAR  2018U
 
 
 
