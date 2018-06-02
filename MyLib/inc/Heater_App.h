@@ -40,7 +40,8 @@
          ((HeaterMode != HEATER_UPDATE_SETPOINT) && \
           (HeaterMode != HEATER_ENTER_PASSWORD) && \
           (HeaterMode != HEATER_SETUP_DAY) && \
-          (HeaterMode != HEATER_SETUP_MON))
+          (HeaterMode != HEATER_SETUP_MON) && \
+          (HeaterMode != HEATER_WORINGTIME_DISPLAY))
 /*******************************************************************************
 **                      Global Data                                           **
 *******************************************************************************/
@@ -79,9 +80,11 @@ void Heater_ReadFlsData(HeaterType *pHeater, Fls_DataIdType FlsId);
 /* Store Heater data to flash memory. */
 void Heater_StoreFlsData(HeaterType *pHeater, Fls_DataIdType FlsId);
 
+/* Display heater working time in day. */
+void Heater_DisplayWorkingTime(void);
+
 /* Blinking LED7-Seg in milisecond synchronously. */
 void BlinkingAllLED7_Synchronous(uint32 duration);
-
 
 
 
@@ -97,13 +100,7 @@ void Exit_HEATER_SETUP_MON_mode(boolean IsTimeOut);
 void Enter_HEATER_SETUP_DAY_mode(void);
 void Exit_HEATER_SETUP_DAY_mode(boolean IsTimeOut);
 
-/* Button call-back function prototypes */
-void BSET_HoldToThres_Event(void);
-void BSET_BCONG_HoldToThres_Event(void);
-void BSET_BTRU_HoldToThres_Event(void);
-void BCONG_Release_Event(void);
-void BTRU_Release_Event(void);
-void BSET_Release_Event(void);
+
 
 
 #if (DEBUG_MODE == STD_ON)

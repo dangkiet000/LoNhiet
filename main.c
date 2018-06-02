@@ -83,12 +83,15 @@ int main()
   /* Checking startup date is configured or not. */
   Heater_CheckFlashData();
 
+
   Heater_Startup();
 
 
   #if (DATA_LOGGING == STD_ON)
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
   #endif
+
+
 
   /* Start convert ADC to get temperature. */
   ADC_StartConvert();

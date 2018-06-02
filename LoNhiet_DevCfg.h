@@ -14,10 +14,16 @@
 /*******************************************************************************
 **                      Include                                               **
 *******************************************************************************/
+#include "LoNhiet_UserCfg.h"
 
 /*******************************************************************************
 **                      Developer configuration                               **
 *******************************************************************************/
+
+/* Trial time theo đơn vị phút, thời gian lưu trong flash memory có đơn vị là
+   phút. */
+#define TRIAL_TIME_IN_MIN     (TRIAL_TIME*60)
+
 #define DATA_LOGGING              STD_OFF
 
 /* System clock define */

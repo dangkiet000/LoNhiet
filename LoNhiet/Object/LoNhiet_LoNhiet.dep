@@ -1,6 +1,6 @@
 Dependencies for Project 'LoNhiet', Target 'LoNhiet': (DO NOT MODIFY !)
-F (..\main.c)(0x5B0AFE06)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\main.o --omf_browse .\object\main.crf --depend .\object\main.d)
-I (..\MyLib\inc\Heater_App.h)(0x5B0AF4D4)
+F (..\main.c)(0x5B129175)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\main.o --omf_browse .\object\main.crf --depend .\object\main.d)
+I (..\MyLib\inc\Heater_App.h)(0x5B129A80)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
 I (..\MyLib\inc\SystemTick_App.h)(0x5AFDB7B6)
 I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
@@ -25,15 +25,15 @@ I (..\MyLib\inc\Get_ADC_Value.h)(0x5AFC643B)
 I (..\MyLib\inc\Scheduler.h)(0x5B0058F5)
 I (..\MyLib\inc\Scheduler_Cfg.h)(0x5AFFCEE8)
 I (..\MyLib\inc\LED7Segment.h)(0x5B09A1CD)
-I (..\MyLib\inc\Button_Processing.h)(0x5B0948B1)
+I (..\MyLib\inc\Button_Processing.h)(0x5B1294BC)
 I (..\MyLib\inc\Fls.h)(0x5AFFFB79)
 I (..\MyLib\inc\Fls_Cfg.h)(0x5B0A7985)
 I (..\MyLib\inc\TimeOut.h)(0x5B00506C)
 I (..\MyLib\inc\TimeOut_Cfg.h)(0x5AF1DFBA)
 I (..\MyLib\inc\DateTime_Validation.h)(0x5B09BFD1)
-I (..\MyLib\inc\Heater_Types.h)(0x5B0A80B7)
-I (..\..\LoNhiet\LoNhiet_UserCfg.h)(0x5B0B0216)
-I (..\..\LoNhiet\LoNhiet_DevCfg.h)(0x5B01B4AA)
+I (..\MyLib\inc\Heater_Types.h)(0x5B128DB6)
+I (..\..\LoNhiet\LoNhiet_UserCfg.h)(0x5B128ABF)
+I (..\..\LoNhiet\LoNhiet_DevCfg.h)(0x5B1289E7)
 F (..\MyLib\src\Temperature_Conversion.c)(0x5AFC65AF)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\temperature_conversion.o --omf_browse .\object\temperature_conversion.crf --depend .\object\temperature_conversion.d)
 I (..\MyLib\inc\Temperature_Conversion.h)(0x5AFC65CA)
 I (..\Common\Std_Types.h)(0x5AD0F178)
@@ -59,7 +59,7 @@ I (..\Common\Std_Types.h)(0x5AD0F178)
 I (..\Common\Compiler\IAR\Compiler.h)(0x5AF1BC53)
 I (..\Common\Platform_Types.h)(0x5AD8E40D)
 I (..\MyLib\inc\Scheduler_Cfg.h)(0x5AFFCEE8)
-F (..\MyLib\src\LED7Segment.c)(0x5B0996EE)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\led7segment.o --omf_browse .\object\led7segment.crf --depend .\object\led7segment.d)
+F (..\MyLib\src\LED7Segment.c)(0x5B129123)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\led7segment.o --omf_browse .\object\led7segment.crf --depend .\object\led7segment.d)
 I (..\MyLib\inc\LED7Segment.h)(0x5B09A1CD)
 I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
@@ -78,9 +78,9 @@ I (..\StdDriver\inc\CLK.h)(0x582463D4)
 I (..\Common\Std_Types.h)(0x5AD0F178)
 I (..\Common\Compiler\IAR\Compiler.h)(0x5AF1BC53)
 I (..\Common\Platform_Types.h)(0x5AD8E40D)
-F (..\MyLib\src\Button_Processing.c)(0x5B09CDAB)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\button_processing.o --omf_browse .\object\button_processing.crf --depend .\object\button_processing.d)
+F (..\MyLib\src\Button_Processing.c)(0x5B1296A4)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\button_processing.o --omf_browse .\object\button_processing.crf --depend .\object\button_processing.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
-I (..\MyLib\inc\Button_Processing.h)(0x5B0948B1)
+I (..\MyLib\inc\Button_Processing.h)(0x5B1294BC)
 I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
 I (..\CMSIS\Include\core_cm0.h)(0x582463D6)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x599EDB3E)
@@ -223,8 +223,8 @@ I (..\MyLib\inc\Fls_Cfg.h)(0x5B0A7985)
 I (..\Common\Std_Types.h)(0x5AD0F178)
 I (..\Common\Compiler\IAR\Compiler.h)(0x5AF1BC53)
 I (..\Common\Platform_Types.h)(0x5AD8E40D)
-F (..\MyLib\src\Heater_App.c)(0x5B0B02AB)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\heater_app.o --omf_browse .\object\heater_app.crf --depend .\object\heater_app.d)
-I (..\MyLib\inc\Heater_App.h)(0x5B0AF4D4)
+F (..\MyLib\src\Heater_App.c)(0x5B129AD6)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\heater_app.o --omf_browse .\object\heater_app.crf --depend .\object\heater_app.d)
+I (..\MyLib\inc\Heater_App.h)(0x5B129A80)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x599EDB3C)
 I (..\MyLib\inc\SystemTick_App.h)(0x5AFDB7B6)
 I (..\Device\Nuvoton\NUC200Series\Include\NUC200Series.h)(0x5AD0FC8E)
@@ -249,18 +249,18 @@ I (..\MyLib\inc\Get_ADC_Value.h)(0x5AFC643B)
 I (..\MyLib\inc\Scheduler.h)(0x5B0058F5)
 I (..\MyLib\inc\Scheduler_Cfg.h)(0x5AFFCEE8)
 I (..\MyLib\inc\LED7Segment.h)(0x5B09A1CD)
-I (..\MyLib\inc\Button_Processing.h)(0x5B0948B1)
+I (..\MyLib\inc\Button_Processing.h)(0x5B1294BC)
 I (..\MyLib\inc\Fls.h)(0x5AFFFB79)
 I (..\MyLib\inc\Fls_Cfg.h)(0x5B0A7985)
 I (..\MyLib\inc\TimeOut.h)(0x5B00506C)
 I (..\MyLib\inc\TimeOut_Cfg.h)(0x5AF1DFBA)
 I (..\MyLib\inc\DateTime_Validation.h)(0x5B09BFD1)
-I (..\MyLib\inc\Heater_Types.h)(0x5B0A80B7)
-I (..\..\LoNhiet\LoNhiet_UserCfg.h)(0x5B0B0216)
-I (..\..\LoNhiet\LoNhiet_DevCfg.h)(0x5B01B4AA)
+I (..\MyLib\inc\Heater_Types.h)(0x5B128DB6)
+I (..\..\LoNhiet\LoNhiet_UserCfg.h)(0x5B128ABF)
+I (..\..\LoNhiet\LoNhiet_DevCfg.h)(0x5B1289E7)
 F (..\MyLib\src\DateTime_Validation.c)(0x5B0A5044)(-c --cpu Cortex-M0 -g -O0 --apcs=interwork -I ..\CMSIS\Include -I ..\..\NUC220LC2AN -I ..\MyLib\inc -I ..\Device\Nuvoton\NUC200Series\Include -I ..\StdDriver\inc -I ..\Common -I ..\Common\Compiler\IAR -I ..\..\LoNhiet-I.\RTE\_LoNhiet-IC:\Keil_v5\ARM\PACK\Nuvoton\NuMicro_DFP\1.2.0\Device\NUC200\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="525"-o .\object\datetime_validation.o --omf_browse .\object\datetime_validation.crf --depend .\object\datetime_validation.d)
 I (..\MyLib\inc\DateTime_Validation.h)(0x5B09BFD1)
-I (..\MyLib\inc\Heater_Types.h)(0x5B0A80B7)
+I (..\MyLib\inc\Heater_Types.h)(0x5B128DB6)
 I (..\Common\Std_Types.h)(0x5AD0F178)
 I (..\Common\Compiler\IAR\Compiler.h)(0x5AF1BC53)
 I (..\Common\Platform_Types.h)(0x5AD8E40D)

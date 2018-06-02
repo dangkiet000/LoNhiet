@@ -150,6 +150,23 @@ void Btn_Init(void)
   uint8_t LucBtnID;
   Btn_ConfigType *pEvent;
   
+  Btn_ConfigSet[BTRU_ID].enEventType = BTN_RELEASED_EVENT;
+  Btn_ConfigSet[BTRU_ID].pfnFunction = &BTRU_Release_Event;
+  Btn_ConfigSet[BTRU_ID].pfnHoldEvent1 = &BSET_BTRU_HoldToThres_Event;
+  Btn_ConfigSet[BTRU_ID].pfnHoldEvent2 = &BTRU_HoldToThres_Event;
+  Btn_ConfigSet[BTRU_ID].usHoldThresTime = 3000;
+
+  Btn_ConfigSet[BCONG_ID].enEventType = BTN_RELEASED_EVENT;
+  Btn_ConfigSet[BCONG_ID].pfnFunction = &BCONG_Release_Event;
+  Btn_ConfigSet[BCONG_ID].pfnHoldEvent1 = &BSET_BCONG_HoldToThres_Event;
+  Btn_ConfigSet[BCONG_ID].usHoldThresTime = 3000;
+
+  Btn_ConfigSet[BSET_ID].enEventType = BTN_HOLD_EVENT;
+  Btn_ConfigSet[BSET_ID].usHoldThresTime = 3000;
+  Btn_ConfigSet[BSET_ID].pfnFunction = &BSET_Release_Event;
+  Btn_ConfigSet[BSET_ID].pfnHoldEvent1 = &BSET_HoldToThres_Event;
+
+  
   for(LucBtnID = 0; LucBtnID < NUM_BUTTON_EVENTS; LucBtnID++)
   {
     /* Get a pointer to the task information. */
@@ -176,18 +193,23 @@ void Btn_MainFunction(void)
   /* Get current time */
   LulNowTick = millis();
   
-  if(Btn_ConfigSet[BTRU_ID].enStatus == BTN_RELEASED)
+  if(BTN_RELEASED == Btn_ConfigSet[BTRU_ID].enStatus)
   {
     Btn_ConfigSet[BTRU_ID].pfnFunction();
     /* Reset status */
     Btn_ConfigSet[BTRU_ID].enStatus = BTN_IDLE;
   }
-  else
+  else if(BTN_ONHOLD == Btn_ConfigSet[BTRU_ID].enStatus)
   {
-  
+    /* To check if BTRU onhold in 6 seconds. */
+    if(LulNowTick - Btn_ConfigSet[BTRU_ID].ulStartHoldTime > \
+                             (Btn_ConfigSet[BTRU_ID].usHoldThresTime*2))
+    {
+      Btn_ConfigSet[BTRU_ID].pfnHoldEvent2();
+    }
   }
   
-  if(Btn_ConfigSet[BCONG_ID].enStatus == BTN_RELEASED)
+  if(BTN_RELEASED == Btn_ConfigSet[BCONG_ID].enStatus)
   {
     Btn_ConfigSet[BCONG_ID].pfnFunction();
     /* Reset status */

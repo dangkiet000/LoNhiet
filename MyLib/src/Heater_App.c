@@ -146,6 +146,7 @@ void StoringWorkingTime(void)
 
 
 /*------------------------- Button processing events -------------------------*/
+/* This event occurs if user release CONG button. */
 void BCONG_Release_Event(void)
 {
   if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
@@ -203,7 +204,7 @@ void BCONG_Release_Event(void)
 
   }
 }
-
+/* This event occurs if user release TRU button. */
 void BTRU_Release_Event(void)
 {
   if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
@@ -263,7 +264,7 @@ void BTRU_Release_Event(void)
   }
 }
 
-
+/* This event occurs if user release SET button. */
 void BSET_Release_Event(void)
 {
   if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
@@ -354,6 +355,8 @@ void BSET_Release_Event(void)
   }
 
 }
+
+/* This event occurs if user press and hold SET button longer 3 seconds. */
 void BSET_HoldToThres_Event(void)
 {
   if(HEATER_IS_NOT_SETTING_MODE(Heater.enActiLockStatus))
@@ -366,6 +369,7 @@ void BSET_HoldToThres_Event(void)
 
   }
 }
+/* This event occurs if user hold CONG and SET button longer 3 seconds. */
 void BSET_BCONG_HoldToThres_Event(void)
 {
   if(HEATER_IS_NOT_SETTING_MODE(Heater.enOpStatus))
@@ -379,7 +383,7 @@ void BSET_BCONG_HoldToThres_Event(void)
 
   }
 }
-
+/* This event occurs if user hold TRU and SET button longer 3 seconds. */
 void BSET_BTRU_HoldToThres_Event(void)
 {
   if(HEATER_IS_NOT_SETTING_MODE(Heater.enOpStatus) == TRUE)
@@ -388,10 +392,47 @@ void BSET_BTRU_HoldToThres_Event(void)
     Enter_HEATER_SETUP_MON_mode();
   }
 }
+
+/* This event occurs if user press and hold TRU button longer 6 seconds. */
+void BTRU_HoldToThres_Event(void)
+{
+  if(HEATER_IS_NOT_SETTING_MODE(Heater.enOpStatus))
+  {
+    Heater.enOpStatus = HEATER_WORINGTIME_DISPLAY;
+    
+    Heater_DisplayWorkingTime();
+    
+    Heater.enOpStatus = HEATER_IDLE;
+  }
+}
 /*******************************************************************************
 **                      Function                                              **
 
 *******************************************************************************/
+/**
+  * @brief Display heater working time in day.
+  * @param[in] None.
+  * @return  None.
+  * @details Display working time of heater.
+             Unit: day.
+  * @note None.
+  */
+void Heater_DisplayWorkingTime(void)
+{
+  uint16 Lusdays;
+  
+  /* Heater.ulWorkingTime| unit: minutes 
+  => hour = Heater.ulWorkingTime/60
+  because heater work 8h/day.
+  => days = hour/8.
+  */
+  Lusdays = (uint16)(Heater.ulWorkingTime/(60*8)) ;
+  
+  LED7_DisplayNumber(Lusdays);
+  DelaySystemTick_ms(HEATER_WORKING_DISPLAY_TIME);
+  BlinkingAllLED7_Synchronous(800);
+
+}
 /**
   * @brief Display heater information at startup time.
   * @param[in] None.
@@ -994,21 +1035,6 @@ void PORT_Init(void)
 /* Initialize button processing events. */
 void Buttons_Init(void)
 {
-  Btn_ConfigSet[BTRU_ID].enEventType = BTN_RELEASED_EVENT;
-  Btn_ConfigSet[BTRU_ID].pfnFunction = &BTRU_Release_Event;
-  Btn_ConfigSet[BTRU_ID].pfnHoldEvent1 = &BSET_BTRU_HoldToThres_Event;
-  Btn_ConfigSet[BTRU_ID].usHoldThresTime = 3000;
-
-  Btn_ConfigSet[BCONG_ID].enEventType = BTN_RELEASED_EVENT;
-  Btn_ConfigSet[BCONG_ID].pfnFunction = &BCONG_Release_Event;
-  Btn_ConfigSet[BCONG_ID].pfnHoldEvent1 = &BSET_BCONG_HoldToThres_Event;
-  Btn_ConfigSet[BCONG_ID].usHoldThresTime = 3000;
-
-  Btn_ConfigSet[BSET_ID].enEventType = BTN_HOLD_EVENT;
-  Btn_ConfigSet[BSET_ID].usHoldThresTime = 3000;
-  Btn_ConfigSet[BSET_ID].pfnFunction = &BSET_Release_Event;
-  Btn_ConfigSet[BSET_ID].pfnHoldEvent1 = &BSET_HoldToThres_Event;
-
   Btn_Init();
 }
 /*******************************************************************************

@@ -119,6 +119,19 @@ void Btn_MainFunction(void);
 
 extern uint32_t millis(void);
 
+/* Button call-back function prototypes */
+extern void BSET_Release_Event(void);
+extern void BSET_HoldToThres_Event(void);
+extern void BSET_BCONG_HoldToThres_Event(void);
+extern void BSET_BTRU_HoldToThres_Event(void);
+
+extern void BCONG_Release_Event(void);
+
+extern void BTRU_Release_Event(void);
+extern void BTRU_HoldToThres_Event(void);
+
+
+
 #endif //__BUTTON_PROCESSING_H__
 
 /*** (C) COPYRIGHT 2016 DangKiet Technology Corp. ***/

@@ -362,7 +362,23 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
   LED2 = LpLEDValue[2];
   LED3 = LpLEDValue[3];
   
-  if(LusNumber < 100) //So Number co 2 chu so
+  if(LusNumber < 10) /* Nếu là số có 1 chữ số */
+  {
+    if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
+    {
+      LED0 = 0;
+      LED1 = 0;
+      LED2 = 0;
+    }
+    else
+    {
+      LED0 = LED7_NODISPLAY_CODE;
+      LED1 = LED7_NODISPLAY_CODE;
+      LED2 = LED7_NODISPLAY_CODE;
+    }
+    LED3 = (uint8) (LusNumber%10);
+  }
+  else if(LusNumber < 100) /* Nếu là số có 2 chữ số */
   {
     if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
     {
@@ -371,14 +387,14 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
     }
     else
     {
-      LED0 = 10;
-      LED1 = 10;
+      LED0 = LED7_NODISPLAY_CODE;
+      LED1 = LED7_NODISPLAY_CODE;
     }
     
     LED2 = (uint8) (LusNumber/10);
     LED3 = (uint8) (LusNumber%10);
   }
-  else if(LusNumber < 1000)  //So Number co 3 chu so
+  else if(LusNumber < 1000)  /* Nếu là số có 3 chữ số */
   {
     if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
     {
@@ -386,14 +402,14 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
     }
     else
     {
-      LED0 = 10;
+      LED0 = LED7_NODISPLAY_CODE;
     }
     LED1 = (uint8) (LusNumber/100);
     LusNumber = (LusNumber - (LED1*100));
     LED2 = (uint8) (LusNumber/10);
     LED3 = (uint8) (LusNumber%10);
   }
-  else if(LusNumber < 9999)  //So Number co 4 chu so
+  else if(LusNumber < 9999)  /* Nếu là số có 4 chữ số */
   {
     LED0 = (uint8) (LusNumber/1000);
     LusNumber = LusNumber - (LED0*1000);
@@ -413,10 +429,10 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
     }
     else
     {
-      LED0 = 10;
-      LED1 = 10;
-      LED2 = 10;
-      LED3 = 10;
+      LED0 = LED7_NODISPLAY_CODE;
+      LED1 = LED7_NODISPLAY_CODE;
+      LED2 = LED7_NODISPLAY_CODE;
+      LED3 = LED7_NODISPLAY_CODE;
     }
     
   }

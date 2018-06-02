@@ -43,6 +43,8 @@ typedef enum ETag_Heater_StatusType
   HEATER_WAIITING_USER_SETUP_DATETIME,
   /* State which user is typing password. */
   HEATER_ENTER_PASSWORD,
+  /* State which heater display working time with unit as day. */
+  HEATER_WORINGTIME_DISPLAY,
   /* State which triac is died. */
   HEATER_TRIAC_DIED,
   /* State which thermal resistor is died. */
