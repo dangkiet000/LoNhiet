@@ -15,6 +15,8 @@
 **                      Include                                               **
 *******************************************************************************/
 #include "LoNhiet_UserCfg.h"
+#include "Compiler.h"
+#include "NUC200Series.h"
 
 /*******************************************************************************
 **                      Developer configuration                               **
@@ -51,17 +53,25 @@
 #define HEATER_TIMEOUT_TRUE      TRUE
 #define HEATER_TIMEOUT_FALSE     FALSE
 
-__INLINE void LED_TEST_ON(void)
+#define MAX_HEATER_TEMPERATURE       725U
+
+/* Maximum of ones */
+#define MAX_ONES_TEMPERATURE         ((uint8)(MAX_HEATER_TEMPERATURE%10))
+#define MAX_TENS_TEMPERATURE         ((uint8)((MAX_HEATER_TEMPERATURE/10)%10))
+#define MAX_HUNDREDS_TEMPERATURE     ((uint8)((MAX_HEATER_TEMPERATURE/100)%10))
+#define MAX_THOUSANDS_TEMPERATURE    ((uint8)(MAX_HEATER_TEMPERATURE/1000))
+
+INLINE void LED_TEST_ON(void)
 {
   LED_TEST = 1;
 }
 
-__INLINE void LED_TEST_OFF(void)
+INLINE void LED_TEST_OFF(void)
 {
   LED_TEST = 0;
 }
 
-__INLINE void LED_TEST_TOOGLE(void)
+INLINE void LED_TEST_TOOGLE(void)
 {
   LED_TEST ^= 1;
 }

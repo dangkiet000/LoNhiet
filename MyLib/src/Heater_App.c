@@ -26,14 +26,30 @@
 /* Lo Nhiet Global structure */
 HeaterType Heater;
 
+
+const uint8 GaaMapNumberToPlace[4] = {
+  THOUSANDS, 
+  HUNDREDS,
+  TENS,
+  ONES
+};
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
 *******************************************************************************/
 /*------------------------- TimeOut Events -----------------------------------*/
 void TO_UpdateSetPoint(void)
 {
-  /* Exit HEATER_UPDATE_SETPOINT mode */
-  Exit_HEATER_UPDATE_SETPOINT_mode(HEATER_TIMEOUT_TRUE);
+  /* This is the last LED7 digit(LED7_3). */
+  if(Heater.ucBlinkLED7Idx == 3)
+  {
+    /* Exit HEATER_UPDATE_SETPOINT mode */
+    Exit_HEATER_UPDATE_SETPOINT_mode(HEATER_TIMEOUT_FALSE);
+  }
+  else
+  {
+    /* Exit HEATER_UPDATE_SETPOINT mode */
+    Exit_HEATER_UPDATE_SETPOINT_mode(HEATER_TIMEOUT_TRUE);
+  }
 }
 void TO_SetDateTime(void)
 {
@@ -151,13 +167,14 @@ void BCONG_Release_Event(void)
 {
   if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
   {
-    /* Increase LED7 value. */
-    LED7_IncreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
-                      &Heater.usSetPoint);
-    LED7_DisplayLeadingZeros(Heater.usSetPoint);
-
     /* Reload timeout counter. */
     TO_Reload(TO_UpdateSetPoint_Channel);
+    
+    /* Increase LED7 value. */
+    Heater.usSetPoint = Heater_TempPlus(Heater.usSetPoint, \
+                           GaaMapNumberToPlace[Heater.ucBlinkLED7Idx]);
+    
+    LED7_DisplayLeadingZeros(Heater.usSetPoint);   
   }
   else if(Heater.enOpStatus == HEATER_ENTER_PASSWORD)
   {
@@ -201,7 +218,7 @@ void BCONG_Release_Event(void)
   }
   else
   {
-
+    /* Do Nothing. */
   }
 }
 /* This event occurs if user release TRU button. */
@@ -209,13 +226,14 @@ void BTRU_Release_Event(void)
 {
   if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
   {
-    /* Decrease LED7 value. */
-    LED7_DecreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
-                      &Heater.usSetPoint);
-    LED7_DisplayLeadingZeros(Heater.usSetPoint);
-
-    /* Reload timeout counter. */
+        /* Reload timeout counter. */
     TO_Reload(TO_UpdateSetPoint_Channel);
+    
+    /* Increase LED7 value. */
+    Heater.usSetPoint = Heater_TempMinus(Heater.usSetPoint, \
+                           GaaMapNumberToPlace[Heater.ucBlinkLED7Idx]);
+    
+    LED7_DisplayLeadingZeros(Heater.usSetPoint);  
   }
   else if(Heater.enOpStatus == HEATER_ENTER_PASSWORD)
   {
@@ -762,6 +780,15 @@ void Enter_HEATER_UPDATE_SETPOINT_mode(void)
 
   /* Blinking LED7_0 first. */
   Heater.ucBlinkLED7Idx = 0;
+  
+  if(MAX_THOUSANDS_TEMPERATURE == 0)
+  {
+    Heater.ucBlinkLED7Idx++;
+  }
+  if(MAX_HUNDREDS_TEMPERATURE == 0)
+  {
+    Heater.ucBlinkLED7Idx++;
+  }
 
   /* Enable blinking LED7. */
   LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
@@ -1032,11 +1059,7 @@ void PORT_Init(void)
   SYS->GPA_MFP |= SYS_GPA_MFP_PA0_ADC0 | SYS_GPA_MFP_PA1_ADC1;
   SYS->ALT_MFP1 &= ~(SYS_ALT_MFP1_PA0_Msk| SYS_ALT_MFP1_PA1_Msk);
 }
-/* Initialize button processing events. */
-void Buttons_Init(void)
-{
-  Btn_Init();
-}
+
 /*******************************************************************************
 **                      Testing Functions                                     **
 *******************************************************************************/

@@ -14,7 +14,7 @@
 **                      Include Section                                       **
 *******************************************************************************/
 #include "Heater_Types.h"
-
+#include "LoNhiet_DevCfg.h"
 
 
 /*******************************************************************************
@@ -45,6 +45,10 @@ void Heater_DayMinus(Heater_DateTimeType *DateTime, uint8 Place);
 
 boolean DateTime_CheckLeapYear(uint16 year);
 uint8 Heater_GetMaxDay(Heater_DateTimeType DateTime);
+
+uint16 GetMulFactor(uint8 Place);
+uint16 Heater_TempPlus(uint16 SetPoint, uint8 Place);
+uint16 Heater_TempMinus(uint16 SetPoint, uint8 Place);
 
 /** @addtogroup None
   @{

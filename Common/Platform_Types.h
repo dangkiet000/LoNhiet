@@ -31,12 +31,12 @@
  /***************************************************************************/
 /* Version Check                                                           */
 /***************************************************************************/
-#define PLATFORM_VENDOR_ID    (0x0055u)
+#define PLATFORM_VENDOR_ID    (0x0099u)
 
 /* AUTOSAR Software Specification Document Version Information */
 #define PLATFORM_AR_MAJOR_VERSION       (4u)
-#define PLATFORM_AR_MINOR_VERSION       (0u)
-#define PLATFORM_AR_PATCH_VERSION       (3u)
+#define PLATFORM_AR_MINOR_VERSION       (3u)
+#define PLATFORM_AR_PATCH_VERSION       (1u)
 
 /* Component Version Information */
 #define PLATFORM_SW_MAJOR_VERSION       (1u)

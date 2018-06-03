@@ -355,86 +355,54 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
 {
   uint16 LusNumber;
   uint8 LED0, LED1, LED2, LED3;
+  uint8 LucNoMeaningDigit;
   
+  if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
+  {
+    LucNoMeaningDigit = 0;
+  }
+  else
+  {
+    LucNoMeaningDigit = LED7_NODISPLAY_CODE;
+  }
+    
   LusNumber = LusIntNumber;
+  
   LED0 = LpLEDValue[0];
   LED1 = LpLEDValue[1];
   LED2 = LpLEDValue[2];
   LED3 = LpLEDValue[3];
   
+  LED0 = (uint8) (LusNumber/1000);
+  LED1 = (uint8) ((LusNumber/100)%10);
+  LED2 = (uint8) ((LusNumber/10)%10);
+  LED3 = (uint8) (LusNumber%10);
+  
   if(LusNumber < 10) /* Nếu là số có 1 chữ số */
   {
-    if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
-    {
-      LED0 = 0;
-      LED1 = 0;
-      LED2 = 0;
-    }
-    else
-    {
-      LED0 = LED7_NODISPLAY_CODE;
-      LED1 = LED7_NODISPLAY_CODE;
-      LED2 = LED7_NODISPLAY_CODE;
-    }
-    LED3 = (uint8) (LusNumber%10);
+    LED0 = LucNoMeaningDigit;
+    LED1 = LucNoMeaningDigit;
+    LED2 = LucNoMeaningDigit;
   }
   else if(LusNumber < 100) /* Nếu là số có 2 chữ số */
   {
-    if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
-    {
-      LED0 = 0;
-      LED1 = 0;
-    }
-    else
-    {
-      LED0 = LED7_NODISPLAY_CODE;
-      LED1 = LED7_NODISPLAY_CODE;
-    }
-    
-    LED2 = (uint8) (LusNumber/10);
-    LED3 = (uint8) (LusNumber%10);
+    LED0 = LucNoMeaningDigit;
+    LED1 = LucNoMeaningDigit;
   }
   else if(LusNumber < 1000)  /* Nếu là số có 3 chữ số */
   {
-    if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
-    {
-      LED0 = 0;
-    }
-    else
-    {
-      LED0 = LED7_NODISPLAY_CODE;
-    }
-    LED1 = (uint8) (LusNumber/100);
-    LusNumber = (LusNumber - (LED1*100));
-    LED2 = (uint8) (LusNumber/10);
-    LED3 = (uint8) (LusNumber%10);
+    LED0 = LucNoMeaningDigit;
   }
   else if(LusNumber < 9999)  /* Nếu là số có 4 chữ số */
   {
-    LED0 = (uint8) (LusNumber/1000);
-    LusNumber = LusNumber - (LED0*1000);
-    LED1 = (uint8) (LusNumber/100);
-    LusNumber = LusNumber - (LED1*100);
-    LED2 = (uint8) (LusNumber/10);
-    LED3 = (uint8) (LusNumber%10);
+    
   }
   else
   { 
-    if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
-    {
-      LED0 = 0;
-      LED1 = 0;
-      LED2 = 0;
-      LED3 = 0;
-    }
-    else
-    {
-      LED0 = LED7_NODISPLAY_CODE;
-      LED1 = LED7_NODISPLAY_CODE;
-      LED2 = LED7_NODISPLAY_CODE;
-      LED3 = LED7_NODISPLAY_CODE;
-    }
-    
+    LED0 = LED7_NODISPLAY_CODE;
+    LED1 = LED7_NODISPLAY_CODE;
+    LED2 = LED7_NODISPLAY_CODE;
+    LED3 = LED7_NODISPLAY_CODE;
   }
   LpLEDValue[0] = LED0;
   LpLEDValue[1] = LED1;

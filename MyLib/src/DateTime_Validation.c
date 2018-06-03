@@ -8,6 +8,7 @@
  * @note
 *****************************************************************************/
 #include "DateTime_Validation.h"
+#include "LED7Segment.h"
 
 /** @addtogroup None
   @{
@@ -23,6 +24,12 @@
 /*******************************************************************************
 **                      Global Data                                           **
 *******************************************************************************/
+const uint8 GaaMapPlaceToMaxTempDigit[4] = {
+  MAX_THOUSANDS_TEMPERATURE, 
+  MAX_HUNDREDS_TEMPERATURE,
+  MAX_TENS_TEMPERATURE,
+  MAX_ONES_TEMPERATURE
+};
 
 
 /*******************************************************************************
@@ -105,6 +112,7 @@ boolean DateTime_CheckLeapYear(uint16 year)
 /**
   * @brief  Correct Month when user decrease value.
   * @param[in] *DateTime: pointer point to DateTime of Heater.
+  * @param[in] Place: place of digit which is setting.
   * @param[out] *DateTime.
   * @return None.
   * @details  None.
@@ -168,6 +176,7 @@ void Heater_MonMinus(Heater_DateTimeType *DateTime, uint8 Place)
 /**
   * @brief  Correct Month when user increase value.
   * @param[in] *DateTime: pointer point to DateTime of Heater.
+  * @param[in] Place: place of digit which is setting.
   * @param[out] *DateTime.
   * @return None.
   * @details  None.
@@ -234,6 +243,7 @@ void Heater_MonPlus(Heater_DateTimeType *DateTime, uint8 Place)
 /**
   * @brief  Correct Day when user increase value.
   * @param[in] *DateTime: pointer point to DateTime of Heater.
+  * @param[in] Place: place of digit which is setting.
   * @param[out] *DateTime.
   * @return None.
   * @details  None.
@@ -319,6 +329,7 @@ void Heater_DayPlus(Heater_DateTimeType *DateTime, uint8 Place)
 /**
   * @brief  Correct Day when user decrease value.
   * @param[in] *DateTime: pointer point to DateTime of Heater.
+  * @param[in] Place: place of digit which is setting.
   * @param[out] *DateTime.
   * @return None.
   * @details  None.
@@ -387,6 +398,123 @@ void Heater_DayMinus(Heater_DateTimeType *DateTime, uint8 Place)
   DateTime->ucDay = (LucChuc*10) + LucDonvi;
 }
 
+
+/**
+  * @brief  Correct temperature when user increase value in setting mode.
+  * @param[in] SetPoint.
+  * @param[in] Place: place of digit which is setting.
+  * @return None.
+  * @details  None.
+  */
+uint16 Heater_TempPlus(uint16 SetPoint, uint8 Place)
+{
+  uint8  LaaSetPoint[4];
+  uint16 MulFactor;
+  
+  MulFactor = GetMulFactor(Place);
+  
+  Int_to_Array(SetPoint, LaaSetPoint, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+  
+  SetPoint += MulFactor;
+
+  if(SetPoint > MAX_HEATER_TEMPERATURE)
+  {
+    /* Set this digit value to 0. */
+    LaaSetPoint[Place] = 0;
+    SetPoint = Array_To_Int(LaaSetPoint);
+  }
+  else
+  {
+    if(LaaSetPoint[Place] >= 9)
+    {
+      /* Set this digit value to 0. */
+      LaaSetPoint[Place] = 0;
+      SetPoint = Array_To_Int(LaaSetPoint);
+    }
+  }
+  return SetPoint;
+}
+
+/**
+  * @brief  Correct temperature when user decrease value in setting mode.
+  * @param[in] SetPoint.
+  * @param[in] Place: place of digit which is setting.
+  * @return None.
+  * @details  None.
+  */
+uint16 Heater_TempMinus(uint16 SetPoint, uint8 Place)
+{
+  uint8  LaaSetPoint[4];
+  uint16 MulFactor;
+  
+  MulFactor = GetMulFactor(Place);
+  
+  Int_to_Array(SetPoint, LaaSetPoint, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+  
+  SetPoint -= MulFactor;
+
+  /* Neu ket qua bi am thi se overflow
+  => SetPoint > MAX_HEATER_TEMPERATURE
+  */
+  if(SetPoint > MAX_HEATER_TEMPERATURE)
+  {
+    /* Set this digit value to max. */
+    LaaSetPoint[Place] = GaaMapPlaceToMaxTempDigit[Place];
+    SetPoint = Array_To_Int(LaaSetPoint);
+  }
+  else
+  {
+    if(LaaSetPoint[Place] == 0)
+    {
+      /* Set this digit value to max. */
+      LaaSetPoint[Place] = 9;
+      SetPoint = Array_To_Int(LaaSetPoint);
+      if(SetPoint > MAX_HEATER_TEMPERATURE)
+      {
+        /* Set this digit value to max. */
+        LaaSetPoint[Place] = GaaMapPlaceToMaxTempDigit[Place];
+        SetPoint = Array_To_Int(LaaSetPoint);
+      }
+    }
+  }
+  
+  return SetPoint;
+}
+
+/**
+  * @brief  Get multiplication factor of number having 4 digits.
+  * @param[in] Place: place of digit which is setting.
+  * @param[out] None.
+  * @return  Multiplication factor.
+  *            Place: ONES      => return 1; 
+  *            Place: TENS      => return 10;
+  *            Place: HUNDREDS  => return 100;
+  *            Place: THOUSANDS => return 1000;
+  * @details  None.
+  */
+uint16 GetMulFactor(uint8 Place)
+{
+  uint16 MulFactor;
+  
+  if(Place == THOUSANDS)
+  {
+    MulFactor = 1000;
+  }
+  else if(Place == HUNDREDS)
+  {
+    MulFactor = 100;
+  }
+  else if(Place == TENS)
+  {
+    MulFactor = 10;
+  }
+  else if(Place == ONES)
+  {
+    MulFactor = 1;
+  }
+  
+  return MulFactor;
+}
 /*@}*/ /* None */
 
 /*@}*/ /* None */

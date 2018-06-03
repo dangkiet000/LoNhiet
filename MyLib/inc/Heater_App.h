@@ -53,7 +53,6 @@ extern HeaterType Heater;
 *******************************************************************************/
 void SYS_Init(void);
 void PORT_Init(void);
-void Buttons_Init(void);
 void Timer0_Init(void);
 
 /* Display heater information at startup time. */

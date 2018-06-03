@@ -56,8 +56,8 @@ int main()
   /* Init to control 4 LED-7seg */
   LED_7Seg_Init();
 
-  /* Init Button */
-  Buttons_Init();
+  /* Initialize button processing events. */
+  Btn_Init();
 
   /* Init Flash module */
   Fls_Init(FLS_CONFIG);
@@ -81,17 +81,15 @@ int main()
   #endif
     
   /* Checking startup date is configured or not. */
-  Heater_CheckFlashData();
+  //Heater_CheckFlashData();
 
 
-  Heater_Startup();
+ //Heater_Startup();
 
 
   #if (DATA_LOGGING == STD_ON)
   Sch_TaskEnable(SCH_SendSetPoint_Task, SCH_RUN_LATER);
   #endif
-
-
 
   /* Start convert ADC to get temperature. */
   ADC_StartConvert();
