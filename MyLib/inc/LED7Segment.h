@@ -126,8 +126,9 @@ typedef struct STag_LED7_DriverType
 *******************************************************************************/
 extern uint32_t millis(void);
 
-void LED_7Seg_Decode(uint8 LedNumber);
-Std_ReturnType Timer_LED_Init(uint16 LusFrequence);
+STATIC void LED_7Seg_Decode(uint8 LedNumber);
+STATIC Std_ReturnType Timer_LED_Init(uint16 LusFrequence);
+
 void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
                               LED7_DisplayType DisplayType);
 uint16 Array_To_Int(uint8 *Array);
@@ -173,10 +174,10 @@ void LED7_MainFunction(void);
 LED7_IdType NUMBER_TO_LEDID(uint8 num);
 
 /* Increase value of the LED7. */
-void LED7_IncreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue);
+void LED7_IncreaseLED7(uint8 LEDIdx, uint16 *DisplayValue);
 
 /* Decrease value of the LED7. */
-void LED7_DecreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue);
+void LED7_DecreaseLED7(uint8 LEDIdx, uint16 *DisplayValue);
 
 
 #ifdef __cplusplus

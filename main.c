@@ -81,10 +81,10 @@ int main()
   #endif
     
   /* Checking startup date is configured or not. */
-  //Heater_CheckFlashData();
+  Heater_CheckFlashData();
 
 
- //Heater_Startup();
+  Heater_Startup();
 
 
   #if (DATA_LOGGING == STD_ON)

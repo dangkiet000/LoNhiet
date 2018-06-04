@@ -1,5 +1,5 @@
 /**************************************************************************//**
- * @file     DateTime_Validation.c
+ * @file     UserInput_Validation.c
  * @version  V1.00
  * $Revision: 1 $
  * $Date: 26/05/2018 3:59p $
@@ -7,7 +7,7 @@
  *
  * @note
 *****************************************************************************/
-#include "DateTime_Validation.h"
+#include "UserInput_Validation.h"
 #include "LED7Segment.h"
 
 /** @addtogroup None
@@ -35,7 +35,40 @@ const uint8 GaaMapPlaceToMaxTempDigit[4] = {
 /*******************************************************************************
 **                      Function                                              **
 *******************************************************************************/
-
+/**
+  * @brief  Get multiplication factor of number having 4 digits.
+  * @param[in] Place: place of digit which is setting.
+  * @param[out] None.
+  * @return  Multiplication factor.
+  *            Place: ONES      => return 1; 
+  *            Place: TENS      => return 10;
+  *            Place: HUNDREDS  => return 100;
+  *            Place: THOUSANDS => return 1000;
+  * @details  None.
+  */
+STATIC uint16 GetMulFactor(uint8 Place)
+{
+  uint16 MulFactor;
+  
+  if(Place == THOUSANDS)
+  {
+    MulFactor = 1000;
+  }
+  else if(Place == HUNDREDS)
+  {
+    MulFactor = 100;
+  }
+  else if(Place == TENS)
+  {
+    MulFactor = 10;
+  }
+  else if(Place == ONES)
+  {
+    MulFactor = 1;
+  }
+  
+  return MulFactor;
+}
 /**
   * @brief  Get max day of month.
   * @param[in] *DateTime: pointer point to DateTime of Heater.
@@ -43,7 +76,7 @@ const uint8 GaaMapPlaceToMaxTempDigit[4] = {
   * @return  max day of month.
   * @details  None.
   */
-uint8 Heater_GetMaxDay(Heater_DateTimeType DateTime)
+STATIC uint8 Heater_GetMaxDay(Heater_DateTimeType DateTime)
 {
   uint8 LucMaxDay;
   
@@ -90,7 +123,7 @@ uint8 Heater_GetMaxDay(Heater_DateTimeType DateTime)
   * @return None.
   * @details  None.
   */
-boolean DateTime_CheckLeapYear(uint16 year)
+STATIC boolean DateTime_CheckLeapYear(uint16 year)
 {
   boolean LblRetVal;
   
@@ -481,40 +514,7 @@ uint16 Heater_TempMinus(uint16 SetPoint, uint8 Place)
   return SetPoint;
 }
 
-/**
-  * @brief  Get multiplication factor of number having 4 digits.
-  * @param[in] Place: place of digit which is setting.
-  * @param[out] None.
-  * @return  Multiplication factor.
-  *            Place: ONES      => return 1; 
-  *            Place: TENS      => return 10;
-  *            Place: HUNDREDS  => return 100;
-  *            Place: THOUSANDS => return 1000;
-  * @details  None.
-  */
-uint16 GetMulFactor(uint8 Place)
-{
-  uint16 MulFactor;
-  
-  if(Place == THOUSANDS)
-  {
-    MulFactor = 1000;
-  }
-  else if(Place == HUNDREDS)
-  {
-    MulFactor = 100;
-  }
-  else if(Place == TENS)
-  {
-    MulFactor = 10;
-  }
-  else if(Place == ONES)
-  {
-    MulFactor = 1;
-  }
-  
-  return MulFactor;
-}
+
 /*@}*/ /* None */
 
 /*@}*/ /* None */

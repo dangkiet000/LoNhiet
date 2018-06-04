@@ -179,8 +179,7 @@ void BCONG_Release_Event(void)
   else if(Heater.enOpStatus == HEATER_ENTER_PASSWORD)
   {
     /* Increase LED7 value. */
-    LED7_IncreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
-                      &Heater.usUserPassword);
+    LED7_IncreaseLED7(Heater.ucBlinkLED7Idx, &Heater.usUserPassword);
     LED7_DisplayLeadingZeros(Heater.usUserPassword);
 
     /* Reload timeout counter. */
@@ -238,8 +237,7 @@ void BTRU_Release_Event(void)
   else if(Heater.enOpStatus == HEATER_ENTER_PASSWORD)
   {
     /* Decrease LED7 value. */
-    LED7_DecreaseLED7(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
-                      &Heater.usUserPassword);
+    LED7_DecreaseLED7(Heater.ucBlinkLED7Idx, &Heater.usUserPassword);
 
     LED7_DisplayLeadingZeros(Heater.usUserPassword);
 

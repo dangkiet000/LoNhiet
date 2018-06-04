@@ -8,13 +8,11 @@
  * @note
  * Copyright (C) 2016 DangKiet Technology Corp. All rights reserved.
 *****************************************************************************/
-#include <stdio.h>
-#include "Button_Processing.h"
+#include "Button_Processing_Cfg.h"
 
 /*******************************************************************************
 **                      Global Data Types                                    **
 *******************************************************************************/
-Btn_ConfigType Btn_ConfigSet[NUM_BUTTON_EVENTS];
 
 
 /*******************************************************************************
@@ -112,7 +110,7 @@ void Button_ISR(void)
 }
 
 
-void HW_Interrupt_GPIO_Init(void)
+STATIC void HW_Interrupt_GPIO_Init(void)
 {
   /* Configure PA.2/3/4 as Input mode */
   GPIO_SetMode(ButtonBaseAddr, BTRU_BIT|BCONG_BIT|BSET_BIT, GPIO_PMD_INPUT);
@@ -147,34 +145,6 @@ void HW_Interrupt_GPIO_Init(void)
   */
 void Btn_Init(void)
 {
-  uint8_t LucBtnID;
-  Btn_ConfigType *pEvent;
-  
-  Btn_ConfigSet[BTRU_ID].enEventType = BTN_RELEASED_EVENT;
-  Btn_ConfigSet[BTRU_ID].pfnFunction = &BTRU_Release_Event;
-  Btn_ConfigSet[BTRU_ID].pfnHoldEvent1 = &BSET_BTRU_HoldToThres_Event;
-  Btn_ConfigSet[BTRU_ID].pfnHoldEvent2 = &BTRU_HoldToThres_Event;
-  Btn_ConfigSet[BTRU_ID].usHoldThresTime = 3000;
-
-  Btn_ConfigSet[BCONG_ID].enEventType = BTN_RELEASED_EVENT;
-  Btn_ConfigSet[BCONG_ID].pfnFunction = &BCONG_Release_Event;
-  Btn_ConfigSet[BCONG_ID].pfnHoldEvent1 = &BSET_BCONG_HoldToThres_Event;
-  Btn_ConfigSet[BCONG_ID].usHoldThresTime = 3000;
-
-  Btn_ConfigSet[BSET_ID].enEventType = BTN_HOLD_EVENT;
-  Btn_ConfigSet[BSET_ID].usHoldThresTime = 3000;
-  Btn_ConfigSet[BSET_ID].pfnFunction = &BSET_Release_Event;
-  Btn_ConfigSet[BSET_ID].pfnHoldEvent1 = &BSET_HoldToThres_Event;
-
-  
-  for(LucBtnID = 0; LucBtnID < NUM_BUTTON_EVENTS; LucBtnID++)
-  {
-    /* Get a pointer to the task information. */
-    pEvent = &Btn_ConfigSet[LucBtnID];
-
-    pEvent->enStatus = BTN_IDLE;
-  }
-  
   /* Enable interrupt by rising and falling edge trigger. */
   HW_Interrupt_GPIO_Init();
 }

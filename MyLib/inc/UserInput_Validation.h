@@ -1,5 +1,5 @@
 /**************************************************************************//**
- * @file     DateTime_Validation.c
+ * @file     UserInput_Validation.c
  * @version  V1.00
  * $Revision: 1 $
  * $Date: 26/05/2018 3:59p $
@@ -38,15 +38,17 @@
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
+STATIC boolean DateTime_CheckLeapYear(uint16 year);
+STATIC uint8 Heater_GetMaxDay(Heater_DateTimeType DateTime);
+STATIC uint16 GetMulFactor(uint8 Place);
+
+
+
 void Heater_MonPlus(Heater_DateTimeType *DateTime, uint8 Place);
 void Heater_MonMinus(Heater_DateTimeType *DateTime, uint8 Place);
 void Heater_DayPlus(Heater_DateTimeType *DateTime, uint8 Place);
 void Heater_DayMinus(Heater_DateTimeType *DateTime, uint8 Place);
 
-boolean DateTime_CheckLeapYear(uint16 year);
-uint8 Heater_GetMaxDay(Heater_DateTimeType DateTime);
-
-uint16 GetMulFactor(uint8 Place);
 uint16 Heater_TempPlus(uint16 SetPoint, uint8 Place);
 uint16 Heater_TempMinus(uint16 SetPoint, uint8 Place);
 

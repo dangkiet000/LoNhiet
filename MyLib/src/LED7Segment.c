@@ -112,7 +112,7 @@ void TimerLED_ISR(void)
   * @return  E_OK/E_NOT_OK.
   * @details  Decode LED-7seg to display digits.
   */
-Std_ReturnType Timer_LED_Init(uint16 LusFrequence)
+STATIC Std_ReturnType Timer_LED_Init(uint16 LusFrequence)
 {
   uint32_t LulCompareValue;
   uint8  LucPrescaler;
@@ -179,7 +179,7 @@ Std_ReturnType Timer_LED_Init(uint16 LusFrequence)
   * @return  None.
   * @details  Decode LED-7seg to display digits.
   */
-void LED_7Seg_Decode(uint8 LedNumber)
+STATIC void LED_7Seg_Decode(uint8 LedNumber)
 {
   switch(LedNumber)
   {
@@ -676,38 +676,14 @@ LED7_IdType NUMBER_TO_LEDID(uint8 num)
   * @return Value of Number after increase.
   * @details 
   */
-void LED7_IncreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue)
+void LED7_IncreaseLED7(uint8 LEDIdx, uint16 *DisplayValue)
 {
   uint8  LaaLED7Value[4];
   
   Int_to_Array(*DisplayValue, LaaLED7Value, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
   
-  /* Increase LED7 value. */
-  switch(LEDpos)
-  {
-    case LED7_0: /* LED7_0(Nghìn) is blinking */
-    {
-      INCREASE_LED7VAL(LaaLED7Value[0]);
-      break;
-    }
-    case LED7_1: /* LED7_1(Trăm) is blinking */
-    {
-      INCREASE_LED7VAL(LaaLED7Value[1]);
-      break;
-    }
-    case LED7_2: /* LED7_2(Chục) is blinking */
-    {
-      INCREASE_LED7VAL(LaaLED7Value[2]);
-      break;
-    }
-    case LED7_3: /* LED7_3(Đơn vị) is blinking */
-    {
-      INCREASE_LED7VAL(LaaLED7Value[3]);
-      break;
-    }
-    default: break;
-  }
-  
+  INCREASE_LED7VAL(LaaLED7Value[LEDIdx]);
+
   *DisplayValue = Array_To_Int(LaaLED7Value);
 }
 
@@ -721,37 +697,13 @@ void LED7_IncreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue)
   * @return Value of Number after decrease.
   * @details 
   */
-void LED7_DecreaseLED7(LED7_IdType LEDpos, uint16 *DisplayValue)
+void LED7_DecreaseLED7(uint8 LEDIdx, uint16 *DisplayValue)
 {
   uint8  LaaLED7Value[4];
   
   Int_to_Array(*DisplayValue, LaaLED7Value, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
   
-  /* Decrease LED7 value. */
-  switch(LEDpos)
-  {
-    case LED7_0: /* LED7_0(Nghìn) is blinking */
-    {
-      DECREASE_LED7VAL(LaaLED7Value[0]);
-      break;
-    }
-    case LED7_1: /* LED7_1(Trăm) is blinking */
-    {
-      DECREASE_LED7VAL(LaaLED7Value[1]);
-      break;
-    }
-    case LED7_2: /* LED7_2(Chục) is blinking */
-    {
-      DECREASE_LED7VAL(LaaLED7Value[2]);
-      break;
-    }
-    case LED7_3: /* LED7_3(Đơn vị) is blinking */
-    {
-      DECREASE_LED7VAL(LaaLED7Value[3]);
-      break;
-    }
-    default: break;
-  }
+  DECREASE_LED7VAL(LaaLED7Value[LEDIdx]);
   
   *DisplayValue = Array_To_Int(LaaLED7Value);
 }

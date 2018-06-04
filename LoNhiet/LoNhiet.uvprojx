@@ -10,6 +10,7 @@
       <TargetName>LoNhiet</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pArmCC>5060750::V5.06 update 6 (build 750)::ARMCC</pArmCC>
       <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
@@ -320,14 +321,14 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>0</wLevel>
+            <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <uC99>0</uC99>
             <uGnu>0</uGnu>
             <useXO>0</useXO>
-            <v6Lang>1</v6Lang>
-            <v6LangP>1</v6LangP>
+            <v6Lang>3</v6Lang>
+            <v6LangP>3</v6LangP>
             <vShortEn>1</vShortEn>
             <vShortWch>1</vShortWch>
             <v6Lto>0</v6Lto>
@@ -337,7 +338,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS\Include;..\..\NUC220LC2AN;..\MyLib\inc;..\Device\Nuvoton\NUC200Series\Include;..\StdDriver\inc;..\Common;..\Common\Compiler\IAR;..\..\LoNhiet</IncludePath>
+              <IncludePath>..\CMSIS\Include;..\..\NUC220LC2AN;..\MyLib\inc;..\Device\Nuvoton\NUC200Series\Include;..\StdDriver\inc;..\Common;..\Common\Compiler\IAR;..\..\LoNhiet;..\MyLib_Cfg\inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -422,11 +423,6 @@
               <FilePath>..\MyLib\src\SystemTick_App.c</FilePath>
             </File>
             <File>
-              <FileName>Scheduler_Cfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\MyLib\src\Scheduler_Cfg.c</FilePath>
-            </File>
-            <File>
               <FileName>Fls.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\MyLib\src\Fls.c</FilePath>
@@ -437,24 +433,14 @@
               <FilePath>..\MyLib\src\TimeOut.c</FilePath>
             </File>
             <File>
-              <FileName>TimeOut_Cfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\MyLib\src\TimeOut_Cfg.c</FilePath>
-            </File>
-            <File>
-              <FileName>Fls_Cfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\MyLib\src\Fls_Cfg.c</FilePath>
-            </File>
-            <File>
               <FileName>Heater_App.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\MyLib\src\Heater_App.c</FilePath>
             </File>
             <File>
-              <FileName>DateTime_Validation.c</FileName>
+              <FileName>UserInput_Validation.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\MyLib\src\DateTime_Validation.c</FilePath>
+              <FilePath>..\MyLib\src\UserInput_Validation.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -530,6 +516,31 @@
         </Group>
         <Group>
           <GroupName>Common</GroupName>
+        </Group>
+        <Group>
+          <GroupName>MyLib_Cfg</GroupName>
+          <Files>
+            <File>
+              <FileName>Button_Processing_Cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib_Cfg\src\Button_Processing_Cfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>Fls_Cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib_Cfg\src\Fls_Cfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>Scheduler_Cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib_Cfg\src\Scheduler_Cfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>TimeOut_Cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib_Cfg\src\TimeOut_Cfg.c</FilePath>
+            </File>
+          </Files>
         </Group>
       </Groups>
     </Target>

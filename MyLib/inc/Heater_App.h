@@ -23,7 +23,7 @@
 #include "Button_Processing.h"
 #include "Fls.h"
 #include "TimeOut.h"
-#include "DateTime_Validation.h"
+#include "UserInput_Validation.h"
 
 #include "Heater_Types.h"
 #include "LoNhiet_UserCfg.h"
@@ -33,8 +33,6 @@
 /*******************************************************************************
 **                      Define macro                                          **
 *******************************************************************************/
-
-#define LIMIT_MAX_SETPOINT(SPvar)  ((SPvar > MAX_TEMP_TYPE_K) ? MAX_TEMP_TYPE_K : SPvar)
 
 #define HEATER_IS_NOT_SETTING_MODE(HeaterMode)     \
          ((HeaterMode != HEATER_UPDATE_SETPOINT) && \

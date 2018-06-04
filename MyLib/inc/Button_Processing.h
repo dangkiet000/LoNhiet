@@ -22,23 +22,6 @@
 /*******************************************************************************
 **                      Define macro                                          **
 *******************************************************************************/
-#define Button_ISR         GPAB_IRQHandler
-  
-#define ButtonBaseAddr     PA 
-  
-#define BSET_PIN               PA4
-#define BCONG_PIN              PA2
-#define BTRU_PIN               PA3
-  
-#define BSET_BIT           BIT4
-#define BCONG_BIT          BIT2
-#define BTRU_BIT           BIT3
-  
-#define BSET_ID         2U
-#define BCONG_ID        1U
-#define BTRU_ID         0U
-  
-#define NUM_BUTTON_EVENTS  3U
 
 /*******************************************************************************
 **                      TYPE DEFINITION                                       **
@@ -59,6 +42,7 @@ typedef enum ETag_Btn_StatusType
   BTN_ONHOLD,
   BTN_PRESSED
 } Btn_StatusType;
+
 //*****************************************************************************
 //
 //! The structure defining a function which the scheduler will call
@@ -73,62 +57,39 @@ typedef struct STag_Btn_ConfigType
   /* If button is hold longer this time, call-back pfnHoldEvent2 was called */
   uint16_t usHoldThresTime;
 
-  /* This type of button event */
-  Btn_EventType enEventType;
-  
   /* State of button */
   Btn_StatusType enStatus;
   
   /* Call-back function */
-  void (*pfnFunction)(void);
+  void (*const pfnFunction)(void);
   
   /* Call-back function was called if button is hold longer usHoldThresTime */
-  void (*pfnHoldEvent1)(void);
+  void (*const pfnHoldEvent1)(void);
   
   /* Call-back function was called if button is hold longer usHoldThresTime */
-  void (*pfnHoldEvent2)(void);
+  void (*const pfnHoldEvent2)(void);
 }Btn_ConfigType;
 
-//*****************************************************************************
-//
-//! This global table must be populated by the client and contains information
-//! on each function that the scheduler is to call.
-//
-//*****************************************************************************
+/*******************************************************************************
+**                      Global definition                                     **
+*******************************************************************************/
 extern Btn_ConfigType Btn_ConfigSet[];
 
-//*****************************************************************************
-//
-//! This global variable must be exported by the client.  It must contain the
-//! number of entries in the Btn_ConfigSet array.
-//
-//*****************************************************************************
-
-  
-  
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
+STATIC void HW_Interrupt_GPIO_Init(void);
 
-void HW_Interrupt_GPIO_Init(void);
+/*******************************************************************************
+**                      API OTHER MODULE                                      **
+*******************************************************************************/
+extern uint32_t millis(void);
+
 /*******************************************************************************
 **                      API Function Prototypes                               **
 *******************************************************************************/
 void Btn_Init(void);
 void Btn_MainFunction(void);
-
-extern uint32_t millis(void);
-
-/* Button call-back function prototypes */
-extern void BSET_Release_Event(void);
-extern void BSET_HoldToThres_Event(void);
-extern void BSET_BCONG_HoldToThres_Event(void);
-extern void BSET_BTRU_HoldToThres_Event(void);
-
-extern void BCONG_Release_Event(void);
-
-extern void BTRU_Release_Event(void);
-extern void BTRU_HoldToThres_Event(void);
 
 
 
