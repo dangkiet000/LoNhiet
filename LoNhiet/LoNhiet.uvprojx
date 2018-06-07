@@ -442,6 +442,11 @@
               <FileType>1</FileType>
               <FilePath>..\MyLib\src\UserInput_Validation.c</FilePath>
             </File>
+            <File>
+              <FileName>Dem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib\src\Dem.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

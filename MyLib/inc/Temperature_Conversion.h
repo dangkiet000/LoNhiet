@@ -27,9 +27,18 @@
 #define  VREF_ADC_IN_VOLT      4.096F /* 4.096V <=> 4096mV */
 #define  VREF_ADC_IN_MILIVOLT  4096U
   
+
+ 
 /* Opamp amplifier factor */
-#define  AMP_FACTOR   (float32)63.29
-  
+#define  AMP_FACTOR    (float32)63.29
+
+#define  MAX_MILIVOLT_TYPE_K (float32)54.886
+
+
+#define  MAX_ADC_TYPE_K        (uint16)(AMP_FACTOR*MAX_MILIVOLT_TYPE_K)
+
+#define  MAX_ADC_TYPE_K_NON_THERMO   4000U 
+
 #define  TEMP_ERROR            8888U
 
 

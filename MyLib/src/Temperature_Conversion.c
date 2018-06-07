@@ -8,7 +8,9 @@
  * @note
  * Copyright (C) 2016 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
+
 #include "Temperature_Conversion.h"
+#include "Dem.h"
 
 /**
   * @brief  Convert adc value of LM35 to ambient temperature.
@@ -104,7 +106,7 @@ uint16 ThermoCouple_mV_To_Temp(float32 Lfl_EmV)
   * @param[in] ADC_Enviroment: ADC value of temperature ambient sensor.
   * @return Thermo-couple temperature after compensating.
   * @details  Convert milivolt of Thermo-couple to Real Thermo-couple temperature.
-
+  * @Note
   CONG THUC BU NHIET THERMO-COUPLE 
     Temp_ThermoCouple_Real = Temp_ThermoCouple_Measure - Temp_Enviroment
     
@@ -134,23 +136,44 @@ uint16 ThermoCouple_ADCToTemp(uint16 ADC_ThermoCouple, \
   float32 LflTC_mV = 0; /* Voltage of Thermo-couple in milivolt */
   uint16 Lus_LM35_Temp = 0;
   uint16 Lus_TC_TempNotCom = 0;
-  uint16 LulADC_ThermoCouple = ADC_ThermoCouple;
-  uint16 LulADC_Enviroment = ADC_Enviroment;
   
-  LflTC_mV = ((float32)(LulADC_ThermoCouple))/ AMP_FACTOR;
-
-  Lus_TC_TempNotCom = ThermoCouple_mV_To_Temp(LflTC_mV);
-
-  Lus_LM35_Temp = ThermoCouple_ADCToAmbientTemp(LulADC_Enviroment);
-  
-  if(Lus_TC_TempNotCom < Lus_LM35_Temp)
+  /* DET runtime error detect. */
+  /* Checking if heater is not connect with Thermo-couple (ADC value = max)*/
+  if(ADC_ThermoCouple > MAX_ADC_TYPE_K_NON_THERMO)
   {
-    return TEMP_ERROR;
+    /* Report Det runtime error detect */
+    LusTemp_ThermoCouple = TEMP_ERROR;
+    
+    Dem_ReportErrorStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_FAILED);
   }
+  else if(ADC_ThermoCouple > MAX_ADC_TYPE_K)
+  {
+    LusTemp_ThermoCouple = TEMP_ERROR;
+  }
+  else
+  {
   
-  LusTemp_ThermoCouple = Lus_TC_TempNotCom - Lus_LM35_Temp;
+    /* Convert ADC value to miliVoltage. */
+    LflTC_mV = ((float32)(ADC_ThermoCouple))/ AMP_FACTOR;
+
+    Lus_TC_TempNotCom = ThermoCouple_mV_To_Temp(LflTC_mV);
+
+    Lus_LM35_Temp = ThermoCouple_ADCToAmbientTemp(ADC_Enviroment);
+    
+    if(Lus_TC_TempNotCom < Lus_LM35_Temp)
+    {
+      /* Report Det runtime error detect */
+      LusTemp_ThermoCouple = TEMP_ERROR;
+    }
+    
+    LusTemp_ThermoCouple = Lus_TC_TempNotCom - Lus_LM35_Temp;
+    
+    Dem_ReportErrorStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_PASSED);
+  }
   return LusTemp_ThermoCouple;
 }
+
+
 /*** (C) COPYRIGHT 2016 Nuvoton Technology Corp. ***/
 
 

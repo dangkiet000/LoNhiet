@@ -15,9 +15,9 @@
 **                      Global Data Types                                    **
 *******************************************************************************/
 uint16_t LusADC_Val[PDMA_DATA_NUM] = {0}; /* Mang Gia tri ADC */
-static uint32_t GulADC_THC_TB;  /* Gia tri ADC trung binh cua Thermo-couple */
+uint32 GulADC_THC_TB;  /* Gia tri ADC trung binh cua Thermo-couple */
 static uint32_t LulADC_THC_TB;  /* Gia tri ADC trung binh cua Thermo-couple */
-static uint32_t GulADC_LM35_TB; /* Gia tri ADC trung binh cua LM35 */
+uint32 GulADC_LM35_TB; /* Gia tri ADC trung binh cua LM35 */
 static uint8_t LucCnt;
 /* Status of ADC */
 volatile ADCStatusType LenConvertStatus = ADC_IDLE;
@@ -272,11 +272,6 @@ uint16_t Get_ADC_Value(boolean LblChannelType)
   } 
 }
 
-/* Temperature convert function */
-uint16_t GetTemp_ThermoCouple(void)
-{
-  return ThermoCouple_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
-}
 
 ADCStatusType ADC_GetStatus(void)
 {

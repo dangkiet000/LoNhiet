@@ -1,5 +1,5 @@
 /**************************************************************************//**
- * @file     Heater_App.c
+ * @file     Heater_App.h
  * @version  V1.00
  * $Revision: 1 $
  * $Date: 26/05/2018 3:59p $
@@ -52,6 +52,9 @@ extern HeaterType Heater;
 void SYS_Init(void);
 void PORT_Init(void);
 void Timer0_Init(void);
+
+/* Temperature convert function */
+uint16 GetTemp_ThermoCouple(void);
 
 /* Display heater information at startup time. */
 void Heater_DisplayInfoAtStartup(void);

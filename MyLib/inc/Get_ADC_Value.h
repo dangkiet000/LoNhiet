@@ -54,8 +54,8 @@ typedef enum ETag_ADCStatusType
   ADC_LM35_IS_CONVERTING
 } ADCStatusType;
 
-static uint32_t GulADC_THC_TB;  /* Gia tri ADC trung binh cua Thermo-couple */
-static uint32_t GulADC_LM35_TB; /* Gia tri ADC trung binh cua LM35 */
+extern uint32 GulADC_THC_TB;  /* Gia tri ADC trung binh cua Thermo-couple */
+extern uint32 GulADC_LM35_TB; /* Gia tri ADC trung binh cua LM35 */
 
 /*******************************************************************************
 **                      Function Prototypes                                   **
@@ -64,17 +64,12 @@ void ADC_Init(void);
 void PDMA_Init(void);
 void Switch_PDMA_Channel(uint32_t LulChannel);
 
-extern uint16_t ThermoCouple_ADCToTemp(uint16_t ADC_ThermoCouple, 
-                                          uint16_t ADC_Enviroment);
-
 /*******************************************************************************
 **                      API Functions                                         **
 *******************************************************************************/
 void Get_ADC_Init(void);
 Std_ReturnType ADC_StartConvert(void);
 uint16_t Get_ADC_Value(boolean LblChannelType);
-/* Temperature convert function */
-uint16_t GetTemp_ThermoCouple(void);
 ADCStatusType ADC_GetStatus(void);
 
 #ifdef __cplusplus

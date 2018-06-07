@@ -425,6 +425,11 @@ void BTRU_HoldToThres_Event(void)
 **                      Function                                              **
 
 *******************************************************************************/
+/* Temperature convert function */
+uint16_t GetTemp_ThermoCouple(void)
+{
+  return ThermoCouple_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
+}
 /**
   * @brief Display heater working time in day.
   * @param[in] None.
