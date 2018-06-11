@@ -74,7 +74,7 @@ void TO_EnterPassword(void)
 /* Display LED7segment every 1000ms. */
 void DisplayTask(void)
 {
-  LED_TEST ^= 1;
+  LED_STATUS ^= 1;
 
   switch(Heater.enOpStatus)
   {
@@ -151,7 +151,7 @@ void StoringWorkingTime(void)
   else /* No */
   {
     /* Accumulate working time */
-    Heater.ulWorkingTime += 30;
+    Heater.ulWorkingTime += STORE_WORKING_TIME_INTERVAL_IN_MIN;
 
     /* To Store working-time in flash memory */
     Heater_StoreFlsData(&Heater, FLS_WORKINGTIME);
@@ -290,7 +290,8 @@ void BSET_Release_Event(void)
 
     /* Blink next LED7seg. */
     Heater.ucBlinkLED7Idx++;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                        SETTING_MODE_BLINK_TIME);
     LED7_DisplayLeadingZeros(Heater.usSetPoint);
 
     if(Heater.ucBlinkLED7Idx > 3)
@@ -310,7 +311,8 @@ void BSET_Release_Event(void)
 
     /* Blink next LED7seg. */
     Heater.ucBlinkLED7Idx++;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                        SETTING_MODE_BLINK_TIME);
     LED7_DisplayLeadingZeros(Heater.usUserPassword);
 
     if(Heater.ucBlinkLED7Idx > 3)
@@ -330,7 +332,8 @@ void BSET_Release_Event(void)
 
     /* Blink next LED7seg. */
     Heater.ucBlinkLED7Idx++;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                        SETTING_MODE_BLINK_TIME);
 
     LED7_DisplayMon(Heater.MDate.ucMonth);
 
@@ -351,7 +354,8 @@ void BSET_Release_Event(void)
 
     /* Blink next LED7seg. */
     Heater.ucBlinkLED7Idx++;
-    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+    LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                        SETTING_MODE_BLINK_TIME);
 
     LED7_DisplayDay(Heater.MDate.ucDay);
 
@@ -425,7 +429,13 @@ void BTRU_HoldToThres_Event(void)
 **                      Function                                              **
 
 *******************************************************************************/
-/* Temperature convert function */
+/**
+  * @brief Get temperature of heater.
+  * @param[in] None.
+  * @return  uint16_t: temperature of heater in degree celsius.
+  * @details None.
+  * @note None.
+  */
 uint16_t GetTemp_ThermoCouple(void)
 {
   return ThermoCouple_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
@@ -435,7 +445,7 @@ uint16_t GetTemp_ThermoCouple(void)
   * @param[in] None.
   * @return  None.
   * @details Display working time of heater.
-             Unit: day.
+  *          Unit: day.
   * @note None.
   */
 void Heater_DisplayWorkingTime(void)
@@ -447,7 +457,7 @@ void Heater_DisplayWorkingTime(void)
   because heater work 8h/day.
   => days = hour/8.
   */
-  Lusdays = (uint16)(Heater.ulWorkingTime/(60*8)) ;
+  Lusdays = (uint16)(Heater.ulWorkingTime/(NUM_MIN_PER_HOUR*NUM_HOUR_PER_DAY));
   
   LED7_DisplayNumber(Lusdays);
   DelaySystemTick_ms(HEATER_WORKING_DISPLAY_TIME);
@@ -491,25 +501,25 @@ void Heater_DisplayInfoAtStartup(void)
   * @brief Checking Activation Lock status and return heater is disable or
            enable.
   * @param[in] None.
-  * @return  HEATER_ENABLE: Heater is enabled triac controlling.
-             HEATER_DISABLE: Heater is disabled triac controlling.
+  * @return  HEATER_TRIAC_ENABLE: Heater is enabled triac controlling.
+             HEATER_TRIAC_DISABLE: Heater is disabled triac controlling.
   * @details Checking Activation Lock status and return heater is disable or
            enable.
   * @note None.
   */
-Heater_ActiStatusType Heater_CheckActivationLock(void)
+Heater_TriacStatusType Heater_CheckActivationLock(void)
 {
-  Heater_ActiStatusType LddRetVal;
+  Heater_TriacStatusType LddRetVal;
 
   Heater_ReadFlsData(&Heater, FLS_ACTILOCKSTATUS);
 
   if(Heater.enActiLockStatus == LONHIET_LOCKED)
   {
-    LddRetVal = HEATER_DISABLE;
+    LddRetVal = HEATER_TRIAC_DISABLE;
   }
   else if(Heater.enActiLockStatus == LONHIET_UNLOCKED)
   {
-    LddRetVal = HEATER_ENABLE;
+    LddRetVal = HEATER_TRIAC_ENABLE;
   }
   else if(Heater.enActiLockStatus == LONHIET_TRIAL)
   {
@@ -520,11 +530,11 @@ Heater_ActiStatusType Heater_CheckActivationLock(void)
       Heater.enActiLockStatus = LONHIET_LOCKED;
       Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
 
-      LddRetVal = HEATER_DISABLE;
+      LddRetVal = HEATER_TRIAC_DISABLE;
     }
     else /* No. */
     {
-      LddRetVal = HEATER_ENABLE;
+      LddRetVal = HEATER_TRIAC_ENABLE;
     }
   }
   else
@@ -596,13 +606,13 @@ void Heater_Startup(void)
   /* To check that heater is configured datetime or not. */
   if(FALSE == Heater_DateProductIsConfigured())
   {
-    Heater.enActiStatus = HEATER_DISABLE;
+    Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
     Heater.enOpStatus = HEATER_WAIITING_USER_SETUP_DATETIME;
   }
   else /* DateTime is configured. */
   {
     /* Checking Activation Lock status. */
-    Heater.enActiStatus = Heater_CheckActivationLock();
+    Heater.enTriacStatus = Heater_CheckActivationLock();
 
     /* Read all information. */
     Heater_ReadFlsData(&Heater, FLS_SETPOINT);
@@ -618,7 +628,7 @@ void Heater_Startup(void)
     printf("Ngay: %d\r\n", Heater.MDate.ucDay);
     printf("Thang: %d\r\n", Heater.MDate.ucMonth);
     printf("Nam: %d\r\n", Heater.MDate.usYear);
-    printf("Working Time: %d minutes\r\n", Heater.ulWorkingTime*30);
+    printf("Working Time: %d minutes\r\n", Heater.ulWorkingTime);
     printf("SetPoint: %d\r\n", Heater.usSetPoint);
     printf("Activation Lock Status: ");
     switch(Heater.enActiLockStatus)
@@ -676,7 +686,8 @@ void Enter_HEATER_SETUP_DAY_mode(void)
   Heater.ucBlinkLED7Idx = 2;
 
   /* Enable blinking LED7. */
-  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                      SETTING_MODE_BLINK_TIME);
 
   /* Start timeout count-down. */
   TO_Trigger(TO_SetDateTime_Channel);
@@ -733,7 +744,8 @@ void Enter_HEATER_SETUP_MON_mode(void)
   Heater.ucBlinkLED7Idx = 2;
 
   /* Enable blinking LED7. */
-  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                      SETTING_MODE_BLINK_TIME);
 
   /* Start timeout count-down. */
   TO_Trigger(TO_SetDateTime_Channel);
@@ -794,7 +806,8 @@ void Enter_HEATER_UPDATE_SETPOINT_mode(void)
   }
 
   /* Enable blinking LED7. */
-  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                      SETTING_MODE_BLINK_TIME);
 
   /* Start timeout count-down. */
   TO_Trigger(TO_UpdateSetPoint_Channel);
@@ -847,7 +860,8 @@ void Enter_HEATER_ENTER_PASSWORD_mode(void)
   Heater.ucBlinkLED7Idx = 0;
 
   /* Enable blinking LED7. */
-  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), 300);
+  LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
+                      SETTING_MODE_BLINK_TIME);
 
   /* Start timeout count-down. */
   TO_Trigger(TO_EnterPassword_Channel);
@@ -1001,7 +1015,7 @@ void Heater_StoreFlsData(HeaterType *pHeater, Fls_DataIdType FlsId)
 /* Blinking LED7-Seg in milisecond synchronously. */
 void BlinkingAllLED7_Synchronous(uint32 duration)
 {
-  LED7_EnableBlinking(LED7_ALL, 150);
+  LED7_EnableBlinking(LED7_ALL, END_EVENT_BLINK_TIME);
   DelaySystemTick_ms(duration);
   LED7_DisableBlinking();
 }
@@ -1042,13 +1056,13 @@ void SYS_Init(void)
 /* Configure port pin as alternative function. */
 void PORT_Init(void)
 {
-  /* Cau hinh chan DIEU KHIEN LED_TEST */
-  GPIO_SetMode(LED_TEST_PORT, LED_TEST_BIT, GPIO_PMD_OUTPUT);
-  LED_TEST = 0;
+  /* Cau hinh chan DIEU KHIEN LED_STATUS */
+  GPIO_SetMode(LED_STATUS_PORT, LED_STATUS_BIT, GPIO_PMD_OUTPUT);
+  LED_STATUS = 0;
 
   /* Cau hinh chan DIEU KHIEN TRIAC */
   GPIO_SetMode(TRIAC_PORT, TRIAC_BIT, GPIO_PMD_OUTPUT);
-  TRIAC_PIN = TRIAC_OFF;
+  TRIAC_OFF();
 
   /* Set GPB multi-function pins for UART0 RXD and TXD */
   SYS->GPB_MFP &= ~(SYS_GPB_MFP_PB4_Msk | SYS_GPB_MFP_PB5_Msk);
@@ -1063,6 +1077,53 @@ void PORT_Init(void)
   SYS->ALT_MFP1 &= ~(SYS_ALT_MFP1_PA0_Msk| SYS_ALT_MFP1_PA1_Msk);
 }
 
+
+/**
+  * @brief Controlling temperture of heater.
+  * @param[in] None.
+  * @return  None.
+  * @details None.
+  * @note None.
+  */
+void HeatingControl_MainFunction(void)
+{
+  if((Heater.enTriacStatus == HEATER_TRIAC_ENABLE) && \
+     (Heater.enOpStatus == HEATER_IDLE))
+  {
+    if(Heater.usTempTHC < Heater.usSetPoint)
+    {
+      TRIAC_ON();
+    }
+    else
+    {
+      TRIAC_OFF();
+    }
+  }
+  else
+  {
+  
+  }
+}
+
+/**
+  * @brief Reads the heater diagnostic status periodically and sets 
+  *        product/development accordingly.
+  * @param[in] None.
+  * @return  None.
+  * @details None.
+  * @note None.
+  */
+void Heater_MainFunctionDiagnostics(void)
+{
+  if(DEM_EVENT_STATUS_PASSED == Dem_GetEventStatus(ERROR_THERMO_NOT_CONNECTED))
+  {
+    Heater.enTriacStatus = HEATER_TRIAC_ENABLE;
+  }
+  else
+  {
+    Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
+  }
+}
 /*******************************************************************************
 **                      Testing Functions                                     **
 *******************************************************************************/

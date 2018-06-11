@@ -102,33 +102,7 @@ int main()
   }
 }
 
-/*************    HardWare connection:    *************************************
-* LED-7Seg:   a <-> PB0
-*             f <-> PB1
-*             b <-> PB2
-*             g <-> PB3
-*             c <-> PC0
-*             dot <-> PC1
-*             e <-> PC2
-*             d <-> PC3
-*          LED1 <-> PA8
-*          LED2 <-> PA9
-*          LED3 <-> PA10
-*          LED4 <-> PA11
-*
-* Button:  Button+ <-> PA2
-*          Button- <-> PA3
-*          ButtonSET <-> PA4
-* Triac:
-* Triac control  <-> PA12
-* Triac feedback <-> PA5
-*
-* Speaker pin    <-> PB8
-*
-* ADC Thermo-Couple <-> PA0
-* ADC LM35          <-> PA1
-********************************************************************************
-Do giam nhiet do: 19s/do C                                                    */
+
 /*******************************************************************************
 **                      End of file                                           **
 *******************************************************************************/

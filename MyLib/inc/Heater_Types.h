@@ -63,14 +63,14 @@ typedef enum ETag_Heater_ActiLockStatusType
 }Heater_ActiLockStatusType;
 
 
-/* Definition of LoNhiet Active Status Type. */
-typedef enum ETag_Heater_ActiStatusType
+/* Definition of LoNhiet Triac Status Type. */
+typedef enum ETag_Heater_TriacStatusType
 {
   /* State which LoNhiet is in trial time */
-  HEATER_ENABLE = 0,
+  HEATER_TRIAC_ENABLE = 0,
   /* State which TRIAC is not working, user must correct password to UNLOCKED */
-  HEATER_DISABLE
-}Heater_ActiStatusType;
+  HEATER_TRIAC_DISABLE
+}Heater_TriacStatusType;
 
 typedef struct STag_Heater_DateTimeType
 {
@@ -112,7 +112,7 @@ typedef struct STag_HeaterType
   Heater_DateTimeType MDate;
   
   /* Heater status is disable or enable. */
-  Heater_ActiStatusType enActiStatus;
+  Heater_TriacStatusType enTriacStatus;
   
 }HeaterType;
 

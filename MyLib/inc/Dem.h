@@ -11,13 +11,14 @@
 **                      Include Section                                       **
 *******************************************************************************/
 #include "Std_Types.h"
+#include "Dem_Cfg.h"
 
 #ifndef __DEM_H__
 #define __DEM_H__
 /*******************************************************************************
 **                      Global Symbols                                        **
 *******************************************************************************/
-#define ERROR_THERMO_NOT_CONNECTED          (Dem_EventIdType)0
+
 
 /*******************************************************************************
 **                      Global Data Types                                     **
@@ -30,13 +31,22 @@ typedef enum {
 
 typedef uint16 Dem_EventIdType;
 
+/* Definition of Dem configuration type. */
+typedef struct STag_Dem_ConfigType
+{
+  /* Dem Event Status. */
+  Dem_EventStatusType enStatus;
+}Dem_ConfigType;
+
+/* Global pointer point to constant flash configuration. */
+extern Dem_ConfigType Dem_GaaConfig[];
+
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
-
-
-extern void Dem_ReportErrorStatus
-                    (Dem_EventIdType EventId, Dem_EventStatusType EventStatus);
+void Dem_SetEventStatus(Dem_EventIdType EventId, \
+                        Dem_EventStatusType EventStatus);
+Dem_EventStatusType Dem_GetEventStatus (Dem_EventIdType EventId);
 
 #endif /* __DEM_H__ */
 

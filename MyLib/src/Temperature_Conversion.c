@@ -144,7 +144,7 @@ uint16 ThermoCouple_ADCToTemp(uint16 ADC_ThermoCouple, \
     /* Report Det runtime error detect */
     LusTemp_ThermoCouple = TEMP_ERROR;
     
-    Dem_ReportErrorStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_FAILED);
+    Dem_SetEventStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_FAILED);
   }
   else if(ADC_ThermoCouple > MAX_ADC_TYPE_K)
   {
@@ -168,7 +168,7 @@ uint16 ThermoCouple_ADCToTemp(uint16 ADC_ThermoCouple, \
     
     LusTemp_ThermoCouple = Lus_TC_TempNotCom - Lus_LM35_Temp;
     
-    Dem_ReportErrorStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_PASSED);
+    Dem_SetEventStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_PASSED);
   }
   return LusTemp_ThermoCouple;
 }

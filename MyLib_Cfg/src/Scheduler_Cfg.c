@@ -63,6 +63,28 @@ tSchedulerTask Sch_GaaTable[] =
     0,
     /* enStatus */
     TASK_ENABLE
+  },
+  /* Index: 4 - SCH_HeatingControl_Task */
+  {
+    /* pfnFunction */
+    &HeatingControl_MainFunction,
+    /* ulInterval */
+    1,
+    /* ulLastTick */
+    0,
+    /* enStatus */
+    TASK_ENABLE
+  },
+  /* Index: 5 - SCH_HeaterDiagnostics_Task */
+  {
+    /* pfnFunction */
+    &Heater_MainFunctionDiagnostics,
+    /* ulInterval */
+    3,
+    /* ulLastTick */
+    0,
+    /* enStatus */
+    TASK_ENABLE
   }
 };
 

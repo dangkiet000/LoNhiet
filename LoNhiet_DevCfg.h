@@ -60,25 +60,63 @@
 #define MAX_HUNDREDS_TEMPERATURE     ((uint8)((MAX_HEATER_TEMPERATURE/100)%10))
 #define MAX_THOUSANDS_TEMPERATURE    ((uint8)(MAX_HEATER_TEMPERATURE/1000))
 
+/* Thời gian nhấp nháy LED7 lúc kết thúc một sự kiện. */
+#define END_EVENT_BLINK_TIME         150U
 
+/* Blinking LED7 time in setting modes. */
+#define SETTING_MODE_BLINK_TIME      300U
+
+/* Khoảng thời gian(phút) mà lò nhiệt lưu lại thời gian làm việc. */
+#define STORE_WORKING_TIME_INTERVAL_IN_MIN  30U
+
+#define NUM_MIN_PER_HOUR  60U
+#define NUM_HOUR_PER_DAY  8U
 
 /*-------------------- Specific hardware configuration. ----------------------*/
+/*************    HardWare connection:    *************************************
+* LED-7Seg:   a <-> PB0
+*             f <-> PB1
+*             b <-> PB2
+*             g <-> PB3
+*             c <-> PC0
+*             dot <-> PC1
+*             e <-> PC2
+*             d <-> PC3
+*          LED1 <-> PA8
+*          LED2 <-> PA9
+*          LED3 <-> PA10
+*          LED4 <-> PA11
+*
+* Button:  Button+ <-> PA2
+*          Button- <-> PA3
+*          ButtonSET <-> PA4
+* Triac:
+* Triac control  <-> PA12
+* Triac feedback <-> PA5
+*
+* Speaker pin    <-> PB8
+*
+* ADC Thermo-Couple <-> PA0
+* ADC LM35          <-> PA1
+*******************************************************************************/
 
 /* System clock define */
 #define PLL_CLOCK                 50000000
 
 
-/* Led test define */
-#define LED_TEST                  PA13
-#define LED_TEST_PORT             PA
-#define LED_TEST_BIT              BIT13
+/* Led Status define */
+#define LED_STATUS                PA13
+#define LED_STATUS_PORT           PA
+#define LED_STATUS_BIT            BIT13
+#define LED_STATUS_ON_VALUE       1U
+#define LED_STATUS_OFF_VALUE      0U
 
 /* Triac control define */
 #define TRIAC_PORT                PA
 #define TRIAC_PIN                 PA12
 #define TRIAC_BIT                 BIT12
-#define TRIAC_ON                  0U
-#define TRIAC_OFF                 1U
+#define TRIAC_ON_VALUE            0U
+#define TRIAC_OFF_VALUE           1U
 
 
 /* Speaker control define */
@@ -90,20 +128,13 @@
 #define HEATER_TIMEOUT_FALSE     FALSE
 
 
+#define TRIAC_ON()               TRIAC_PIN = TRIAC_ON_VALUE
+#define TRIAC_OFF()              TRIAC_PIN = TRIAC_OFF_VALUE
 
-INLINE void LED_TEST_ON(void)
-{
-  LED_TEST = 1;
-}
+#define LED_STATUS_ON()          LED_STATUS = LED_STATUS_ON_VALUE
 
-INLINE void LED_TEST_OFF(void)
-{
-  LED_TEST = 0;
-}
+#define LED_STATUS_OFF()         LED_STATUS = LED_STATUS_OFF_VALUE
 
-INLINE void LED_TEST_TOOGLE(void)
-{
-  LED_TEST ^= 1;
-}
+#define LED_STATUS_TOOGLE()      LED_STATUS ^= 1;
 
 #endif //__LONHIET_DEVCFG_H__

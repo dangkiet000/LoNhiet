@@ -24,6 +24,7 @@
 #include "Fls.h"
 #include "TimeOut.h"
 #include "UserInput_Validation.h"
+#include "Dem.h"
 
 #include "Heater_Types.h"
 #include "LoNhiet_UserCfg.h"
@@ -66,7 +67,7 @@ void Heater_DisplayInfoAtStartup(void);
 void Heater_CheckFlashData(void);
 
 /* Checking Activation Lock status and return heater is disable or enable. */
-Heater_ActiStatusType Heater_CheckActivationLock(void);
+Heater_TriacStatusType Heater_CheckActivationLock(void);
 
 /* Startup heater. */
 void Heater_Startup(void);

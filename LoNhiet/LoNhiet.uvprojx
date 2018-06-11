@@ -545,6 +545,11 @@
               <FileType>1</FileType>
               <FilePath>..\MyLib_Cfg\src\TimeOut_Cfg.c</FilePath>
             </File>
+            <File>
+              <FileName>Dem_Cfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\MyLib_Cfg\src\Dem_Cfg.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
