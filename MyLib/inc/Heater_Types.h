@@ -49,17 +49,17 @@ typedef enum ETag_Heater_StatusType
   HEATER_TRIAC_DIED,
   /* State which thermal resistor is died. */
   HEATER_RESISTOR_DIED,
-}Heater_StatusType;
+}Heater_StateType;
 
 /* Definition of LoNhiet Activation Lock Status */
 typedef enum ETag_Heater_ActiLockStatusType
 {
   /* State which LoNhiet is in trial time */
-  LONHIET_TRIAL = 5,
+  HEATER_TRIAL = 5,
   /* State which TRIAC is not working, user must correct password to UNLOCKED */
-  LONHIET_LOCKED,
+  HEATER_LOCKED,
   /* State which user can use full feature. */
-  LONHIET_UNLOCKED
+  HEATER_UNLOCKED
 }Heater_ActiLockStatusType;
 
 
@@ -91,7 +91,7 @@ typedef struct STag_HeaterType
   uint32 ulWorkingTime;
   
   /* LoNhiet operation status */
-  Heater_StatusType enOpStatus;
+  Heater_StateType enOpMode;
   
   /* LoNhiet Activation Lock Status */
   Heater_ActiLockStatusType enActiLockStatus;
@@ -113,7 +113,7 @@ typedef struct STag_HeaterType
   
   /* Heater status is disable or enable. */
   Heater_TriacStatusType enTriacStatus;
-  
+
 }HeaterType;
 
 

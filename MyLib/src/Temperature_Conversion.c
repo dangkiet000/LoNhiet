@@ -29,7 +29,7 @@
   
     => Temp_MT = ADCValue/10  
   */
-uint16 ThermoCouple_ADCToAmbientTemp(uint16 LusADCValue)
+uint16 ThC_ADCToAmbientTemp(uint16 LusADCValue)
 {
   uint16 LusADCLM35;
   LusADCLM35 = LusADCValue;
@@ -49,7 +49,7 @@ uint16 ThermoCouple_ADCToAmbientTemp(uint16 LusADCValue)
     Reference:
     http://srdata.nist.gov/its90/type_k/kcoefficients_inverse.html
   */
-uint16 ThermoCouple_mV_To_Temp(float32 Lfl_EmV)
+uint16 ThC_mV_To_Temp(float32 Lfl_EmV)
 {
   uint16 LusTemp;
   float32 E;
@@ -129,7 +129,7 @@ uint16 ThermoCouple_mV_To_Temp(float32 Lfl_EmV)
     ma Vref_ADC*1000 = MAX_ADC_VALUE
     => V_TC (mV)= ADCValue/AMP_FACTOR
   */
-uint16 ThermoCouple_ADCToTemp(uint16 ADC_ThermoCouple, \
+uint16 ThC_ADCToTemp(uint16 ADC_ThermoCouple, \
                                    uint16 ADC_Enviroment)
 {
   uint16 LusTemp_ThermoCouple; /* in Celsius */
@@ -146,19 +146,20 @@ uint16 ThermoCouple_ADCToTemp(uint16 ADC_ThermoCouple, \
     
     Dem_SetEventStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_FAILED);
   }
+  /*
   else if(ADC_ThermoCouple > MAX_ADC_TYPE_K)
   {
     LusTemp_ThermoCouple = TEMP_ERROR;
-  }
+  }*/
   else
   {
   
     /* Convert ADC value to miliVoltage. */
     LflTC_mV = ((float32)(ADC_ThermoCouple))/ AMP_FACTOR;
 
-    Lus_TC_TempNotCom = ThermoCouple_mV_To_Temp(LflTC_mV);
+    Lus_TC_TempNotCom = ThC_mV_To_Temp(LflTC_mV);
 
-    Lus_LM35_Temp = ThermoCouple_ADCToAmbientTemp(ADC_Enviroment);
+    Lus_LM35_Temp = ThC_ADCToAmbientTemp(ADC_Enviroment);
     
     if(Lus_TC_TempNotCom < Lus_LM35_Temp)
     {

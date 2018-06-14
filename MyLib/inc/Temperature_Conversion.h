@@ -68,12 +68,12 @@
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
-uint16 ThermoCouple_mV_To_Temp(float32 Lfl_EmV);
-uint16 ThermoCouple_ADCToAmbientTemp(uint16 LusADCValue);
+uint16 ThC_mV_To_Temp(float32 Lfl_EmV);
+uint16 ThC_ADCToAmbientTemp(uint16 LusADCValue);
 /*******************************************************************************
 **                      API Functions                                         **
 *******************************************************************************/
-extern uint16 ThermoCouple_ADCToTemp(uint16 ADC_ThermoCouple, 
+extern uint16 ThC_ADCToTemp(uint16 ADC_ThermoCouple, 
                                      uint16 ADC_Enviroment);
 
 

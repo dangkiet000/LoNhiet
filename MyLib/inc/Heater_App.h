@@ -54,6 +54,9 @@ void SYS_Init(void);
 void PORT_Init(void);
 void Timer0_Init(void);
 
+/* Display imaginary temperature to user. */
+void Heater_DisplayImaginaryTemp(uint16 Temperature, uint16 SetPoint);
+
 /* Temperature convert function */
 uint16 GetTemp_ThermoCouple(void);
 

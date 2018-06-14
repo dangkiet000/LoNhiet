@@ -23,7 +23,11 @@ Dem_ConfigType Dem_GaaConfig[] =
   /* Index: 0 - ERROR_THERMO_NOT_CONNECTED */
   {
     /* enStatus */
-    DEM_EVENT_STATUS_PASSED
+    DEM_EVENT_STATUS_PASSED,
+    /* pFunction */
+    &Dem_ErrThermoNotConnected_PassedEvent,
+    /* pFunction */
+    &Dem_ErrThermoNotConnected_FailedEvent,
   }
 };
 

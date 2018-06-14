@@ -64,6 +64,8 @@ int main()
 
   /* Init TimeOut module */
   TO_Init(TIMEOUT_CONFIG);
+  
+  Dem_Init();
 
   #if (DEBUG_MODE == STD_ON)
   /* Init UART1 use for debug and testing */

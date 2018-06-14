@@ -100,6 +100,13 @@ typedef struct STag_LED7_DriverType
 /* Errors code. */
 #define LED7_ERR0             0U
 #define LED7_ERR1             1U
+#define LED7_ERR2             2U
+#define LED7_ERR3             3U
+#define LED7_ERR4             4U
+#define LED7_ERR5             5U
+#define LED7_ERR6             6U
+#define LED7_ERR7             7U
+#define LED7_ERR8             8U
 #define LED7_ERR9             9U
 
 /* Result code. */

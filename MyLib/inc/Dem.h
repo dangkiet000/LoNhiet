@@ -36,6 +36,12 @@ typedef struct STag_Dem_ConfigType
 {
   /* Dem Event Status. */
   Dem_EventStatusType enStatus;
+  
+  /* Call-back passed function */
+  void (*const pPassedEvent)(void);
+  
+  /* Call-back failed function */
+  void (*const pFailedEvent)(void);
 }Dem_ConfigType;
 
 /* Global pointer point to constant flash configuration. */
@@ -44,6 +50,8 @@ extern Dem_ConfigType Dem_GaaConfig[];
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
+/* Initialize dem. */
+void Dem_Init(void);
 void Dem_SetEventStatus(Dem_EventIdType EventId, \
                         Dem_EventStatusType EventStatus);
 Dem_EventStatusType Dem_GetEventStatus (Dem_EventIdType EventId);

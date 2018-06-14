@@ -45,6 +45,7 @@
 /* Nhiệt độ cao nhất mà lò có thể đạt được. */
 #define MAX_HEATER_TEMPERATURE  NHIET_DO_MAX
 
+#define TOLERANCE_DISPLAY_SETPOINT  SAI_SO_HIEN_THI_NHIET_DO_CAI_DAT
 
 /* Trial time theo đơn vị phút, thời gian lưu trong flash memory có đơn vị là
    phút. */

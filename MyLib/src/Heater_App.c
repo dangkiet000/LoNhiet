@@ -27,7 +27,7 @@
 HeaterType Heater;
 
 
-const uint8 GaaMapNumberToPlace[4] = {
+const uint8 GaaMapNumberToPlace[MAX_NUM_LED7] = {
   THOUSANDS, 
   HUNDREDS,
   TENS,
@@ -36,6 +36,17 @@ const uint8 GaaMapNumberToPlace[4] = {
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
 *******************************************************************************/
+/*------------------------- Diagnostic Events(Dem) ---------------------------*/
+void Dem_ErrThermoNotConnected_PassedEvent(void)
+{
+  Heater.enTriacStatus = HEATER_TRIAC_ENABLE;
+}
+
+void Dem_ErrThermoNotConnected_FailedEvent(void)
+{
+  Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
+  TRIAC_OFF();
+}
 /*------------------------- TimeOut Events -----------------------------------*/
 void TO_UpdateSetPoint(void)
 {
@@ -53,12 +64,12 @@ void TO_UpdateSetPoint(void)
 }
 void TO_SetDateTime(void)
 {
-  if(Heater.enOpStatus == HEATER_SETUP_MON)
+  if(Heater.enOpMode == HEATER_SETUP_MON)
   {
     /* Exit HEATER_SETUP_MON mode */
     Exit_HEATER_SETUP_MON_mode(HEATER_TIMEOUT_TRUE);
   }
-  else if(Heater.enOpStatus == HEATER_SETUP_DAY)
+  else if(Heater.enOpMode == HEATER_SETUP_DAY)
   {
     /* Exit HEATER_SETUP_DAY mode */
     Exit_HEATER_SETUP_DAY_mode(HEATER_TIMEOUT_TRUE);
@@ -74,9 +85,7 @@ void TO_EnterPassword(void)
 /* Display LED7segment every 1000ms. */
 void DisplayTask(void)
 {
-  LED_STATUS ^= 1;
-
-  switch(Heater.enOpStatus)
+  switch(Heater.enOpMode)
   {
     case HEATER_UPDATE_SETPOINT:
     {
@@ -93,7 +102,15 @@ void DisplayTask(void)
     }
     case HEATER_IDLE:
     {
-      LED7_DisplayNumber(Heater.usTempTHC);
+      /* To check  error */
+      if(DEM_EVENT_STATUS_FAILED == Dem_GetEventStatus(ERROR_THERMO_NOT_CONNECTED))
+      {
+        LED7_DisplayError(LED7_ERR1);
+      }
+      else /* No error is detected. */
+      {
+        Heater_DisplayImaginaryTemp(Heater.usTempTHC, Heater.usSetPoint);
+      }
       break;
     }
     case HEATER_ENTER_PASSWORD:
@@ -165,7 +182,7 @@ void StoringWorkingTime(void)
 /* This event occurs if user release CONG button. */
 void BCONG_Release_Event(void)
 {
-  if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
+  if(Heater.enOpMode == HEATER_UPDATE_SETPOINT)
   {
     /* Reload timeout counter. */
     TO_Reload(TO_UpdateSetPoint_Channel);
@@ -176,7 +193,7 @@ void BCONG_Release_Event(void)
     
     LED7_DisplayLeadingZeros(Heater.usSetPoint);   
   }
-  else if(Heater.enOpStatus == HEATER_ENTER_PASSWORD)
+  else if(Heater.enOpMode == HEATER_ENTER_PASSWORD)
   {
     /* Increase LED7 value. */
     LED7_IncreaseLED7(Heater.ucBlinkLED7Idx, &Heater.usUserPassword);
@@ -185,7 +202,7 @@ void BCONG_Release_Event(void)
     /* Reload timeout counter. */
     TO_Reload(TO_EnterPassword_Channel);
   }
-  else if(Heater.enOpStatus == HEATER_SETUP_MON)
+  else if(Heater.enOpMode == HEATER_SETUP_MON)
   {
     /* Increase Month value. */
     switch(Heater.ucBlinkLED7Idx)
@@ -200,7 +217,7 @@ void BCONG_Release_Event(void)
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
   }
-  else if(Heater.enOpStatus == HEATER_SETUP_DAY)
+  else if(Heater.enOpMode == HEATER_SETUP_DAY)
   {
     /* Increase day value. */
     switch(Heater.ucBlinkLED7Idx)
@@ -223,7 +240,7 @@ void BCONG_Release_Event(void)
 /* This event occurs if user release TRU button. */
 void BTRU_Release_Event(void)
 {
-  if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
+  if(Heater.enOpMode == HEATER_UPDATE_SETPOINT)
   {
         /* Reload timeout counter. */
     TO_Reload(TO_UpdateSetPoint_Channel);
@@ -234,7 +251,7 @@ void BTRU_Release_Event(void)
     
     LED7_DisplayLeadingZeros(Heater.usSetPoint);  
   }
-  else if(Heater.enOpStatus == HEATER_ENTER_PASSWORD)
+  else if(Heater.enOpMode == HEATER_ENTER_PASSWORD)
   {
     /* Decrease LED7 value. */
     LED7_DecreaseLED7(Heater.ucBlinkLED7Idx, &Heater.usUserPassword);
@@ -244,7 +261,7 @@ void BTRU_Release_Event(void)
     /* Reload timeout counter. */
     TO_Reload(TO_EnterPassword_Channel);
   }
-  else if(Heater.enOpStatus == HEATER_SETUP_MON)
+  else if(Heater.enOpMode == HEATER_SETUP_MON)
   {
     /* Decrease Month value. */
     switch(Heater.ucBlinkLED7Idx)
@@ -259,7 +276,7 @@ void BTRU_Release_Event(void)
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
   }
-  else if(Heater.enOpStatus == HEATER_SETUP_DAY)
+  else if(Heater.enOpMode == HEATER_SETUP_DAY)
   {
     /* Decrease Day value. */
     switch(Heater.ucBlinkLED7Idx)
@@ -283,7 +300,7 @@ void BTRU_Release_Event(void)
 /* This event occurs if user release SET button. */
 void BSET_Release_Event(void)
 {
-  if(Heater.enOpStatus == HEATER_UPDATE_SETPOINT)
+  if(Heater.enOpMode == HEATER_UPDATE_SETPOINT)
   {
     /* Reload timeout counter. */
     TO_Reload(TO_UpdateSetPoint_Channel);
@@ -304,7 +321,7 @@ void BSET_Release_Event(void)
 
     }
   }
-  else if(Heater.enOpStatus == HEATER_ENTER_PASSWORD)
+  else if(Heater.enOpMode == HEATER_ENTER_PASSWORD)
   {
     /* Reload timeout counter. */
     TO_Reload(TO_EnterPassword_Channel);
@@ -325,7 +342,7 @@ void BSET_Release_Event(void)
 
     }
   }
-  else if(Heater.enOpStatus == HEATER_SETUP_MON)
+  else if(Heater.enOpMode == HEATER_SETUP_MON)
   {
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
@@ -347,7 +364,7 @@ void BSET_Release_Event(void)
 
     }
   }
-  else if(Heater.enOpStatus == HEATER_SETUP_DAY)
+  else if(Heater.enOpMode == HEATER_SETUP_DAY)
   {
     /* Reload timeout counter. */
     TO_Reload(TO_SetDateTime_Channel);
@@ -379,7 +396,7 @@ void BSET_Release_Event(void)
 /* This event occurs if user press and hold SET button longer 3 seconds. */
 void BSET_HoldToThres_Event(void)
 {
-  if(HEATER_IS_NOT_SETTING_MODE(Heater.enActiLockStatus))
+  if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enActiLockStatus))
   {
     /* Enter HEATER_UPDATE_SETPOINT mode. */
     Enter_HEATER_UPDATE_SETPOINT_mode();
@@ -392,10 +409,10 @@ void BSET_HoldToThres_Event(void)
 /* This event occurs if user hold CONG and SET button longer 3 seconds. */
 void BSET_BCONG_HoldToThres_Event(void)
 {
-  if(HEATER_IS_NOT_SETTING_MODE(Heater.enOpStatus))
+  if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode))
   {
     /* Set Heater status as HEATER_ENTER_PASSWORD. */
-    Heater.enOpStatus = HEATER_ENTER_PASSWORD;
+    Heater.enOpMode = HEATER_ENTER_PASSWORD;
     Enter_HEATER_ENTER_PASSWORD_mode();
   }
   else
@@ -406,7 +423,7 @@ void BSET_BCONG_HoldToThres_Event(void)
 /* This event occurs if user hold TRU and SET button longer 3 seconds. */
 void BSET_BTRU_HoldToThres_Event(void)
 {
-  if(HEATER_IS_NOT_SETTING_MODE(Heater.enOpStatus) == TRUE)
+  if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode) == TRUE)
   {
     /* Set Heater status as HEATER_SETUP_DATETIME. */
     Enter_HEATER_SETUP_MON_mode();
@@ -416,29 +433,59 @@ void BSET_BTRU_HoldToThres_Event(void)
 /* This event occurs if user press and hold TRU button longer 6 seconds. */
 void BTRU_HoldToThres_Event(void)
 {
-  if(HEATER_IS_NOT_SETTING_MODE(Heater.enOpStatus))
+  if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode))
   {
-    Heater.enOpStatus = HEATER_WORINGTIME_DISPLAY;
+    Heater.enOpMode = HEATER_WORINGTIME_DISPLAY;
     
     Heater_DisplayWorkingTime();
     
-    Heater.enOpStatus = HEATER_IDLE;
+    Heater.enOpMode = HEATER_IDLE;
   }
 }
 /*******************************************************************************
 **                      Function                                              **
 
 *******************************************************************************/
+
+/**
+  * @brief Display imaginary temperature to user.
+  * @param[in] Temperature: temperature of heater.
+  * @param[in] SetPoint: temperature set point of heater.
+  * @return  uint16: temperature which display on LED.
+  * @details Display imaginary temperature to user. This is not real
+  *          temperature.
+  *   Temperature : H
+  *   SetPoint    : S
+  *   TOLERANCE_DISPLAY_SETPOINT :N  
+  *
+  * If H is out of range [(S - N),(S + N)], display H
+  * Else (H is in range [(S - N),(S + N)]) display S
+  * @note None.
+  */
+void Heater_DisplayImaginaryTemp(uint16 Temperature, uint16 SetPoint)
+{
+  /* If Temperature is out of range [(S - N),(S + N)], display Temperature */
+  if((Temperature < (SetPoint - TOLERANCE_DISPLAY_SETPOINT)) && \
+     (Temperature > (SetPoint + TOLERANCE_DISPLAY_SETPOINT)))
+  {
+    LED7_DisplayNumber(Temperature);
+  }
+  /* Else (H is in range [(S - N),(S + N)]) display SetPoint */
+  else 
+  {
+    LED7_DisplayNumber(SetPoint);
+  }
+}
 /**
   * @brief Get temperature of heater.
   * @param[in] None.
-  * @return  uint16_t: temperature of heater in degree celsius.
+  * @return  uint16: temperature of heater in degree celsius.
   * @details None.
   * @note None.
   */
-uint16_t GetTemp_ThermoCouple(void)
+uint16 GetTemp_ThermoCouple(void)
 {
-  return ThermoCouple_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
+  return ThC_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
 }
 /**
   * @brief Display heater working time in day.
@@ -513,21 +560,21 @@ Heater_TriacStatusType Heater_CheckActivationLock(void)
 
   Heater_ReadFlsData(&Heater, FLS_ACTILOCKSTATUS);
 
-  if(Heater.enActiLockStatus == LONHIET_LOCKED)
+  if(Heater.enActiLockStatus == HEATER_LOCKED)
   {
     LddRetVal = HEATER_TRIAC_DISABLE;
   }
-  else if(Heater.enActiLockStatus == LONHIET_UNLOCKED)
+  else if(Heater.enActiLockStatus == HEATER_UNLOCKED)
   {
     LddRetVal = HEATER_TRIAC_ENABLE;
   }
-  else if(Heater.enActiLockStatus == LONHIET_TRIAL)
+  else if(Heater.enActiLockStatus == HEATER_TRIAL)
   {
     /* To check if working-time is over Trial time */
     if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
     {
       /* Yes. Disable LoNhiet */
-      Heater.enActiLockStatus = LONHIET_LOCKED;
+      Heater.enActiLockStatus = HEATER_LOCKED;
       Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
 
       LddRetVal = HEATER_TRIAC_DISABLE;
@@ -575,7 +622,7 @@ void Heater_CheckFlashData(void)
     Fls_Write(FLS_DATEPRODUCTSTATUS, &LddFlsData);
 
     /* 3. Flash activation lock status. */
-    Heater.enActiLockStatus = LONHIET_TRIAL;
+    Heater.enActiLockStatus = HEATER_TRIAL;
     Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
 
     /* 4. Flash working time as 0. */
@@ -598,7 +645,8 @@ void Heater_CheckFlashData(void)
   * @brief Startup heater.
   * @param[in] None.
   * @return  None.
-  * @details None.
+  * @details Check that heater is configured datetime or not.
+  *   If DateTime is configured, Heater can work normally.
   * @note None.
   */
 void Heater_Startup(void)
@@ -607,9 +655,9 @@ void Heater_Startup(void)
   if(FALSE == Heater_DateProductIsConfigured())
   {
     Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
-    Heater.enOpStatus = HEATER_WAIITING_USER_SETUP_DATETIME;
+    Heater.enOpMode = HEATER_WAIITING_USER_SETUP_DATETIME;
   }
-  else /* DateTime is configured. */
+  else /* DateTime is configured. At this time, Heater can work normally */
   {
     /* Checking Activation Lock status. */
     Heater.enTriacStatus = Heater_CheckActivationLock();
@@ -633,13 +681,12 @@ void Heater_Startup(void)
     printf("Activation Lock Status: ");
     switch(Heater.enActiLockStatus)
     {
-      case LONHIET_LOCKED: { printf("LOCKED \r\n"); break;  }
-      case LONHIET_UNLOCKED: { printf("UNLOCKED \r\n"); break;  }
-      case LONHIET_TRIAL: {  printf("TRIAL \r\n"); break;  }
+      case HEATER_LOCKED: { printf("LOCKED \r\n"); break;  }
+      case HEATER_UNLOCKED: { printf("UNLOCKED \r\n"); break;  }
+      case HEATER_TRIAL: {  printf("TRIAL \r\n"); break;  }
       default: break;
     }
     #endif
-  
   }
 
 }
@@ -675,7 +722,7 @@ boolean Heater_DateProductIsConfigured(void)
 void Enter_HEATER_SETUP_DAY_mode(void)
 {
     /* Set Heater status as HEATER_SETUP_DATETIME. */
-  Heater.enOpStatus = HEATER_SETUP_DAY;
+  Heater.enOpMode = HEATER_SETUP_DAY;
 
   Heater.MDate.ucDay = 1;
 
@@ -722,18 +769,18 @@ void Exit_HEATER_SETUP_DAY_mode(boolean IsTimeOut)
   /* Set heater status. */
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
-    Heater.enOpStatus = HEATER_WAIITING_USER_SETUP_DATETIME;
+    Heater.enOpMode = HEATER_WAIITING_USER_SETUP_DATETIME;
   }
   else
   {
-    Heater.enOpStatus = HEATER_IDLE;
+    Heater.enOpMode = HEATER_IDLE;
   }
 }
 
 void Enter_HEATER_SETUP_MON_mode(void)
 {
   /* Set Heater status as HEATER_SETUP_DATETIME. */
-  Heater.enOpStatus = HEATER_SETUP_MON;
+  Heater.enOpMode = HEATER_SETUP_MON;
 
   Heater.MDate.ucMonth = 1;
 
@@ -761,7 +808,7 @@ void Exit_HEATER_SETUP_MON_mode(boolean IsTimeOut)
      set point. */
     LED7_DisplayResult(LED7_FAIL);
 
-    Heater.enOpStatus = HEATER_IDLE;
+    Heater.enOpMode = HEATER_IDLE;
   }
   else
   {
@@ -777,7 +824,7 @@ void Exit_HEATER_SETUP_MON_mode(boolean IsTimeOut)
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
     /* Set heater status. */
-    Heater.enOpStatus = HEATER_WAIITING_USER_SETUP_DATETIME;
+    Heater.enOpMode = HEATER_WAIITING_USER_SETUP_DATETIME;
   }
   else
   {
@@ -788,7 +835,7 @@ void Exit_HEATER_SETUP_MON_mode(boolean IsTimeOut)
 void Enter_HEATER_UPDATE_SETPOINT_mode(void)
 {
   /* Set Heater status as HEATER_UPDATE_SETPOINT. */
-  Heater.enOpStatus = HEATER_UPDATE_SETPOINT;
+  Heater.enOpMode = HEATER_UPDATE_SETPOINT;
 
   /* Blinking All LED7 to inform that Heater is in Update setpoint mode. */
   BlinkingAllLED7_Synchronous(1500);
@@ -843,7 +890,7 @@ void Exit_HEATER_UPDATE_SETPOINT_mode(boolean IsTimeOut)
 
   /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
   BlinkingAllLED7_Synchronous(1500);
-  Heater.enOpStatus = HEATER_IDLE;
+  Heater.enOpMode = HEATER_IDLE;
 }
 void Enter_HEATER_ENTER_PASSWORD_mode(void)
 {
@@ -881,7 +928,7 @@ void Exit_HEATER_ENTER_PASSWORD_mode(boolean IsTimeOut)
     /* Validate user password. */
     if(Heater.usUserPassword == HEATER_PASSWORD)
     {
-      Heater.enActiLockStatus = LONHIET_UNLOCKED;
+      Heater.enActiLockStatus = HEATER_UNLOCKED;
 
       Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
 
@@ -900,7 +947,7 @@ void Exit_HEATER_ENTER_PASSWORD_mode(boolean IsTimeOut)
   Heater.ucBlinkLED7Idx = 0;
   Heater.usUserPassword = 0;
 
-  Heater.enOpStatus = HEATER_IDLE;
+  Heater.enOpMode = HEATER_IDLE;
 }
 
 /* Read Heater data which store in data flash memory. */
@@ -1058,7 +1105,7 @@ void PORT_Init(void)
 {
   /* Cau hinh chan DIEU KHIEN LED_STATUS */
   GPIO_SetMode(LED_STATUS_PORT, LED_STATUS_BIT, GPIO_PMD_OUTPUT);
-  LED_STATUS = 0;
+  LED_STATUS = LED_STATUS_OFF();
 
   /* Cau hinh chan DIEU KHIEN TRIAC */
   GPIO_SetMode(TRIAC_PORT, TRIAC_BIT, GPIO_PMD_OUTPUT);
@@ -1088,7 +1135,7 @@ void PORT_Init(void)
 void HeatingControl_MainFunction(void)
 {
   if((Heater.enTriacStatus == HEATER_TRIAC_ENABLE) && \
-     (Heater.enOpStatus == HEATER_IDLE))
+     (Heater.enOpMode == HEATER_IDLE))
   {
     if(Heater.usTempTHC < Heater.usSetPoint)
     {
@@ -1101,7 +1148,7 @@ void HeatingControl_MainFunction(void)
   }
   else
   {
-  
+    TRIAC_OFF();
   }
 }
 
@@ -1115,14 +1162,7 @@ void HeatingControl_MainFunction(void)
   */
 void Heater_MainFunctionDiagnostics(void)
 {
-  if(DEM_EVENT_STATUS_PASSED == Dem_GetEventStatus(ERROR_THERMO_NOT_CONNECTED))
-  {
-    Heater.enTriacStatus = HEATER_TRIAC_ENABLE;
-  }
-  else
-  {
-    Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
-  }
+  
 }
 /*******************************************************************************
 **                      Testing Functions                                     **

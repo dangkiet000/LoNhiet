@@ -484,26 +484,7 @@ void LED7_DisplayError(uint8  ErrorCode)
   GaaLED7Value[1] = LED7_R_CHAR;
   GaaLED7Value[2] = LED7_R_CHAR;
   
-  switch(ErrorCode)
-  {
-    case LED7_ERR0:
-    {
-      GaaLED7Value[3] = 0;
-      break;
-    }
-    case LED7_ERR1:
-    {
-      GaaLED7Value[3] = 1;
-      break;
-    }
-    case LED7_ERR9:
-    {
-      GaaLED7Value[3] = 9;
-      break;
-    }
-    default: break;
-  }
-  
+  GaaLED7Value[3] = ErrorCode; 
 }
 
 /**

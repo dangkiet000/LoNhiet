@@ -38,9 +38,12 @@
 */
 #define THOI_GIAN_HIEN_THI_SO_NGAY_LAM_VIEC_CUA_LO_NHIET  5000U
 
+/* Sai số hiện thị so với nhiệt độ cài đặt. Đây là khoảng nhiệt mà lò sẽ hiển 
+   thị nhiệt độ cài đặt thay vì nhiệt độ thực tế của lò. */
+#define SAI_SO_HIEN_THI_NHIET_DO_CAI_DAT    5U
+
 /* Nhiệt độ cao nhất mà lò có thể đạt được. */
 #define NHIET_DO_MAX            725U
-
 
 /* Chế độ debug, khi ON thì sẽ xuất ra nhiều thông tin cần thiết qua UART1 */
 #define DEBUG_MODE              STD_ON
@@ -54,5 +57,12 @@
 */
 #define DATA_LOGGING            STD_OFF
 
+
+/*
+Chú ý: 
+1. Khi Cặp nhiệt không kết nối với mạch thì LED sẽ hiển thị: ERR0.
+2. Khi TRIAC mở thì LED xanh dương không sáng, khi TRIAC đóng thì LED xanh dương
+sáng.
+*/
 
 #endif //__LONHIET_USERCFG_H__

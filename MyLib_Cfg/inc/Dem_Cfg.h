@@ -26,7 +26,9 @@
 /*----------------------------------------------------------------------------*/
 /*                          USER CONFIGURATION                                */
 /*----------------------------------------------------------------------------*/
-
+/* Scheduler call-back function prototypes */
+extern void Dem_ErrThermoNotConnected_PassedEvent(void);
+extern void Dem_ErrThermoNotConnected_FailedEvent(void);
 
 #endif /* __DEM_CFG_H__ */
 
