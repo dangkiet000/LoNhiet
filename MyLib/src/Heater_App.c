@@ -465,7 +465,7 @@ void BTRU_HoldToThres_Event(void)
 void Heater_DisplayImaginaryTemp(uint16 Temperature, uint16 SetPoint)
 {
   /* If Temperature is out of range [(S - N),(S + N)], display Temperature */
-  if((Temperature < (SetPoint - TOLERANCE_DISPLAY_SETPOINT)) && \
+  if((Temperature < (SetPoint - TOLERANCE_DISPLAY_SETPOINT)) || \
      (Temperature > (SetPoint + TOLERANCE_DISPLAY_SETPOINT)))
   {
     LED7_DisplayNumber(Temperature);
