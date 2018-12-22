@@ -25,9 +25,9 @@ Btn_ConfigType Btn_ConfigSet[] = {
     /* pfnFunction */
     &BTRU_Release_Event,
     /* pfnHoldEvent1 */
-    &BSET_BTRU_HoldToThres_Event,
+    &BSET_BTRU_Hold_3s_Event,
     /* pfnHoldEvent2 */
-    &BTRU_HoldToThres_Event
+    &BTRU_Hold_6s_Event
   },
   /* BCONG_ID */
   {
@@ -40,7 +40,7 @@ Btn_ConfigType Btn_ConfigSet[] = {
     /* pfnFunction */
     &BCONG_Release_Event,
     /* pfnHoldEvent1 */
-    &BSET_BCONG_HoldToThres_Event,
+    &BSET_BCONG_Hold_3s_Event,
     /* pfnHoldEvent2 */
     NULL_PTR
   },
@@ -55,7 +55,7 @@ Btn_ConfigType Btn_ConfigSet[] = {
     /* pfnFunction */
     &BSET_Release_Event,
     /* pfnHoldEvent1 */
-    &BSET_HoldToThres_Event,
+    &BSET_Hold_3s_Event,
     /* pfnHoldEvent2 */
     NULL_PTR
   }

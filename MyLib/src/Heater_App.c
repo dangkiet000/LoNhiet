@@ -394,7 +394,7 @@ void BSET_Release_Event(void)
 }
 
 /* This event occurs if user press and hold SET button longer 3 seconds. */
-void BSET_HoldToThres_Event(void)
+void BSET_Hold_3s_Event(void)
 {
   if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enActiLockStatus))
   {
@@ -407,7 +407,7 @@ void BSET_HoldToThres_Event(void)
   }
 }
 /* This event occurs if user hold CONG and SET button longer 3 seconds. */
-void BSET_BCONG_HoldToThres_Event(void)
+void BSET_BCONG_Hold_3s_Event(void)
 {
   if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode))
   {
@@ -421,9 +421,10 @@ void BSET_BCONG_HoldToThres_Event(void)
   }
 }
 /* This event occurs if user hold TRU and SET button longer 3 seconds. */
-void BSET_BTRU_HoldToThres_Event(void)
+void BSET_BTRU_Hold_3s_Event(void)
 {
-  if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode) == TRUE)
+  if((TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode))
+    && (HEATER_WAIITING_USER_SETUP_DATETIME == Heater.enOpMode))
   {
     /* Set Heater status as HEATER_SETUP_DATETIME. */
     Enter_HEATER_SETUP_MON_mode();
@@ -431,7 +432,7 @@ void BSET_BTRU_HoldToThres_Event(void)
 }
 
 /* This event occurs if user press and hold TRU button longer 6 seconds. */
-void BTRU_HoldToThres_Event(void)
+void BTRU_Hold_6s_Event(void)
 {
   if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode))
   {
@@ -659,6 +660,8 @@ void Heater_Startup(void)
   }
   else /* DateTime is configured. At this time, Heater can work normally */
   {
+    /* Disable button event set*/
+    
     /* Checking Activation Lock status. */
     Heater.enTriacStatus = Heater_CheckActivationLock();
 

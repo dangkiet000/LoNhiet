@@ -39,14 +39,14 @@
 
 /* Button call-back function prototypes */
 extern void BSET_Release_Event(void);
-extern void BSET_HoldToThres_Event(void);
-extern void BSET_BCONG_HoldToThres_Event(void);
-extern void BSET_BTRU_HoldToThres_Event(void);
+extern void BSET_Hold_3s_Event(void);
+extern void BSET_BCONG_Hold_3s_Event(void);
+extern void BSET_BTRU_Hold_3s_Event(void);
 
 extern void BCONG_Release_Event(void);
 
 extern void BTRU_Release_Event(void);
-extern void BTRU_HoldToThres_Event(void);
+extern void BTRU_Hold_6s_Event(void);
 
 /*******************************************************************************
 **                      TYPE DEFINITION                                       **
