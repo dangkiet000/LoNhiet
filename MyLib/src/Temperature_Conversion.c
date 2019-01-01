@@ -11,6 +11,7 @@
 
 #include "Temperature_Conversion.h"
 #include "Dem.h"
+#include "LoNhiet_DevCfg.h"
 
 /**
   * @brief  Convert adc value of LM35 to ambient temperature.
@@ -27,14 +28,29 @@
     Ta co VREF_ADC_IN_VOLT*1000 = MAX_ADC_VALUE
        Temp_MT = (ADCValue*VREF_ADC_IN_VOLT/(VREF_ADC_IN_VOLT*1000))*100
   
-    => Temp_MT = ADCValue/10  
-  */
+    => Temp_MT = ADCValue/10
+    
+  This LM35 design to measure temperature at 2-150
+  => 
+  MIN mV = 2*10 = 20mV.
+  MAX mV = 150*10 = 1500mV.
+  => ADC MIN value = 20
+     ADC MAX value = 1500
+*/
 uint16 ThC_ADCToAmbientTemp(uint16 LusADCValue)
 {
-  uint16 LusADCLM35;
-  LusADCLM35 = LusADCValue;
+  uint16 LusTempLM35;
   
-  return (LusADCLM35/10);
+  LusTempLM35 = LusADCValue/10;
+  
+  if((LusTempLM35 < MIN_LM35_ADC_TEMPERATURE) || \
+     (LusTempLM35 > MAX_LM35_ADC_TEMPERATURE))
+  {
+    /* LM35 ERROR */
+    LusTempLM35 = LM35_INVALID_VALUE;
+  }
+  
+  return (LusTempLM35);
 }
 
 /**
@@ -137,40 +153,34 @@ uint16 ThC_ADCToTemp(uint16 ADC_ThermoCouple, \
   uint16 Lus_LM35_Temp = 0;
   uint16 Lus_TC_TempNotCom = 0;
   
-  /* DET runtime error detect. */
-  /* Checking if heater is not connect with Thermo-couple (ADC value = max)*/
-  if(ADC_ThermoCouple > MAX_ADC_TYPE_K_NON_THERMO)
+  /* Convert ADC value to miliVoltage. */
+  LflTC_mV = ((float32)(ADC_ThermoCouple))/ AMP_FACTOR;
+
+  Lus_TC_TempNotCom = ThC_mV_To_Temp(LflTC_mV);
+
+  Lus_LM35_Temp = ThC_ADCToAmbientTemp(ADC_Enviroment);
+  
+  if(Lus_LM35_Temp == LM35_INVALID_VALUE)
   {
     /* Report Det runtime error detect */
-    LusTemp_ThermoCouple = TEMP_ERROR;
+    LusTemp_ThermoCouple = THC_INVALID_VALUE;
+    
+    Dem_SetEventStatus(ERROR_LM35_NOT_WORKING, DEM_EVENT_STATUS_FAILED);
+  }
+  else if(Lus_TC_TempNotCom < Lus_LM35_Temp)
+  {
+    /* Report Det runtime error detect */
+    LusTemp_ThermoCouple = THC_INVALID_VALUE;
     
     Dem_SetEventStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_FAILED);
   }
-  /*
-  else if(ADC_ThermoCouple > MAX_ADC_TYPE_K)
-  {
-    LusTemp_ThermoCouple = TEMP_ERROR;
-  }*/
   else
   {
-  
-    /* Convert ADC value to miliVoltage. */
-    LflTC_mV = ((float32)(ADC_ThermoCouple))/ AMP_FACTOR;
-
-    Lus_TC_TempNotCom = ThC_mV_To_Temp(LflTC_mV);
-
-    Lus_LM35_Temp = ThC_ADCToAmbientTemp(ADC_Enviroment);
-    
-    if(Lus_TC_TempNotCom < Lus_LM35_Temp)
-    {
-      /* Report Det runtime error detect */
-      LusTemp_ThermoCouple = TEMP_ERROR;
-    }
-    
     LusTemp_ThermoCouple = Lus_TC_TempNotCom - Lus_LM35_Temp;
-    
+  
     Dem_SetEventStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_PASSED);
   }
+  
   return LusTemp_ThermoCouple;
 }
 

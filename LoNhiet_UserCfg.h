@@ -25,7 +25,7 @@
 #define THOI_GIAN_DUNG_THU		  240U
 
 /* Số serial của sản phẩm, số này phải là số có bốn chữ số */
-#define SO_SERI             		8910U
+#define SO_SERI             		6810U
 
 /* Đây là số đặc biệt của sản phẩm, hết hợp với số serial tạo thành mật khẩu */
 #define SO_DAC_BIET             2U
@@ -43,7 +43,7 @@
 #define SAI_SO_HIEN_THI_NHIET_DO_CAI_DAT    5U
 
 /* Nhiệt độ cao nhất mà lò có thể đạt được. */
-#define NHIET_DO_MAX            725U
+#define NHIET_DO_MAX            1350U
 
 /* Chế độ debug, khi ON thì sẽ xuất ra nhiều thông tin cần thiết qua UART1 */
 #define DEBUG_MODE              STD_ON

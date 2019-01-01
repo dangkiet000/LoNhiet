@@ -39,7 +39,17 @@
 
 #define  MAX_ADC_TYPE_K_NON_THERMO   4000U 
 
-#define  TEMP_ERROR            8888U
+#define  THC_INVALID_VALUE           9999U
+
+#define  LM35_INVALID_VALUE          8888U
+
+/* Nhiệt độ nhỏ nhất mà LM35 có thể đo được. */
+#define MIN_LM35_ADC_TEMPERATURE     2U
+
+/* Nhiệt độ cao nhất mà LM35 có thể đo được. */
+#define MAX_LM35_ADC_TEMPERATURE     150U
+
+
 
 
 /* Dinh nghia cac he so cho cong thuc noi suy nhiet do cho Thermo-couple 

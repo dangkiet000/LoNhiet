@@ -23,15 +23,15 @@
 #define SCH_HeaterDiagnostics_Task    5U
 
 /* Scheduler call-back function prototypes */
-extern void DisplayTask(void);
-extern void Send_SetPoint_to_PC(void);
-extern void UpdateADCValue(void);
-extern void StoringWorkingTime(void);
+extern void DisplayTask_1000ms(void);
+extern void Send_SetPoint_to_PC_20000ms(void);
+extern void UpdateADCValue_250ms(void);
+extern void StoringWorkingTime_30minutes(void);
 /* Controlling temperture of heater. */
-extern void HeatingControl_MainFunction(void);
+extern void HeatingControl_MainFunction_1ms(void);
 /* Reads the heater diagnostic status periodically and sets product/development 
    accordingly. */
-extern void Heater_MainFunctionDiagnostics(void);
+extern void Heater_MainFunctionDiagnostics_3ms(void);
 
 
 

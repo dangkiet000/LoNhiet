@@ -20,8 +20,10 @@
 /*******************************************************************************
  **                       Type definitions                                    **
  ******************************************************************************/
-#define MAX_DEM_EVENT_ID                    (Dem_EventIdType)1U
+#define MAX_DEM_EVENT_ID                    (Dem_EventIdType)2U
+
 #define ERROR_THERMO_NOT_CONNECTED          (Dem_EventIdType)0U
+#define ERROR_LM35_NOT_WORKING              (Dem_EventIdType)1U
 
 /*----------------------------------------------------------------------------*/
 /*                          USER CONFIGURATION                                */
@@ -29,6 +31,9 @@
 /* Scheduler call-back function prototypes */
 extern void Dem_ErrThermoNotConnected_PassedEvent(void);
 extern void Dem_ErrThermoNotConnected_FailedEvent(void);
+
+extern void Dem_ErrLM35NotWorking_PassedEvent(void);
+extern void Dem_ErrLM35NotWorking_FailedEvent(void);
 
 #endif /* __DEM_CFG_H__ */
 

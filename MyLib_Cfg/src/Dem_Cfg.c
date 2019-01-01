@@ -28,6 +28,15 @@ Dem_ConfigType Dem_GaaConfig[] =
     &Dem_ErrThermoNotConnected_PassedEvent,
     /* pFunction */
     &Dem_ErrThermoNotConnected_FailedEvent,
+  },
+  /* Index: 1 - ERROR_LM35_NOT_WORKING */
+  {
+    /* enStatus */
+    DEM_EVENT_STATUS_PASSED,
+    /* pFunction */
+    &Dem_ErrLM35NotWorking_PassedEvent,
+    /* pFunction */
+    &Dem_ErrLM35NotWorking_FailedEvent,
   }
 };
 

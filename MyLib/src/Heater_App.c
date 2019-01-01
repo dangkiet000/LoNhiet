@@ -36,7 +36,9 @@ const uint8 GaaMapNumberToPlace[MAX_NUM_LED7] = {
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
 *******************************************************************************/
-/*------------------------- Diagnostic Events(Dem) ---------------------------*/
+/*------------------------------------------------------------------------------
+                            Diagnostic Events(Dem)
+------------------------------------------------------------------------------*/
 void Dem_ErrThermoNotConnected_PassedEvent(void)
 {
   Heater.enTriacStatus = HEATER_TRIAC_ENABLE;
@@ -47,7 +49,18 @@ void Dem_ErrThermoNotConnected_FailedEvent(void)
   Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
   TRIAC_OFF();
 }
-/*------------------------- TimeOut Events -----------------------------------*/
+
+void Dem_ErrLM35NotWorking_PassedEvent(void)
+{
+
+}
+void Dem_ErrLM35NotWorking_FailedEvent(void)
+{
+
+}
+/*------------------------------------------------------------------------------
+                            TimeOut Events
+------------------------------------------------------------------------------*/
 void TO_UpdateSetPoint(void)
 {
   /* This is the last LED7 digit(LED7_3). */
@@ -81,9 +94,11 @@ void TO_EnterPassword(void)
   Exit_HEATER_ENTER_PASSWORD_mode(HEATER_TIMEOUT_TRUE);
 }
 
-/*------------------------- Scheduler Events ---------------------------------*/
+/*------------------------------------------------------------------------------
+                            Scheduler Events 
+-------------------------------------------------------------------------------*/
 /* Display LED7segment every 1000ms. */
-void DisplayTask(void)
+void DisplayTask_1000ms(void)
 {
   switch(Heater.enOpMode)
   {
@@ -106,6 +121,10 @@ void DisplayTask(void)
       if(DEM_EVENT_STATUS_FAILED == Dem_GetEventStatus(ERROR_THERMO_NOT_CONNECTED))
       {
         LED7_DisplayError(LED7_ERR1);
+      }
+      else if(DEM_EVENT_STATUS_FAILED == Dem_GetEventStatus(ERROR_LM35_NOT_WORKING))
+      {
+        LED7_DisplayError(LED7_ERR2);
       }
       else /* No error is detected. */
       {
@@ -138,7 +157,7 @@ void DisplayTask(void)
 }
 
 
-void Send_SetPoint_to_PC(void)
+void Send_SetPoint_to_PC_20000ms(void)
 {
   #if (DATA_LOGGING == STD_ON)
   printf("SP %d\n", Heater.usSetPoint);
@@ -147,17 +166,18 @@ void Send_SetPoint_to_PC(void)
 
 
 /* Get temperature of Thermo-Couple every 250ms.*/
-void UpdateADCValue(void)
+void UpdateADCValue_250ms(void)
 {
   if(ADC_IDLE == ADC_GetStatus())
   {
     Heater.usTempTHC = GetTemp_ThermoCouple();
+    ADC_StartConvert();
   }
-  ADC_StartConvert();
+  
 }
 
 /* Storing working-time every 30 minutes to data flash memory */
-void StoringWorkingTime(void)
+void StoringWorkingTime_30minutes(void)
 {
   /* To check if working-time is over Trial time */
   if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
@@ -178,7 +198,49 @@ void StoringWorkingTime(void)
 
 
 
-/*------------------------- Button processing events -------------------------*/
+
+/**
+  * @brief Controlling temperture of heater.
+  * @param[in] None.
+  * @return  None.
+  * @details None.
+  * @note None.
+  */
+void HeatingControl_MainFunction_1ms(void)
+{
+  if((Heater.enTriacStatus == HEATER_TRIAC_ENABLE) && \
+     (Heater.enOpMode == HEATER_IDLE))
+  {
+    if(Heater.usTempTHC < Heater.usSetPoint)
+    {
+      TRIAC_ON();
+    }
+    else
+    {
+      TRIAC_OFF();
+    }
+  }
+  else
+  {
+    TRIAC_OFF();
+  }
+}
+
+/**
+  * @brief Reads the heater diagnostic status periodically and sets 
+  *        product/development accordingly.
+  * @param[in] None.
+  * @return  None.
+  * @details None.
+  * @note None.
+  */
+void Heater_MainFunctionDiagnostics_3ms(void)
+{
+  
+}
+/*------------------------------------------------------------------------------
+                            Button processing events
+------------------------------------------------------------------------------*/
 /* This event occurs if user release CONG button. */
 void BCONG_Release_Event(void)
 {
@@ -396,7 +458,9 @@ void BSET_Release_Event(void)
 /* This event occurs if user press and hold SET button longer 3 seconds. */
 void BSET_Hold_3s_Event(void)
 {
-  if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enActiLockStatus))
+  /* Checking if heater is in any setting mode or heater is locked? */
+  if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode) && \
+     (HEATER_LOCKED != Heater.enActiLockStatus))
   {
     /* Enter HEATER_UPDATE_SETPOINT mode. */
     Enter_HEATER_UPDATE_SETPOINT_mode();
@@ -445,9 +509,23 @@ void BTRU_Hold_6s_Event(void)
 }
 /*******************************************************************************
 **                      Function                                              **
-
 *******************************************************************************/
-
+/**
+  * @brief Reset MCU.
+  * @param[in] None.
+  * @return  None.
+  * @details Reset MCU.
+  * @note None.
+  */
+void Heater_Reset(void)
+{
+  SYS_UnlockReg();
+    
+  /* Reset MCU. */
+  SYS_ResetChip();
+  
+  SYS_LockReg();
+}
 /**
   * @brief Display imaginary temperature to user.
   * @param[in] Temperature: temperature of heater.
@@ -486,7 +564,23 @@ void Heater_DisplayImaginaryTemp(uint16 Temperature, uint16 SetPoint)
   */
 uint16 GetTemp_ThermoCouple(void)
 {
-  return ThC_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
+  uint16 LusTemp_ThermoCouple; /* in Celsius */
+  
+  /* DET runtime error detect. */
+  /* Checking if heater is not connect with Thermo-couple (ADC value = max)*/
+  if(GulADC_THC_TB > MAX_ADC_TYPE_K_NON_THERMO)
+  {
+    /* Report Det runtime error detect */
+    LusTemp_ThermoCouple = THC_INVALID_VALUE;
+    
+    Dem_SetEventStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_FAILED);
+  }
+  else
+  {
+    LusTemp_ThermoCouple = ThC_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
+  }
+  
+  return LusTemp_ThermoCouple;
 }
 /**
   * @brief Display heater working time in day.
@@ -655,6 +749,7 @@ void Heater_Startup(void)
   /* To check that heater is configured datetime or not. */
   if(FALSE == Heater_DateProductIsConfigured())
   {
+    /* Datetime has not configured yet. */
     Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
     Heater.enOpMode = HEATER_WAIITING_USER_SETUP_DATETIME;
   }
@@ -722,6 +817,10 @@ boolean Heater_DateProductIsConfigured(void)
   return Lblretval;
 }
 
+
+/*------------------------------------------------------------------------------
+                          ENTER / EXIT EVENT
+------------------------------------------------------------------------------*/
 void Enter_HEATER_SETUP_DAY_mode(void)
 {
     /* Set Heater status as HEATER_SETUP_DATETIME. */
@@ -769,14 +868,18 @@ void Exit_HEATER_SETUP_DAY_mode(boolean IsTimeOut)
   /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
   BlinkingAllLED7_Synchronous(1500);
 
-  /* Set heater status. */
+  /* Checking if datetime setting is finish without timeout or not. */
   if(IsTimeOut == HEATER_TIMEOUT_TRUE)
   {
     Heater.enOpMode = HEATER_WAIITING_USER_SETUP_DATETIME;
   }
   else
   {
+    /* Setting is finished, no timeout. */
     Heater.enOpMode = HEATER_IDLE;
+    
+    /* Execute RESET. */
+    Heater_Reset();
   }
 }
 
@@ -848,12 +951,16 @@ void Enter_HEATER_UPDATE_SETPOINT_mode(void)
   
   if(MAX_THOUSANDS_TEMPERATURE == 0)
   {
+    /* Blink another LED7. */
     Heater.ucBlinkLED7Idx++;
+    
+    if(MAX_HUNDREDS_TEMPERATURE == 0)
+    {
+      /* Blink another LED7. */
+      Heater.ucBlinkLED7Idx++;
+    }
   }
-  if(MAX_HUNDREDS_TEMPERATURE == 0)
-  {
-    Heater.ucBlinkLED7Idx++;
-  }
+  
 
   /* Enable blinking LED7. */
   LED7_EnableBlinking(NUMBER_TO_LEDID(Heater.ucBlinkLED7Idx), \
@@ -880,7 +987,7 @@ void Exit_HEATER_UPDATE_SETPOINT_mode(boolean IsTimeOut)
        K. */
     if(Heater.usSetPoint > MAX_TEMP_TYPE_K)
     {
-      LED7_DisplayError(LED7_ERR1);
+      LED7_DisplayError(LED7_ERR0);
     }
     else
     {
@@ -892,7 +999,7 @@ void Exit_HEATER_UPDATE_SETPOINT_mode(boolean IsTimeOut)
   Heater.ucBlinkLED7Idx = 0;
 
   /* Blinking all LED7 to inform that Setup-SetPoint is finished. */
-  BlinkingAllLED7_Synchronous(1500);
+  BlinkingAllLED7_Synchronous(2000);
   Heater.enOpMode = HEATER_IDLE;
 }
 void Enter_HEATER_ENTER_PASSWORD_mode(void)
@@ -951,6 +1058,8 @@ void Exit_HEATER_ENTER_PASSWORD_mode(boolean IsTimeOut)
   Heater.usUserPassword = 0;
 
   Heater.enOpMode = HEATER_IDLE;
+  /* Execute RESET. */
+  Heater_Reset();
 }
 
 /* Read Heater data which store in data flash memory. */
@@ -1128,45 +1237,7 @@ void PORT_Init(void)
 }
 
 
-/**
-  * @brief Controlling temperture of heater.
-  * @param[in] None.
-  * @return  None.
-  * @details None.
-  * @note None.
-  */
-void HeatingControl_MainFunction(void)
-{
-  if((Heater.enTriacStatus == HEATER_TRIAC_ENABLE) && \
-     (Heater.enOpMode == HEATER_IDLE))
-  {
-    if(Heater.usTempTHC < Heater.usSetPoint)
-    {
-      TRIAC_ON();
-    }
-    else
-    {
-      TRIAC_OFF();
-    }
-  }
-  else
-  {
-    TRIAC_OFF();
-  }
-}
 
-/**
-  * @brief Reads the heater diagnostic status periodically and sets 
-  *        product/development accordingly.
-  * @param[in] None.
-  * @return  None.
-  * @details None.
-  * @note None.
-  */
-void Heater_MainFunctionDiagnostics(void)
-{
-  
-}
 /*******************************************************************************
 **                      Testing Functions                                     **
 *******************************************************************************/

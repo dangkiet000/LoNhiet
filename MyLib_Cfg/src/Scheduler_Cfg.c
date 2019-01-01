@@ -23,7 +23,7 @@ tSchedulerTask Sch_GaaTable[] =
   /* Index: 0 - SCH_UpdateADC_Task */
   {
     /* pfnFunction */
-    &UpdateADCValue,
+    &UpdateADCValue_250ms,
     /* ulInterval */
     250,
     /* ulLastTick */
@@ -34,7 +34,7 @@ tSchedulerTask Sch_GaaTable[] =
   /* Index: 1 - SCH_Display_Task */
   {
     /* pfnFunction */
-    &DisplayTask,
+    &DisplayTask_1000ms,
     /* ulInterval */
     1000,
     /* ulLastTick */
@@ -45,7 +45,7 @@ tSchedulerTask Sch_GaaTable[] =
   /* Index: 2 - SCH_SendSetPoint_Task */
   {
     /* pfnFunction */
-    &Send_SetPoint_to_PC,
+    &Send_SetPoint_to_PC_20000ms,
     /* ulInterval */
     20000,
     /* ulLastTick */
@@ -56,7 +56,7 @@ tSchedulerTask Sch_GaaTable[] =
   /* Index: 3 - SCH_StoringWorkingTime_Task */
   {
     /* pfnFunction */
-    &StoringWorkingTime,
+    &StoringWorkingTime_30minutes,
     /* ulInterval */
     30*60*1000, /* 30 minutes */
     /* ulLastTick */
@@ -67,7 +67,7 @@ tSchedulerTask Sch_GaaTable[] =
   /* Index: 4 - SCH_HeatingControl_Task */
   {
     /* pfnFunction */
-    &HeatingControl_MainFunction,
+    &HeatingControl_MainFunction_1ms,
     /* ulInterval */
     1,
     /* ulLastTick */
@@ -78,7 +78,7 @@ tSchedulerTask Sch_GaaTable[] =
   /* Index: 5 - SCH_HeaterDiagnostics_Task */
   {
     /* pfnFunction */
-    &Heater_MainFunctionDiagnostics,
+    &Heater_MainFunctionDiagnostics_3ms,
     /* ulInterval */
     3,
     /* ulLastTick */

@@ -98,9 +98,15 @@ typedef struct STag_LED7_DriverType
 #define LED7_L_CHAR           18U
 
 /* Errors code. */
+/* TEMPERATURE OF SET POINT IS WRONG */
 #define LED7_ERR0             0U
+
+/* ERROR_THERMO_NOT_CONNECTED */
 #define LED7_ERR1             1U
+
+/* ERROR_LM35_NOT_WORKING */
 #define LED7_ERR2             2U
+
 #define LED7_ERR3             3U
 #define LED7_ERR4             4U
 #define LED7_ERR5             5U
