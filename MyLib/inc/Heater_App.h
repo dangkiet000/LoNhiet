@@ -34,6 +34,7 @@
 /*******************************************************************************
 **                      Define macro                                          **
 *******************************************************************************/
+#define EXT_CLOCK_NOT_STABLE     0
 
 #define HEATER_IS_NOT_SETTING_MODE(HeaterMode)     \
          ((HeaterMode != HEATER_UPDATE_SETPOINT) && \

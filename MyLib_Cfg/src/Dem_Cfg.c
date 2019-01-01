@@ -37,6 +37,15 @@ Dem_ConfigType Dem_GaaConfig[] =
     &Dem_ErrLM35NotWorking_PassedEvent,
     /* pFunction */
     &Dem_ErrLM35NotWorking_FailedEvent,
+  },
+  /* Index: 2 - ERROR_CRYSTAL_NOT_WORKING */
+  {
+    /* enStatus */
+    DEM_EVENT_STATUS_PASSED,
+    /* pFunction */
+    &Dem_ErrCrystalNotWorking_PassedEvent,
+    /* pFunction */
+    &Dem_ErrCrystalNotWorking_FailedEvent,
   }
 };
 

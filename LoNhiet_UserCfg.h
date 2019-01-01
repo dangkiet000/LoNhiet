@@ -25,7 +25,7 @@
 #define THOI_GIAN_DUNG_THU		  240U
 
 /* Số serial của sản phẩm, số này phải là số có bốn chữ số */
-#define SO_SERI             		6810U
+#define SO_SERI             		5310U
 
 /* Đây là số đặc biệt của sản phẩm, hết hợp với số serial tạo thành mật khẩu */
 #define SO_DAC_BIET             2U

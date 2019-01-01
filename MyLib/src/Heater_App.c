@@ -58,6 +58,17 @@ void Dem_ErrLM35NotWorking_FailedEvent(void)
 {
 
 }
+
+void Dem_ErrCrystalNotWorking_PassedEvent(void)
+{
+
+}
+
+void Dem_ErrCrystalNotWorking_FailedEvent(void)
+{
+
+}
+
 /*------------------------------------------------------------------------------
                             TimeOut Events
 ------------------------------------------------------------------------------*/
@@ -149,7 +160,19 @@ void DisplayTask_1000ms(void)
     }
     case HEATER_WAIITING_USER_SETUP_DATETIME:
     {
-      LED7_DisplayNumber(Heater.usTempTHC);
+      /* To check  error */
+      if(DEM_EVENT_STATUS_FAILED == Dem_GetEventStatus(ERROR_THERMO_NOT_CONNECTED))
+      {
+        LED7_DisplayError(LED7_ERR1);
+      }
+      else if(DEM_EVENT_STATUS_FAILED == Dem_GetEventStatus(ERROR_LM35_NOT_WORKING))
+      {
+        LED7_DisplayError(LED7_ERR2);
+      }
+      else
+      {
+        LED7_DisplayNumber(Heater.usTempTHC);
+      }
       break;
     }
     default: break;
@@ -473,7 +496,9 @@ void BSET_Hold_3s_Event(void)
 /* This event occurs if user hold CONG and SET button longer 3 seconds. */
 void BSET_BCONG_Hold_3s_Event(void)
 {
-  if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode))
+  /* Checking if heater is in any setting mode or heater is not unlocked? */
+  if(TRUE == HEATER_IS_NOT_SETTING_MODE(Heater.enOpMode) && \
+     (HEATER_UNLOCKED != Heater.enActiLockStatus))
   {
     /* Set Heater status as HEATER_ENTER_PASSWORD. */
     Heater.enOpMode = HEATER_ENTER_PASSWORD;
@@ -1182,6 +1207,9 @@ void BlinkingAllLED7_Synchronous(uint32 duration)
 /* Init System, peripheral clock and multi-function I/O. */
 void SYS_Init(void)
 {
+  uint32_t ClockStatus;
+  
+  ClockStatus = EXT_CLOCK_NOT_STABLE;
   /*--------------------------------------------------------------------------*/
   /* Init System Clock                                                        */
   /*--------------------------------------------------------------------------*/
@@ -1199,7 +1227,16 @@ void SYS_Init(void)
   CLK_EnableXtalRC(CLK_PWRCON_XTL12M_EN_Msk);
 
   /* Waiting for external XTAL clock ready */
-  CLK_WaitClockReady(CLK_CLKSTATUS_XTL12M_STB_Msk);
+  ClockStatus = CLK_WaitClockReady(CLK_CLKSTATUS_XTL12M_STB_Msk);
+
+  if(EXT_CLOCK_NOT_STABLE == ClockStatus)
+  {
+    Dem_SetEventStatus(ERROR_CRYSTAL_NOT_WORKING, DEM_EVENT_STATUS_FAILED);
+  }
+  else
+  {
+    Dem_SetEventStatus(ERROR_CRYSTAL_NOT_WORKING, DEM_EVENT_STATUS_PASSED);
+  }
 
   /* Set core clock as PLL_CLOCK from PLL */
   CLK_SetCoreClock(PLL_CLOCK);

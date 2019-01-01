@@ -23,7 +23,7 @@
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/
-
+void Error_Delay(uint32 LulTimeOutCnt);
 
 /*******************************************************************************
 **                      Global Data                                           **
@@ -38,21 +38,39 @@
 *******************************************************************************/
 int main()
 {
+  Dem_Init();
+  
+  /* Init GPIO */
+  PORT_Init();
+  
+  
+  
   /* Unlock protected registers */
   SYS_UnlockReg();
 
   /* Init System, peripheral clock and multi-function I/O */
   SYS_Init();
 
+  /* If External crystal is not working, blink LED green. */
+  if(DEM_EVENT_STATUS_FAILED == Dem_GetEventStatus(ERROR_CRYSTAL_NOT_WORKING))
+  {
+    LED_STATUS = LED_STATUS_ON();
+    Error_Delay(20000000);
+    LED_STATUS = LED_STATUS_OFF();
+    Error_Delay(20000000);
+    LED_STATUS = LED_STATUS_ON();
+    Error_Delay(20000000);
+    LED_STATUS = LED_STATUS_OFF();
+  }
+  
   /* Init SystemTick timer */
   SYSTick_Init(ONE_MS_SYSTICK*1000);
 
   /* Lock protected registers */
   SYS_LockReg();
 
-  /* Init GPIO */
-  PORT_Init();
-
+  
+  
   /* Init to control 4 LED-7seg */
   LED_7Seg_Init();
 
@@ -65,8 +83,6 @@ int main()
   /* Init TimeOut module */
   TO_Init(TIMEOUT_CONFIG);
   
-  Dem_Init();
-
   #if (DEBUG_MODE == STD_ON)
   /* Init UART1 use for debug and testing */
   UART1_Init();
@@ -104,6 +120,13 @@ int main()
   }
 }
 
+void Error_Delay(uint32 LulTimeOutCnt)
+{
+  while(LulTimeOutCnt != 0)
+  {
+     LulTimeOutCnt--;
+  }
+}
 
 /*******************************************************************************
 **                      End of file                                           **
