@@ -26,7 +26,6 @@
 /* Lo Nhiet Global structure */
 HeaterType Heater;
 
-
 const uint8 GaaMapNumberToPlace[MAX_NUM_LED7] = {
   THOUSANDS, 
   HUNDREDS,
@@ -968,6 +967,9 @@ void Enter_HEATER_UPDATE_SETPOINT_mode(void)
   /* Set Heater status as HEATER_UPDATE_SETPOINT. */
   Heater.enOpMode = HEATER_UPDATE_SETPOINT;
 
+  /* Reset setpoint value first. */
+  Heater.usSetPoint = 0;
+  
   /* Blinking All LED7 to inform that Heater is in Update setpoint mode. */
   BlinkingAllLED7_Synchronous(1500);
 
