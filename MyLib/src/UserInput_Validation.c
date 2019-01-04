@@ -471,7 +471,7 @@ uint16 Heater_TempPlus(uint16 SetPoint, uint8 Place)
 /**
   * @brief  Correct temperature when user decrease value in setting mode.
   * @param[in] SetPoint.
-  * @param[in] Place: place of digit which is setting.
+  * @param[in] Place: place of digit which is setting. Range: 0..3
   * @return None.
   * @details  None.
   */
@@ -484,19 +484,10 @@ uint16 Heater_TempMinus(uint16 SetPoint, uint8 Place)
   
   Int_to_Array(SetPoint, LaaSetPoint, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
   
-  SetPoint -= MulFactor;
-
-  /* Neu ket qua bi am thi se overflow
-  => SetPoint > MAX_HEATER_TEMPERATURE
-  */
-  if(SetPoint > MAX_HEATER_TEMPERATURE)
+  if(SetPoint != 0)
   {
-    /* Set this digit value to max. */
-    LaaSetPoint[Place] = GaaMapPlaceToMaxTempDigit[Place];
-    SetPoint = Array_To_Int(LaaSetPoint);
-  }
-  else
-  {
+    SetPoint -= MulFactor;
+    
     if(LaaSetPoint[Place] == 0)
     {
       /* Set this digit value to max. */
@@ -510,6 +501,23 @@ uint16 Heater_TempMinus(uint16 SetPoint, uint8 Place)
       }
     }
   }
+  else /* Nếu setpoint là 0 mà trừ thì sẽ bị overflow */
+  {
+    if((Place > 0) && (GaaMapPlaceToMaxTempDigit[Place-1] > 0))
+    {
+      /* Set this digit value to max number. */
+      LaaSetPoint[Place] = 9;
+      SetPoint = Array_To_Int(LaaSetPoint);
+    }
+    else
+    {
+      /* Set this digit value to max temperature digit. */
+      LaaSetPoint[Place] = GaaMapPlaceToMaxTempDigit[Place];
+      SetPoint = Array_To_Int(LaaSetPoint);
+    }
+  }
+  
+
   
   return SetPoint;
 }
