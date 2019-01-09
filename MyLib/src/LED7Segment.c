@@ -11,25 +11,51 @@
 
 #include "LED7Segment.h"
 
+#define LED7_TYPE           0
+#define LED7_COMMON_ANODE   0
+#define LED7_COMMON_CATHODE 1
+
+#define NUMBER_OF_ERROR_CODE 4
 /*******************************************************************************
 **                      Global Data Types                                    **
 *******************************************************************************/
 /* 
 Bit7 | Bit6 | Bit5 | Bit4 | Bit3 | Bit2 |  Bit1 | Bit0
 DOT     G      F      E      D      C       B      A
+
+Bit7 = 1 <=> LEDDOT is ON
 */
-static const uint8 LED7_NumberCode[10] = {
- 0xFF, // Digit 0
- 0xFF, // Digit 1
- 0xFF, // Digit 2
- 0xFF, // Digit 3
- 0xFF, // Digit 4
- 0xFF, // Digit 5
- 0xFF, // Digit 6
- 0xFF, // Digit 7
- 0xFF, // Digit 8
- 0xFF  // Digit 9
+
+static const uint8 LED7_NumberFont[11] = {
+  0x3F, /* Digit 0 */
+	0x06, /* Digit 1 */
+	0x5B, /* Digit 2 */
+	0x4F, /* Digit 3 */
+	0x66, /* Digit 4 */
+  0x6D, /* Digit 5 */
+	0x7D, /* Digit 6 */
+	0x07, /* Digit 7 */
+	0x7F, /* Digit 8 */
+	0x6F, /* Digit 9 */
+  0x00  /* No Display */
 };
+
+static const uint8 LED7_ErrorFont[NUMBER_OF_ERROR_CODE][4] = {
+  {0x79,  0x77,  0x77, 0x3F}, // {'E','R','R','0'}
+  {0x79,  0x77,  0x77, 0x06}, // {'E','R','R','1'}
+  {0x79,  0x77,  0x77, 0x5B}, // {'E','R','R','2'}
+  {0x79,  0x77,  0x77, 0x4F}, // {'E','R','R','3'}
+};
+
+static const uint8 LED7_ResultPASS_Font[4] = {
+  0x73,  0x77,  0x6D, 0x6D // {'P','A','S','S'}
+};
+
+static const uint8 LED7_ResultFAIL_Font[4] = {
+  0x71,  0x77,  0x30, 0x38 // {'F','A','I','L'}
+};
+
+
 uint8 GaaLED7Value[MAX_NUM_LED7];
 boolean GblAllLedIsOff = FALSE;
 static uint8 Guccount = 0;
@@ -105,7 +131,7 @@ void TimerLED_ISR(void)
     }
     
     LED_7Seg_Decode(GaaLED7Value[Guccount]);
-    
+
     /* Check to reset count. */
     if(Guccount >= (MAX_NUM_LED7 - 1))
     {
@@ -189,172 +215,6 @@ STATIC Std_ReturnType Timer_LED_Init(uint16 LusFrequence)
 }
 
 
-/**
-  * @brief  Decode LED-7seg.
-  * @param[in] LedNumber: 0-9.
-  * @return  None.
-  * @details  Decode LED-7seg to display digits.
-  */
-STATIC void LED_7Seg_Decode(uint8 LedNumber)
-{
-  switch(LedNumber)
-  {
-    case 0:
-    {
-      PB->DOUT |=  (BIT3);
-      PB->DOUT &=~ (BIT0|BIT1|BIT2);
-      PC->DOUT &=~ (BIT0|BIT2|BIT3);
-      break;
-    }
-    case 1:
-    {
-      PB->DOUT |=  (BIT0|BIT1|BIT3);
-      PB->DOUT &=~ (BIT2);
-      PC->DOUT |=  (BIT2|BIT3);
-      PC->DOUT &=~ (BIT0);
-      break;
-    }
-    case 2:
-    {
-      PB->DOUT |=  (BIT1);
-      PB->DOUT &=~ (BIT0|BIT2|BIT3);
-      PC->DOUT |=  (BIT0);
-      PC->DOUT &=~ (BIT2|BIT3);
-      break;
-    }
-    case 3:
-    {
-      PB->DOUT |=  (BIT1);
-      PB->DOUT &=~ (BIT0|BIT2|BIT3);
-      PC->DOUT |=  (BIT2);
-      PC->DOUT &=~ (BIT0|BIT3);
-      break;
-    }
-    case 4:
-    {
-      PB->DOUT |=  (BIT0);
-      PB->DOUT &=~ (BIT1|BIT2|BIT3);
-      PC->DOUT |=  (BIT2|BIT3);
-      PC->DOUT &=~ (BIT0);
-      break;
-    }
-    case 5:
-    {
-      PB->DOUT |=  (BIT2);
-      PB->DOUT &=~ (BIT0|BIT1|BIT3);
-      PC->DOUT |=  (BIT2);
-      PC->DOUT &=~ (BIT0|BIT3);
-      break;
-    }
-    case 6:
-    {
-      PB->DOUT |=  (BIT2);
-      PB->DOUT &=~ (BIT0|BIT1|BIT3);
-      PC->DOUT &=~ (BIT0|BIT3|BIT2);
-      break;
-    }
-    case 7:
-    {
-      PB->DOUT |=  (BIT1|BIT3);
-      PB->DOUT &=~ (BIT0|BIT2);
-      PC->DOUT |=  (BIT2|BIT3);
-      PC->DOUT &=~ (BIT0);
-      break;
-    }
-    case 8:
-    {
-      PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
-      PC->DOUT &=~ (BIT0|BIT2|BIT3);
-      break;
-    }
-    case 9:
-    {
-      PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
-      PC->DOUT &=~ (BIT0|BIT2|BIT3);
-      PC->DOUT |=  (BIT2);
-      break;
-    }
-    case LED7_NODISPLAY_CODE:
-    {
-      /* No display */
-      PB->DOUT |= (BIT0|BIT1|BIT2|BIT3);
-      PC->DOUT |= (BIT0|BIT2|BIT3);
-      break;
-    }
-    case LED7_E_CHAR:
-    {
-      /* 'E' character */
-      PB->DOUT &=~ (BIT0|BIT1|BIT3);
-      PB->DOUT |= (BIT2);
-      
-      PC->DOUT &=~ (BIT2|BIT3);
-      PC->DOUT |= (BIT0);
-      break;
-    }
-    case LED7_R_CHAR:
-    {
-      /* 'R' character */
-      PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
-      
-      PC->DOUT &=~ (BIT0|BIT2);
-      PC->DOUT |= (BIT3);
-      break;
-    }
-    case LED7_P_CHAR:
-    {
-      /* 'P' character */
-      PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
-      PC->DOUT &=~ (BIT2);
-      PC->DOUT |=  (BIT3|BIT0);
-      break;
-    }
-    case LED7_A_CHAR:
-    {
-      /* 'A' character */
-      PB->DOUT &=~ (BIT0|BIT1|BIT2|BIT3);
-      PC->DOUT &=~ (BIT0|BIT2);
-      PC->DOUT |=  (BIT3);
-      break;
-    }
-    case LED7_S_CHAR:
-    {
-      /* 'S' character */
-      PB->DOUT |=  (BIT2);
-      PB->DOUT &=~ (BIT0|BIT1|BIT3);
-      PC->DOUT |=  (BIT2);
-      PC->DOUT &=~ (BIT0|BIT3);
-      break;
-    }
-    case LED7_F_CHAR:
-    {
-      /* 'F' character */
-      PB->DOUT |= (BIT2);
-      PB->DOUT &=~ (BIT0|BIT1|BIT3);
-      PC->DOUT &=~ (BIT2);
-      PC->DOUT |=  (BIT3|BIT0);
-      break;
-    }
-    case LED7_I_CHAR:
-    {
-      /* 'I' character */
-      PB->DOUT |=  (BIT0|BIT3|BIT2);
-      PB->DOUT &=~ (BIT1);
-      PC->DOUT |=  (BIT0|BIT3);
-      PC->DOUT &=~ (BIT2);
-      break;
-    }
-    case LED7_L_CHAR:
-    {
-      /* 'L' character */
-      PB->DOUT |=  (BIT0|BIT3|BIT2);
-      PB->DOUT &=~ (BIT1);
-      PC->DOUT |=  (BIT0);
-      PC->DOUT &=~ (BIT3|BIT2);
-      break;
-    }
-    default: break;
-  }
-}
 
 /**
   * @brief  Decode LED-7seg.
@@ -362,19 +222,59 @@ STATIC void LED_7Seg_Decode(uint8 LedNumber)
   * @return  None.
   * @details  Decode LED-7seg to display digits.
   */
-/*
+
+static void Int_to_Array(uint16  LusIntNumber, uint8 *LpArray, \
+                                    uint8 NoMeaningValue)
+{
+  LpArray[0] = (uint8) (LusIntNumber/1000);
+  LpArray[1] = (uint8) ((LusIntNumber/100)%10);
+  LpArray[2] = (uint8) ((LusIntNumber/10)%10);
+  LpArray[3] = (uint8) (LusIntNumber%10);
+  
+  if(LusIntNumber < 10) /* Nếu là số có 1 chữ số */
+  {
+    LpArray[0] = NoMeaningValue;
+    LpArray[1] = NoMeaningValue;
+    LpArray[2] = NoMeaningValue;
+  }
+  else if(LusIntNumber < 100) /* Nếu là số có 2 chữ số */
+  {
+    LpArray[0] = NoMeaningValue;
+    LpArray[1] = NoMeaningValue;
+  }
+  else if(LusIntNumber < 1000)  /* Nếu là số có 3 chữ số */
+  {
+    LpArray[0] = NoMeaningValue;
+  }
+  else if(LusIntNumber < 9999)  /* Nếu là số có 4 chữ số */
+  {
+    
+  }
+  else
+  { 
+    LpArray[0] = NoMeaningValue;
+    LpArray[1] = NoMeaningValue;
+    LpArray[2] = NoMeaningValue;
+    LpArray[3] = NoMeaningValue;
+  }
+}
+
 STATIC void LED_7Seg_Decode(uint8 RawValue)
 {
-  LED7_SEG_A_PIN = BIT0 & RawValue;
-  LED7_SEG_B_PIN = BIT1 & RawValue;
-  LED7_SEG_C_PIN = BIT2 & RawValue;
-  LED7_SEG_D_PIN = BIT3 & RawValue;
-  LED7_SEG_E_PIN = BIT4 & RawValue;
-  LED7_SEG_F_PIN = BIT5 & RawValue;
-  LED7_SEG_G_PIN = BIT6 & RawValue;
-  LED7_SEG_DOT_PIN = BIT7 & RawValue;
+  if(LED7_TYPE == LED7_COMMON_ANODE)
+  {
+    RawValue = ~RawValue;
+  }
+  LED7_SEG_A_PIN = (BIT0 & RawValue);
+  LED7_SEG_B_PIN = (BIT1 & RawValue)>>1;
+  LED7_SEG_C_PIN = (BIT2 & RawValue)>>2;
+  LED7_SEG_D_PIN = (BIT3 & RawValue)>>3;
+  LED7_SEG_E_PIN = (BIT4 & RawValue)>>4;
+  LED7_SEG_F_PIN = (BIT5 & RawValue)>>5;
+  LED7_SEG_G_PIN = (BIT6 & RawValue)>>6;
+LED7_SEG_DOT_PIN = (BIT7 & RawValue)>>7;
 }
-*/
+
 /**
   * @brief  Convert int to character array.
   * @param[in] LusNumber: integer.
@@ -383,7 +283,7 @@ STATIC void LED_7Seg_Decode(uint8 RawValue)
   * @details  Ham tach so nguyen (khong dau) thanh ung chu 
   * so rieng biet va luu vao mang.
   */
-void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
+void LED7_IntToLED7Code(uint16  LusIntNumber, uint8 *LpLEDValue, \
                                     LED7_DisplayType DisplayType)
 {
   uint16 LusNumber;
@@ -400,11 +300,6 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
   }
     
   LusNumber = LusIntNumber;
-  
-  LED0 = LpLEDValue[0];
-  LED1 = LpLEDValue[1];
-  LED2 = LpLEDValue[2];
-  LED3 = LpLEDValue[3];
   
   LED0 = (uint8) (LusNumber/1000);
   LED1 = (uint8) ((LusNumber/100)%10);
@@ -437,10 +332,10 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
     LED2 = LED7_NODISPLAY_CODE;
     LED3 = LED7_NODISPLAY_CODE;
   }
-  LpLEDValue[0] = LED0;
-  LpLEDValue[1] = LED1;
-  LpLEDValue[2] = LED2;
-  LpLEDValue[3] = LED3;
+  LpLEDValue[0] = LED7_NumberFont[LED0];
+  LpLEDValue[1] = LED7_NumberFont[LED1];
+  LpLEDValue[2] = LED7_NumberFont[LED2];
+  LpLEDValue[3] = LED7_NumberFont[LED3];
 }
 
 /**
@@ -449,7 +344,7 @@ void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
   * @return  value of array as int.
   * @details  None
   */
-uint16 Array_To_Int(uint8 *Array)
+static uint16 Array_To_Int(uint8 *Array)
 {
   uint16 IntNumber;
   
@@ -491,7 +386,7 @@ void LED_7Seg_Init(void)
   */
 void LED7_DisplayNumber(uint16  DisplayValue)
 {
-  Int_to_Array(DisplayValue, GaaLED7Value, LED7_DISPLAY_NUMBER);
+  LED7_IntToLED7Code(DisplayValue, GaaLED7Value, LED7_DISPLAY_NUMBER);
 }
 /**
   * @brief  Display number with adding zeros on LED7segment.
@@ -501,7 +396,7 @@ void LED7_DisplayNumber(uint16  DisplayValue)
   */
 void LED7_DisplayLeadingZeros(uint16  DisplayValue)
 {
-  Int_to_Array(DisplayValue, GaaLED7Value, \
+  LED7_IntToLED7Code(DisplayValue, GaaLED7Value, \
                LED7_DISPLAY_NUMBER_LEADING_ZEROS);
 }
 
@@ -513,11 +408,10 @@ void LED7_DisplayLeadingZeros(uint16  DisplayValue)
   */
 void LED7_DisplayError(uint8  ErrorCode)
 {
-  GaaLED7Value[0] = LED7_E_CHAR;
-  GaaLED7Value[1] = LED7_R_CHAR;
-  GaaLED7Value[2] = LED7_R_CHAR;
-  
-  GaaLED7Value[3] = ErrorCode; 
+  GaaLED7Value[0] = LED7_ErrorFont[ErrorCode][0];
+  GaaLED7Value[1] = LED7_ErrorFont[ErrorCode][1];
+  GaaLED7Value[2] = LED7_ErrorFont[ErrorCode][2];
+  GaaLED7Value[3] = LED7_ErrorFont[ErrorCode][3];
 }
 
 /**
@@ -532,18 +426,18 @@ void LED7_DisplayResult(uint8  ResultCode)
   {
     case LED7_PASS:
     {
-      GaaLED7Value[0] = LED7_P_CHAR;
-      GaaLED7Value[1] = LED7_A_CHAR;
-      GaaLED7Value[2] = LED7_S_CHAR;
-      GaaLED7Value[3] = LED7_S_CHAR;
+      GaaLED7Value[0] = LED7_ResultPASS_Font[0];
+      GaaLED7Value[1] = LED7_ResultPASS_Font[1];
+      GaaLED7Value[2] = LED7_ResultPASS_Font[2];
+      GaaLED7Value[3] = LED7_ResultPASS_Font[3];
       break;
     }
     case LED7_FAIL:
     {
-      GaaLED7Value[0] = LED7_F_CHAR;
-      GaaLED7Value[1] = LED7_A_CHAR;
-      GaaLED7Value[2] = LED7_I_CHAR;
-      GaaLED7Value[3] = LED7_L_CHAR;
+      GaaLED7Value[0] = LED7_ResultFAIL_Font[0];
+      GaaLED7Value[1] = LED7_ResultFAIL_Font[1];
+      GaaLED7Value[2] = LED7_ResultFAIL_Font[2];
+      GaaLED7Value[3] = LED7_ResultFAIL_Font[3];
       break;
     }
     default: break;
@@ -558,10 +452,10 @@ void LED7_DisplayResult(uint8  ResultCode)
   */
 void LED7_DisplayDay(uint8  Day)
 {
-  GaaLED7Value[0] = LED7_NODISPLAY_CODE;
-  GaaLED7Value[1] = LED7_NODISPLAY_CODE;
-  GaaLED7Value[2] = Day/10;
-  GaaLED7Value[3] = Day%10;
+  GaaLED7Value[0] = LED7_NumberFont[LED7_NODISPLAY_CODE];
+  GaaLED7Value[1] = LED7_NumberFont[LED7_NODISPLAY_CODE];
+  GaaLED7Value[2] = LED7_NumberFont[Day/10];
+  GaaLED7Value[3] = LED7_NumberFont[Day%10];
 }
 /**
   * @brief  Display Month on LED7segment.
@@ -571,10 +465,10 @@ void LED7_DisplayDay(uint8  Day)
   */
 void LED7_DisplayMon(uint8  Mon)
 {
-  GaaLED7Value[0] = LED7_NODISPLAY_CODE;
-  GaaLED7Value[1] = LED7_NODISPLAY_CODE;
-  GaaLED7Value[2] = Mon/10;
-  GaaLED7Value[3] = Mon%10;
+  GaaLED7Value[0] = LED7_NumberFont[LED7_NODISPLAY_CODE];
+  GaaLED7Value[1] = LED7_NumberFont[LED7_NODISPLAY_CODE];
+  GaaLED7Value[2] = LED7_NumberFont[Mon/10];
+  GaaLED7Value[3] = LED7_NumberFont[Mon%10];
 }
 /**
   * @brief  Turn off LED7segment without effect another LED7s.
@@ -694,10 +588,12 @@ void LED7_IncreaseLED7(uint8 LEDIdx, uint16 *DisplayValue)
 {
   uint8  LaaLED7Value[4];
   
-  Int_to_Array(*DisplayValue, LaaLED7Value, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+  /* Convert display value(uint16) to array. */
+  Int_to_Array(*DisplayValue, LaaLED7Value, 0);
   
   INCREASE_LED7VAL(LaaLED7Value[LEDIdx]);
 
+  /* Convert array display value(uint16) to . */
   *DisplayValue = Array_To_Int(LaaLED7Value);
 }
 
@@ -715,7 +611,7 @@ void LED7_DecreaseLED7(uint8 LEDIdx, uint16 *DisplayValue)
 {
   uint8  LaaLED7Value[4];
   
-  Int_to_Array(*DisplayValue, LaaLED7Value, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+  Int_to_Array(*DisplayValue, LaaLED7Value, 0);
   
   DECREASE_LED7VAL(LaaLED7Value[LEDIdx]);
   
