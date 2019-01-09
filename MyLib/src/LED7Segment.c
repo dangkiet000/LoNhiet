@@ -14,6 +14,22 @@
 /*******************************************************************************
 **                      Global Data Types                                    **
 *******************************************************************************/
+/* 
+Bit7 | Bit6 | Bit5 | Bit4 | Bit3 | Bit2 |  Bit1 | Bit0
+DOT     G      F      E      D      C       B      A
+*/
+static const uint8 LED7_NumberCode[10] = {
+ 0xFF, // Digit 0
+ 0xFF, // Digit 1
+ 0xFF, // Digit 2
+ 0xFF, // Digit 3
+ 0xFF, // Digit 4
+ 0xFF, // Digit 5
+ 0xFF, // Digit 6
+ 0xFF, // Digit 7
+ 0xFF, // Digit 8
+ 0xFF  // Digit 9
+};
 uint8 GaaLED7Value[MAX_NUM_LED7];
 boolean GblAllLedIsOff = FALSE;
 static uint8 Guccount = 0;
@@ -175,7 +191,7 @@ STATIC Std_ReturnType Timer_LED_Init(uint16 LusFrequence)
 
 /**
   * @brief  Decode LED-7seg.
-  * @param[in] LucLedNumber: 0-9.
+  * @param[in] LedNumber: 0-9.
   * @return  None.
   * @details  Decode LED-7seg to display digits.
   */
@@ -340,8 +356,25 @@ STATIC void LED_7Seg_Decode(uint8 LedNumber)
   }
 }
 
-
-
+/**
+  * @brief  Decode LED-7seg.
+  * @param[in] RawValue: 8bit LED7. If bitx = 1, LED is ON. Otherwise, LED is OFF
+  * @return  None.
+  * @details  Decode LED-7seg to display digits.
+  */
+/*
+STATIC void LED_7Seg_Decode(uint8 RawValue)
+{
+  LED7_SEG_A_PIN = BIT0 & RawValue;
+  LED7_SEG_B_PIN = BIT1 & RawValue;
+  LED7_SEG_C_PIN = BIT2 & RawValue;
+  LED7_SEG_D_PIN = BIT3 & RawValue;
+  LED7_SEG_E_PIN = BIT4 & RawValue;
+  LED7_SEG_F_PIN = BIT5 & RawValue;
+  LED7_SEG_G_PIN = BIT6 & RawValue;
+  LED7_SEG_DOT_PIN = BIT7 & RawValue;
+}
+*/
 /**
   * @brief  Convert int to character array.
   * @param[in] LusNumber: integer.

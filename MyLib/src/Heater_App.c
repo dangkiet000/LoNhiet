@@ -35,6 +35,318 @@ const uint8 GaaMapNumberToPlace[MAX_NUM_LED7] = {
 /*******************************************************************************
 **                      Interrupt Service Routine                             **
 *******************************************************************************/
+/*******************************************************************************
+**                      Function                                              **
+*******************************************************************************/
+/**
+  * @brief Reset MCU.
+  * @param[in] None.
+  * @return  None.
+  * @details Reset MCU.
+  * @note None.
+  */
+void Heater_Reset(void)
+{
+  SYS_UnlockReg();
+    
+  /* Reset MCU. */
+  SYS_ResetChip();
+  
+  SYS_LockReg();
+}
+/**
+  * @brief Display imaginary temperature to user.
+  * @param[in] Temperature: temperature of heater.
+  * @param[in] SetPoint: temperature set point of heater.
+  * @return  uint16: temperature which display on LED.
+  * @details Display imaginary temperature to user. This is not real
+  *          temperature.
+  *   Temperature : H
+  *   SetPoint    : S
+  *   TOLERANCE_DISPLAY_SETPOINT :N  
+  *
+  * If H is out of range [(S - N),(S + N)], display H
+  * Else (H is in range [(S - N),(S + N)]) display S
+  * @note None.
+  */
+void Heater_DisplayImaginaryTemp(uint16 Temperature, uint16 SetPoint)
+{
+  /* If Temperature is out of range [(S - N),(S + N)], display Temperature */
+  if((Temperature < (SetPoint - TOLERANCE_DISPLAY_SETPOINT)) || \
+     (Temperature > (SetPoint + TOLERANCE_DISPLAY_SETPOINT)))
+  {
+    LED7_DisplayNumber(Temperature);
+  }
+  /* Else (H is in range [(S - N),(S + N)]) display SetPoint */
+  else 
+  {
+    LED7_DisplayNumber(SetPoint);
+  }
+}
+/**
+  * @brief Get temperature of heater.
+  * @param[in] None.
+  * @return  uint16: temperature of heater in degree celsius.
+  * @details None.
+  * @note None.
+  */
+uint16 GetTemp_ThermoCouple(void)
+{
+  uint16 LusTemp_ThermoCouple; /* in Celsius */
+  
+  /* DET runtime error detect. */
+  /* Checking if heater is not connect with Thermo-couple (ADC value = max)*/
+  if(GulADC_THC_TB > MAX_ADC_TYPE_K_NON_THERMO)
+  {
+    /* Report Det runtime error detect */
+    LusTemp_ThermoCouple = THC_INVALID_VALUE;
+    
+    Dem_SetEventStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_FAILED);
+  }
+  else
+  {
+    LusTemp_ThermoCouple = ThC_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
+  }
+  
+  return LusTemp_ThermoCouple;
+}
+/**
+  * @brief Display heater working time in day.
+  * @param[in] None.
+  * @return  None.
+  * @details Display working time of heater.
+  *          Unit: day.
+  * @note None.
+  */
+void Heater_DisplayWorkingTime(void)
+{
+  uint16 Lusdays;
+  
+  /* Heater.ulWorkingTime| unit: minutes 
+  => hour = Heater.ulWorkingTime/60
+  because heater work 8h/day.
+  => days = hour/8.
+  */
+  Lusdays = (uint16)(Heater.ulWorkingTime/(NUM_MIN_PER_HOUR*NUM_HOUR_PER_DAY));
+  
+  LED7_DisplayNumber(Lusdays);
+  DelaySystemTick_ms(HEATER_WORKING_DISPLAY_TIME);
+  BlinkingAllLED7_Synchronous(800);
+
+}
+/**
+  * @brief Display heater information at startup time.
+  * @param[in] None.
+  * @return  None.
+  * @details 1. Display day in 1s.
+             2. Display month in 1s.
+             3. Display year in 1s.
+             4. Display serial number in 1s.
+             5. Display set point in 1s.
+  * @note None.
+  */
+void Heater_DisplayInfoAtStartup(void)
+{
+  LED7_DisplayDay(Heater.MDate.ucDay);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+  
+  LED7_DisplayMon(Heater.MDate.ucMonth);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+  
+  LED7_DisplayLeadingZeros(Heater.MDate.usYear);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+  
+  LED7_DisplayLeadingZeros(SERIAL_NUMBER);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+  
+  LED7_DisplayNumber(Heater.usSetPoint);
+  DelaySystemTick_ms(1000);
+  BlinkingAllLED7_Synchronous(800);
+}
+/**
+  * @brief Checking Activation Lock status and return heater is disable or
+           enable.
+  * @param[in] None.
+  * @return  HEATER_TRIAC_ENABLE: Heater is enabled triac controlling.
+             HEATER_TRIAC_DISABLE: Heater is disabled triac controlling.
+  * @details Checking Activation Lock status and return heater is disable or
+           enable.
+  * @note None.
+  */
+Heater_TriacStatusType Heater_CheckActivationLock(void)
+{
+  Heater_TriacStatusType LddRetVal;
+
+  Heater_ReadFlsData(&Heater, FLS_ACTILOCKSTATUS);
+
+  if(Heater.enActiLockStatus == HEATER_LOCKED)
+  {
+    LddRetVal = HEATER_TRIAC_DISABLE;
+  }
+  else if(Heater.enActiLockStatus == HEATER_UNLOCKED)
+  {
+    LddRetVal = HEATER_TRIAC_ENABLE;
+  }
+  else if(Heater.enActiLockStatus == HEATER_TRIAL)
+  {
+    /* To check if working-time is over Trial time */
+    if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
+    {
+      /* Yes. Disable LoNhiet */
+      Heater.enActiLockStatus = HEATER_LOCKED;
+      Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
+
+      LddRetVal = HEATER_TRIAC_DISABLE;
+    }
+    else /* No. */
+    {
+      LddRetVal = HEATER_TRIAC_ENABLE;
+    }
+  }
+  else
+  {
+    /* Do Nothing */
+  }
+
+  return LddRetVal;
+}
+/**
+  * @brief Checking SERIAL_NUMBER is equal serial number in the flash memory.
+  * @param[in] None.
+  * @return  None.
+  * @details Checking SERIAL_NUMBER is equal serial number in the flash memory.
+             Yes: Nothing to do.
+             No: write essential data(startup data) to flash memory.
+  * @note Heater need some mandatory data to startup correctly.
+  */
+void Heater_CheckFlashData(void)
+{
+  Fls_DataType LddFlsData;
+
+  Fls_Read(FLS_SERIAL_NUMBER, &LddFlsData);
+
+  /* Checking SERIAL_NUMBER is equal serial number in the flash memory. */
+  if(LddFlsData == SERIAL_NUMBER)
+  {
+    /* Startup data is configured. */
+  }
+  else
+  {
+    /* Write Startup data to memory. */
+    /* 1. Flash SERIAL_NUMBER. */
+    Heater_StoreFlsData(&Heater, FLS_SERIAL_NUMBER);
+
+    /* 2. Flash date product status. */
+    LddFlsData = HEATER_DATEPRODUCT_IS_NOT_CONFIGURED;
+    Fls_Write(FLS_DATEPRODUCTSTATUS, &LddFlsData);
+
+    /* 3. Flash activation lock status. */
+    Heater.enActiLockStatus = HEATER_TRIAL;
+    Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
+
+    /* 4. Flash working time as 0. */
+    Heater.ulWorkingTime = 0;
+    Heater_StoreFlsData(&Heater, FLS_WORKINGTIME);
+
+    /* 5. Flash year of heater. */
+    Heater.MDate.usYear = MANUFACTURE_YEAR;
+    Heater_StoreFlsData(&Heater, FLS_NAM);
+
+    /* 6. Flash default setpoint as 70. */
+    Heater.usSetPoint = 70;
+    Heater_StoreFlsData(&Heater, FLS_SETPOINT);
+
+    /* Reset MCU. */
+  }
+
+}
+/**
+  * @brief Startup heater.
+  * @param[in] None.
+  * @return  None.
+  * @details Check that heater is configured datetime or not.
+  *   If DateTime is configured, Heater can work normally.
+  * @note None.
+  */
+void Heater_Startup(void)
+{
+  /* To check that heater is configured datetime or not. */
+  if(FALSE == Heater_DateProductIsConfigured())
+  {
+    /* Datetime has not configured yet. */
+    Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
+    Heater.enOpMode = HEATER_WAIITING_USER_SETUP_DATETIME;
+  }
+  else /* DateTime is configured. At this time, Heater can work normally */
+  {
+    /* Disable button event set*/
+    
+    /* Checking Activation Lock status. */
+    Heater.enTriacStatus = Heater_CheckActivationLock();
+
+    /* Read all information. */
+    Heater_ReadFlsData(&Heater, FLS_SETPOINT);
+    Heater_ReadFlsData(&Heater, FLS_WORKINGTIME);
+
+    Heater_ReadFlsData(&Heater, FLS_NGAY);
+    Heater_ReadFlsData(&Heater, FLS_THANG);
+    Heater_ReadFlsData(&Heater, FLS_NAM);
+    
+    Heater_DisplayInfoAtStartup();
+    
+    #if (DEBUG_MODE == STD_ON)
+    printf("Ngay: %d\r\n", Heater.MDate.ucDay);
+    printf("Thang: %d\r\n", Heater.MDate.ucMonth);
+    printf("Nam: %d\r\n", Heater.MDate.usYear);
+    printf("Working Time: %d minutes\r\n", Heater.ulWorkingTime);
+    printf("SetPoint: %d\r\n", Heater.usSetPoint);
+    printf("Activation Lock Status: ");
+    switch(Heater.enActiLockStatus)
+    {
+      case HEATER_LOCKED: { printf("LOCKED \r\n"); break;  }
+      case HEATER_UNLOCKED: { printf("UNLOCKED \r\n"); break;  }
+      case HEATER_TRIAL: {  printf("TRIAL \r\n"); break;  }
+      default: break;
+    }
+    #endif
+  }
+
+}
+/**
+  * @brief Check date of product is configured or not.
+  * @param[in] None.
+  * @return  TRUE: Date product of heater is congigured. Otherwise, return
+  *          is FALSE.
+  * @details None.
+  * @note None.
+  */
+boolean Heater_DateProductIsConfigured(void)
+{
+  Fls_DataType LddDPStatus;
+  boolean Lblretval;
+
+  Fls_Read(FLS_DATEPRODUCTSTATUS, &LddDPStatus);
+
+  if(LddDPStatus == HEATER_DATEPRODUCT_IS_CONFIGURED)
+  {
+    /* Date product of heater is congigured. */
+    Lblretval = TRUE;
+  }
+  else
+  {
+    /* Date product of heater has not congigured yet. */
+    Lblretval = FALSE;
+  }
+
+  return Lblretval;
+}
+
+
+
 /*------------------------------------------------------------------------------
                             Diagnostic Events(Dem)
 ------------------------------------------------------------------------------*/
@@ -128,7 +440,11 @@ void DisplayTask_1000ms(void)
     case HEATER_IDLE:
     {
       /* To check  error */
-      if(DEM_EVENT_STATUS_FAILED == Dem_GetEventStatus(ERROR_THERMO_NOT_CONNECTED))
+      if(Heater.enActiLockStatus == HEATER_LOCKED)
+      {
+        LED7_DisplayError(LED7_ERR0);
+      }
+      else if(DEM_EVENT_STATUS_FAILED == Dem_GetEventStatus(ERROR_THERMO_NOT_CONNECTED))
       {
         LED7_DisplayError(LED7_ERR1);
       }
@@ -174,6 +490,7 @@ void DisplayTask_1000ms(void)
       }
       break;
     }
+
     default: break;
   }
 }
@@ -205,7 +522,20 @@ void StoringWorkingTime_30minutes(void)
   if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
   {
     /* Yes. Disable LoNhiet */
+    /* Accumulate working time */
+    Heater.ulWorkingTime += STORE_WORKING_TIME_INTERVAL_IN_MIN;
 
+    /* To Store working-time in flash memory */
+    /* Yes. Disable LoNhiet */
+    Heater_StoreFlsData(&Heater, FLS_WORKINGTIME);
+    
+    if(Heater.enActiLockStatus != HEATER_LOCKED)
+    {
+      Heater.enActiLockStatus = HEATER_LOCKED;
+      Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
+      Heater_Reset();
+    }
+  
   }
   else /* No */
   {
@@ -531,317 +861,6 @@ void BTRU_Hold_6s_Event(void)
     Heater.enOpMode = HEATER_IDLE;
   }
 }
-/*******************************************************************************
-**                      Function                                              **
-*******************************************************************************/
-/**
-  * @brief Reset MCU.
-  * @param[in] None.
-  * @return  None.
-  * @details Reset MCU.
-  * @note None.
-  */
-void Heater_Reset(void)
-{
-  SYS_UnlockReg();
-    
-  /* Reset MCU. */
-  SYS_ResetChip();
-  
-  SYS_LockReg();
-}
-/**
-  * @brief Display imaginary temperature to user.
-  * @param[in] Temperature: temperature of heater.
-  * @param[in] SetPoint: temperature set point of heater.
-  * @return  uint16: temperature which display on LED.
-  * @details Display imaginary temperature to user. This is not real
-  *          temperature.
-  *   Temperature : H
-  *   SetPoint    : S
-  *   TOLERANCE_DISPLAY_SETPOINT :N  
-  *
-  * If H is out of range [(S - N),(S + N)], display H
-  * Else (H is in range [(S - N),(S + N)]) display S
-  * @note None.
-  */
-void Heater_DisplayImaginaryTemp(uint16 Temperature, uint16 SetPoint)
-{
-  /* If Temperature is out of range [(S - N),(S + N)], display Temperature */
-  if((Temperature < (SetPoint - TOLERANCE_DISPLAY_SETPOINT)) || \
-     (Temperature > (SetPoint + TOLERANCE_DISPLAY_SETPOINT)))
-  {
-    LED7_DisplayNumber(Temperature);
-  }
-  /* Else (H is in range [(S - N),(S + N)]) display SetPoint */
-  else 
-  {
-    LED7_DisplayNumber(SetPoint);
-  }
-}
-/**
-  * @brief Get temperature of heater.
-  * @param[in] None.
-  * @return  uint16: temperature of heater in degree celsius.
-  * @details None.
-  * @note None.
-  */
-uint16 GetTemp_ThermoCouple(void)
-{
-  uint16 LusTemp_ThermoCouple; /* in Celsius */
-  
-  /* DET runtime error detect. */
-  /* Checking if heater is not connect with Thermo-couple (ADC value = max)*/
-  if(GulADC_THC_TB > MAX_ADC_TYPE_K_NON_THERMO)
-  {
-    /* Report Det runtime error detect */
-    LusTemp_ThermoCouple = THC_INVALID_VALUE;
-    
-    Dem_SetEventStatus(ERROR_THERMO_NOT_CONNECTED, DEM_EVENT_STATUS_FAILED);
-  }
-  else
-  {
-    LusTemp_ThermoCouple = ThC_ADCToTemp(GulADC_THC_TB, GulADC_LM35_TB);
-  }
-  
-  return LusTemp_ThermoCouple;
-}
-/**
-  * @brief Display heater working time in day.
-  * @param[in] None.
-  * @return  None.
-  * @details Display working time of heater.
-  *          Unit: day.
-  * @note None.
-  */
-void Heater_DisplayWorkingTime(void)
-{
-  uint16 Lusdays;
-  
-  /* Heater.ulWorkingTime| unit: minutes 
-  => hour = Heater.ulWorkingTime/60
-  because heater work 8h/day.
-  => days = hour/8.
-  */
-  Lusdays = (uint16)(Heater.ulWorkingTime/(NUM_MIN_PER_HOUR*NUM_HOUR_PER_DAY));
-  
-  LED7_DisplayNumber(Lusdays);
-  DelaySystemTick_ms(HEATER_WORKING_DISPLAY_TIME);
-  BlinkingAllLED7_Synchronous(800);
-
-}
-/**
-  * @brief Display heater information at startup time.
-  * @param[in] None.
-  * @return  None.
-  * @details 1. Display day in 1s.
-             2. Display month in 1s.
-             3. Display year in 1s.
-             4. Display serial number in 1s.
-             5. Display set point in 1s.
-  * @note None.
-  */
-void Heater_DisplayInfoAtStartup(void)
-{
-  LED7_DisplayDay(Heater.MDate.ucDay);
-  DelaySystemTick_ms(1000);
-  BlinkingAllLED7_Synchronous(800);
-  
-  LED7_DisplayMon(Heater.MDate.ucMonth);
-  DelaySystemTick_ms(1000);
-  BlinkingAllLED7_Synchronous(800);
-  
-  LED7_DisplayLeadingZeros(Heater.MDate.usYear);
-  DelaySystemTick_ms(1000);
-  BlinkingAllLED7_Synchronous(800);
-  
-  LED7_DisplayLeadingZeros(SERIAL_NUMBER);
-  DelaySystemTick_ms(1000);
-  BlinkingAllLED7_Synchronous(800);
-  
-  LED7_DisplayNumber(Heater.usSetPoint);
-  DelaySystemTick_ms(1000);
-  BlinkingAllLED7_Synchronous(800);
-}
-/**
-  * @brief Checking Activation Lock status and return heater is disable or
-           enable.
-  * @param[in] None.
-  * @return  HEATER_TRIAC_ENABLE: Heater is enabled triac controlling.
-             HEATER_TRIAC_DISABLE: Heater is disabled triac controlling.
-  * @details Checking Activation Lock status and return heater is disable or
-           enable.
-  * @note None.
-  */
-Heater_TriacStatusType Heater_CheckActivationLock(void)
-{
-  Heater_TriacStatusType LddRetVal;
-
-  Heater_ReadFlsData(&Heater, FLS_ACTILOCKSTATUS);
-
-  if(Heater.enActiLockStatus == HEATER_LOCKED)
-  {
-    LddRetVal = HEATER_TRIAC_DISABLE;
-  }
-  else if(Heater.enActiLockStatus == HEATER_UNLOCKED)
-  {
-    LddRetVal = HEATER_TRIAC_ENABLE;
-  }
-  else if(Heater.enActiLockStatus == HEATER_TRIAL)
-  {
-    /* To check if working-time is over Trial time */
-    if(Heater.ulWorkingTime > TRIAL_TIME_IN_MIN)
-    {
-      /* Yes. Disable LoNhiet */
-      Heater.enActiLockStatus = HEATER_LOCKED;
-      Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
-
-      LddRetVal = HEATER_TRIAC_DISABLE;
-    }
-    else /* No. */
-    {
-      LddRetVal = HEATER_TRIAC_ENABLE;
-    }
-  }
-  else
-  {
-    /* Do Nothing */
-  }
-
-  return LddRetVal;
-}
-/**
-  * @brief Checking SERIAL_NUMBER is equal serial number in the flash memory.
-  * @param[in] None.
-  * @return  None.
-  * @details Checking SERIAL_NUMBER is equal serial number in the flash memory.
-             Yes: Nothing to do.
-             No: write essential data(startup data) to flash memory.
-  * @note Heater need some mandatory data to startup correctly.
-  */
-void Heater_CheckFlashData(void)
-{
-  Fls_DataType LddFlsData;
-
-  Fls_Read(FLS_SERIAL_NUMBER, &LddFlsData);
-
-  /* Checking SERIAL_NUMBER is equal serial number in the flash memory. */
-  if(LddFlsData == SERIAL_NUMBER)
-  {
-    /* Startup data is configured. */
-  }
-  else
-  {
-    /* Write Startup data to memory. */
-    /* 1. Flash SERIAL_NUMBER. */
-    Heater_StoreFlsData(&Heater, FLS_SERIAL_NUMBER);
-
-    /* 2. Flash date product status. */
-    LddFlsData = HEATER_DATEPRODUCT_IS_NOT_CONFIGURED;
-    Fls_Write(FLS_DATEPRODUCTSTATUS, &LddFlsData);
-
-    /* 3. Flash activation lock status. */
-    Heater.enActiLockStatus = HEATER_TRIAL;
-    Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
-
-    /* 4. Flash working time as 0. */
-    Heater.ulWorkingTime = 0;
-    Heater_StoreFlsData(&Heater, FLS_WORKINGTIME);
-
-    /* 5. Flash year of heater. */
-    Heater.MDate.usYear = MANUFACTURE_YEAR;
-    Heater_StoreFlsData(&Heater, FLS_NAM);
-
-    /* 6. Flash default setpoint as 70. */
-    Heater.usSetPoint = 70;
-    Heater_StoreFlsData(&Heater, FLS_SETPOINT);
-
-    /* Reset MCU. */
-  }
-
-}
-/**
-  * @brief Startup heater.
-  * @param[in] None.
-  * @return  None.
-  * @details Check that heater is configured datetime or not.
-  *   If DateTime is configured, Heater can work normally.
-  * @note None.
-  */
-void Heater_Startup(void)
-{
-  /* To check that heater is configured datetime or not. */
-  if(FALSE == Heater_DateProductIsConfigured())
-  {
-    /* Datetime has not configured yet. */
-    Heater.enTriacStatus = HEATER_TRIAC_DISABLE;
-    Heater.enOpMode = HEATER_WAIITING_USER_SETUP_DATETIME;
-  }
-  else /* DateTime is configured. At this time, Heater can work normally */
-  {
-    /* Disable button event set*/
-    
-    /* Checking Activation Lock status. */
-    Heater.enTriacStatus = Heater_CheckActivationLock();
-
-    /* Read all information. */
-    Heater_ReadFlsData(&Heater, FLS_SETPOINT);
-    Heater_ReadFlsData(&Heater, FLS_WORKINGTIME);
-
-    Heater_ReadFlsData(&Heater, FLS_NGAY);
-    Heater_ReadFlsData(&Heater, FLS_THANG);
-    Heater_ReadFlsData(&Heater, FLS_NAM);
-    
-    Heater_DisplayInfoAtStartup();
-    
-    #if (DEBUG_MODE == STD_ON)
-    printf("Ngay: %d\r\n", Heater.MDate.ucDay);
-    printf("Thang: %d\r\n", Heater.MDate.ucMonth);
-    printf("Nam: %d\r\n", Heater.MDate.usYear);
-    printf("Working Time: %d minutes\r\n", Heater.ulWorkingTime);
-    printf("SetPoint: %d\r\n", Heater.usSetPoint);
-    printf("Activation Lock Status: ");
-    switch(Heater.enActiLockStatus)
-    {
-      case HEATER_LOCKED: { printf("LOCKED \r\n"); break;  }
-      case HEATER_UNLOCKED: { printf("UNLOCKED \r\n"); break;  }
-      case HEATER_TRIAL: {  printf("TRIAL \r\n"); break;  }
-      default: break;
-    }
-    #endif
-  }
-
-}
-/**
-  * @brief Check date of product is configured or not.
-  * @param[in] None.
-  * @return  TRUE: Date product of heater is congigured. Otherwise, return
-  *          is FALSE.
-  * @details None.
-  * @note None.
-  */
-boolean Heater_DateProductIsConfigured(void)
-{
-  Fls_DataType LddDPStatus;
-  boolean Lblretval;
-
-  Fls_Read(FLS_DATEPRODUCTSTATUS, &LddDPStatus);
-
-  if(LddDPStatus == HEATER_DATEPRODUCT_IS_CONFIGURED)
-  {
-    /* Date product of heater is congigured. */
-    Lblretval = TRUE;
-  }
-  else
-  {
-    /* Date product of heater has not congigured yet. */
-    Lblretval = FALSE;
-  }
-
-  return Lblretval;
-}
-
-
 /*------------------------------------------------------------------------------
                           ENTER / EXIT EVENT
 ------------------------------------------------------------------------------*/
@@ -1014,7 +1033,7 @@ void Exit_HEATER_UPDATE_SETPOINT_mode(boolean IsTimeOut)
        K. */
     if(Heater.usSetPoint > MAX_TEMP_TYPE_K)
     {
-      LED7_DisplayError(LED7_ERR0);
+      LED7_DisplayError(LED7_ERR3);
     }
     else
     {

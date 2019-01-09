@@ -76,6 +76,15 @@ typedef struct STag_LED7_DriverType
 /*******************************************************************************
 **                      Configuration                                         **
 *******************************************************************************/
+#define LED7_SEG_A_PIN  PB0
+#define LED7_SEG_B_PIN  PB2
+#define LED7_SEG_C_PIN  PC0
+#define LED7_SEG_D_PIN  PC3
+#define LED7_SEG_E_PIN  PC2
+#define LED7_SEG_F_PIN  PB1
+#define LED7_SEG_G_PIN  PB3
+#define LED7_SEG_DOT_PIN  PC1
+
 /* Definition of position LED */
 #define  LED7_0   0x01U
 #define  LED7_1   0x02U

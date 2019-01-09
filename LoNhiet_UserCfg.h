@@ -22,10 +22,10 @@
    này, mạch sẽ bi khóa, không dùng được.
 	 Đơn vị: giờ.
 */
-#define THOI_GIAN_DUNG_THU		  240U
+#define THOI_GIAN_DUNG_THU		  1U
 
 /* Số serial của sản phẩm, số này phải là số có bốn chữ số */
-#define SO_SERI             		5310U
+#define SO_SERI             		1000U
 
 /* Đây là số đặc biệt của sản phẩm, hết hợp với số serial tạo thành mật khẩu */
 #define SO_DAC_BIET             2U
