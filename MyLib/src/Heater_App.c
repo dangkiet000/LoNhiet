@@ -1089,6 +1089,8 @@ void Exit_HEATER_ENTER_PASSWORD_mode(boolean IsTimeOut)
       Heater_StoreFlsData(&Heater, FLS_ACTILOCKSTATUS);
 
       LED7_DisplayResult(LED7_PASS);
+      
+      
     }
     else
     {
@@ -1099,13 +1101,19 @@ void Exit_HEATER_ENTER_PASSWORD_mode(boolean IsTimeOut)
   /* Blinking all LED7 to inform that Enter-password is finished. */
   BlinkingAllLED7_Synchronous(2500);
 
-  /* Reset variables. */
-  Heater.ucBlinkLED7Idx = 0;
-  Heater.usUserPassword = 0;
+  if(Heater.usUserPassword != HEATER_PASSWORD)
+  {
+    /* Reset variables. */
+    Heater.ucBlinkLED7Idx = 0;
+    Heater.usUserPassword = 0;
 
-  Heater.enOpMode = HEATER_IDLE;
-  /* Execute RESET. */
-  Heater_Reset();
+    Heater.enOpMode = HEATER_IDLE;
+  }
+  else /* Validate user password. */
+  {
+    /* Execute RESET. */
+    Heater_Reset();
+  }
 }
 
 /* Read Heater data which store in data flash memory. */

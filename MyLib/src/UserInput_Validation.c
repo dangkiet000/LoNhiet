@@ -8,7 +8,6 @@
  * @note
 *****************************************************************************/
 #include "UserInput_Validation.h"
-#include "LED7Segment.h"
 
 /** @addtogroup None
   @{
@@ -30,11 +29,68 @@ const uint8 GaaMapPlaceToMaxTempDigit[4] = {
   MAX_TENS_TEMPERATURE,
   MAX_ONES_TEMPERATURE
 };
-
-
+/*******************************************************************************
+**                      Function Prototype                                    **
+*******************************************************************************/
+static void Int_to_Array(uint16  LusIntNumber, uint8 *LpArray, \
+                                    uint8 NoMeaningValue);
+static uint16 Array_To_Int(uint8 *Array);
 /*******************************************************************************
 **                      Function                                              **
 *******************************************************************************/
+/**
+  * @brief  Convert int to character array.
+  * @param[in] LusNumber: integer.
+  * @param[in] *LpArray: pointer point to character array.
+  * @return  None.
+  * @details  Ham tach so nguyen (khong dau) thanh ung chu 
+  * so rieng biet va luu vao mang.
+  */
+static void Int_to_Array(uint16  LusIntNumber, uint8 *LpArray, \
+                                    uint8 NoMeaningValue)
+{
+  LpArray[0] = (uint8) (LusIntNumber/1000);
+  LpArray[1] = (uint8) ((LusIntNumber/100)%10);
+  LpArray[2] = (uint8) ((LusIntNumber/10)%10);
+  LpArray[3] = (uint8) (LusIntNumber%10);
+  
+  if(LusIntNumber < 10) /* Nếu là số có 1 chữ số */
+  {
+    LpArray[0] = NoMeaningValue;
+    LpArray[1] = NoMeaningValue;
+    LpArray[2] = NoMeaningValue;
+  }
+  else if(LusIntNumber < 100) /* Nếu là số có 2 chữ số */
+  {
+    LpArray[0] = NoMeaningValue;
+    LpArray[1] = NoMeaningValue;
+  }
+  else if(LusIntNumber < 1000)  /* Nếu là số có 3 chữ số */
+  {
+    LpArray[0] = NoMeaningValue;
+  }
+  else if(LusIntNumber < 9999)  /* Nếu là số có 4 chữ số */
+  {
+    
+  }
+  else
+  { 
+    LpArray[0] = NoMeaningValue;
+    LpArray[1] = NoMeaningValue;
+    LpArray[2] = NoMeaningValue;
+    LpArray[3] = NoMeaningValue;
+  }
+}
+
+static uint16 Array_To_Int(uint8 *Array)
+{
+  uint16 IntNumber;
+  
+  IntNumber = Array[0]*1000 + Array[1]*100 + Array[2]*10 + + Array[3];
+
+  return IntNumber;  
+}
+
 /**
   * @brief  Get multiplication factor of number having 4 digits.
   * @param[in] Place: place of digit which is setting.
@@ -446,7 +502,7 @@ uint16 Heater_TempPlus(uint16 SetPoint, uint8 Place)
   
   MulFactor = GetMulFactor(Place);
   
-  Int_to_Array(SetPoint, LaaSetPoint, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+  Int_to_Array(SetPoint, LaaSetPoint, 0);
   
   SetPoint += MulFactor;
 
@@ -482,7 +538,7 @@ uint16 Heater_TempMinus(uint16 SetPoint, uint8 Place)
   
   MulFactor = GetMulFactor(Place);
   
-  Int_to_Array(SetPoint, LaaSetPoint, LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+  Int_to_Array(SetPoint, LaaSetPoint, 0);
   
   if(SetPoint != 0)
   {

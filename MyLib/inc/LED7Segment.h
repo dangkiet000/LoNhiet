@@ -97,14 +97,6 @@ typedef struct STag_LED7_DriverType
 
 /* LED value code. */
 #define LED7_NODISPLAY_CODE   10U
-#define LED7_E_CHAR           11U
-#define LED7_R_CHAR           12U
-#define LED7_P_CHAR           13U
-#define LED7_A_CHAR           14U
-#define LED7_S_CHAR           15U
-#define LED7_F_CHAR           16U
-#define LED7_I_CHAR           17U
-#define LED7_L_CHAR           18U
 
 /* Errors code. */
 /* TEMPERATURE OF SET POINT IS WRONG */
@@ -151,7 +143,7 @@ extern uint32_t millis(void);
 STATIC void LED_7Seg_Decode(uint8 LedNumber);
 STATIC Std_ReturnType Timer_LED_Init(uint16 LusFrequence);
 
-void Int_to_Array(uint16  LusIntNumber, uint8 *LpLEDValue, \
+void LED7_IntToLED7Code(uint16  LusIntNumber, uint8 *LpLEDValue, \
                               LED7_DisplayType DisplayType);
 uint16 Array_To_Int(uint8 *Array);
 /*******************************************************************************

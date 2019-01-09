@@ -101,7 +101,6 @@ int main()
   /* Checking startup date is configured or not. */
   Heater_CheckFlashData();
 
-
   Heater_Startup();
 
 
