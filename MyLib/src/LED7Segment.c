@@ -11,49 +11,10 @@
 
 #include "LED7Segment.h"
 
-#define LED7_TYPE           0
-#define LED7_COMMON_ANODE   0
-#define LED7_COMMON_CATHODE 1
 
-#define NUMBER_OF_ERROR_CODE 4
 /*******************************************************************************
 **                      Global Data Types                                    **
 *******************************************************************************/
-/* 
-Bit7 | Bit6 | Bit5 | Bit4 | Bit3 | Bit2 |  Bit1 | Bit0
-DOT     G      F      E      D      C       B      A
-
-Bit7 = 1 <=> LEDDOT is ON
-*/
-
-static const uint8 LED7_NumberFont[11] = {
-  0x3F, /* Digit 0 */
-	0x06, /* Digit 1 */
-	0x5B, /* Digit 2 */
-	0x4F, /* Digit 3 */
-	0x66, /* Digit 4 */
-  0x6D, /* Digit 5 */
-	0x7D, /* Digit 6 */
-	0x07, /* Digit 7 */
-	0x7F, /* Digit 8 */
-	0x6F, /* Digit 9 */
-  0x00  /* No Display */
-};
-
-static const uint8 LED7_ErrorFont[NUMBER_OF_ERROR_CODE][4] = {
-  {0x79,  0x77,  0x77, 0x3F}, // {'E','R','R','0'}
-  {0x79,  0x77,  0x77, 0x06}, // {'E','R','R','1'}
-  {0x79,  0x77,  0x77, 0x5B}, // {'E','R','R','2'}
-  {0x79,  0x77,  0x77, 0x4F}, // {'E','R','R','3'}
-};
-
-static const uint8 LED7_ResultPASS_Font[4] = {
-  0x73,  0x77,  0x6D, 0x6D // {'P','A','S','S'}
-};
-
-static const uint8 LED7_ResultFAIL_Font[4] = {
-  0x71,  0x77,  0x30, 0x38 // {'F','A','I','L'}
-};
 
 
 uint8 GaaLED7Value[MAX_NUM_LED7];
@@ -261,10 +222,12 @@ static void Int_to_Array(uint16  LusIntNumber, uint8 *LpArray, \
 
 STATIC void LED_7Seg_Decode(uint8 RawValue)
 {
+  /* If this is LED7 Common anode. */
   if(LED7_TYPE == LED7_COMMON_ANODE)
   {
     RawValue = ~RawValue;
   }
+  
   LED7_SEG_A_PIN = (BIT0 & RawValue);
   LED7_SEG_B_PIN = (BIT1 & RawValue)>>1;
   LED7_SEG_C_PIN = (BIT2 & RawValue)>>2;
@@ -272,7 +235,7 @@ STATIC void LED_7Seg_Decode(uint8 RawValue)
   LED7_SEG_E_PIN = (BIT4 & RawValue)>>4;
   LED7_SEG_F_PIN = (BIT5 & RawValue)>>5;
   LED7_SEG_G_PIN = (BIT6 & RawValue)>>6;
-LED7_SEG_DOT_PIN = (BIT7 & RawValue)>>7;
+  LED7_SEG_DOT_PIN = (BIT7 & RawValue)>>7;
 }
 
 /**
@@ -286,56 +249,14 @@ LED7_SEG_DOT_PIN = (BIT7 & RawValue)>>7;
 void LED7_IntToLED7Code(uint16  LusIntNumber, uint8 *LpLEDValue, \
                                     LED7_DisplayType DisplayType)
 {
-  uint16 LusNumber;
-  uint8 LED0, LED1, LED2, LED3;
-  uint8 LucNoMeaningDigit;
+  uint8 LaaTemp[4];
+
+  Int_to_Array(LusIntNumber, LaaTemp, DisplayType);
   
-  if(DisplayType == LED7_DISPLAY_NUMBER_LEADING_ZEROS)
-  {
-    LucNoMeaningDigit = 0;
-  }
-  else
-  {
-    LucNoMeaningDigit = LED7_NODISPLAY_CODE;
-  }
-    
-  LusNumber = LusIntNumber;
-  
-  LED0 = (uint8) (LusNumber/1000);
-  LED1 = (uint8) ((LusNumber/100)%10);
-  LED2 = (uint8) ((LusNumber/10)%10);
-  LED3 = (uint8) (LusNumber%10);
-  
-  if(LusNumber < 10) /* Nếu là số có 1 chữ số */
-  {
-    LED0 = LucNoMeaningDigit;
-    LED1 = LucNoMeaningDigit;
-    LED2 = LucNoMeaningDigit;
-  }
-  else if(LusNumber < 100) /* Nếu là số có 2 chữ số */
-  {
-    LED0 = LucNoMeaningDigit;
-    LED1 = LucNoMeaningDigit;
-  }
-  else if(LusNumber < 1000)  /* Nếu là số có 3 chữ số */
-  {
-    LED0 = LucNoMeaningDigit;
-  }
-  else if(LusNumber < 9999)  /* Nếu là số có 4 chữ số */
-  {
-    
-  }
-  else
-  { 
-    LED0 = LED7_NODISPLAY_CODE;
-    LED1 = LED7_NODISPLAY_CODE;
-    LED2 = LED7_NODISPLAY_CODE;
-    LED3 = LED7_NODISPLAY_CODE;
-  }
-  LpLEDValue[0] = LED7_NumberFont[LED0];
-  LpLEDValue[1] = LED7_NumberFont[LED1];
-  LpLEDValue[2] = LED7_NumberFont[LED2];
-  LpLEDValue[3] = LED7_NumberFont[LED3];
+  LpLEDValue[0] = LED7_NumberFont[LaaTemp[0]];
+  LpLEDValue[1] = LED7_NumberFont[LaaTemp[1]];
+  LpLEDValue[2] = LED7_NumberFont[LaaTemp[2]];
+  LpLEDValue[3] = LED7_NumberFont[LaaTemp[3]];
 }
 
 /**
@@ -367,9 +288,6 @@ void LED_7Seg_Init(void)
   GPIO_SetMode(PA, BIT8|BIT9|BIT10|BIT11, GPIO_PMD_OUTPUT);
   GPIO_SetMode(PB, BIT0|BIT1|BIT2|BIT3, GPIO_PMD_OUTPUT);
   GPIO_SetMode(PC, BIT0|BIT1|BIT2|BIT3, GPIO_PMD_OUTPUT);
-  
-  /* Dot in Led7seg is off */
-  LEDDOT = 1;
   
   /* Configure Time 150Hz use for display LED7-Seg */
   Timer_LED_Init(200);

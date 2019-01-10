@@ -23,7 +23,7 @@
 #define SCH_HeaterDiagnostics_Task    5U
 
 /* Scheduler call-back function prototypes */
-extern void DisplayTask_1000ms(void);
+extern void DisplayTask_UserConfigTimems(void);
 extern void Send_SetPoint_to_PC_20000ms(void);
 extern void UpdateADCValue_250ms(void);
 extern void StoringWorkingTime_30minutes(void);

@@ -11,6 +11,8 @@
  ******************************************************************************/
 #ifndef __LONHIET_USERCFG_H__
 #define __LONHIET_USERCFG_H__
+
+#include "Std_Types.h"
 /*******************************************************************************
 **                      Include                                               **
 *******************************************************************************/
@@ -44,6 +46,19 @@
 
 /* Nhiệt độ cao nhất mà lò có thể đạt được. */
 #define NHIET_DO_MAX            1350U
+
+/* Thời gian cập nhật để hiển thị nhiệt độ. Đơn vị: mili giây. */
+#define THOI_GIAN_CAP_NHAT_HIEN_THI_NHIET_DO 1000
+
+/* Đây là loại LED7 đoạn
+LED7_TYPE = 0: Anode chung(dương chung).
+LED7_TYPE = 1: Cathode chung(âm chung).
+*/
+#define LED7_TYPE           0
+
+
+/* Số mã lỗi hiển thị trên LED7. */
+#define NUMBER_OF_ERROR_CODE 4
 
 /* Chế độ debug, khi ON thì sẽ xuất ra nhiều thông tin cần thiết qua UART1 */
 #define DEBUG_MODE              STD_ON

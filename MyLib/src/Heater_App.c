@@ -420,7 +420,7 @@ void TO_EnterPassword(void)
                             Scheduler Events 
 -------------------------------------------------------------------------------*/
 /* Display LED7segment every 1000ms. */
-void DisplayTask_1000ms(void)
+void DisplayTask_UserConfigTimems(void)
 {
   switch(Heater.enOpMode)
   {

@@ -14,6 +14,7 @@
 
 #include "NUC200Series.h"
 #include "Std_Types.h"
+#include "LoNhiet_UserCfg.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -92,6 +93,10 @@ typedef struct STag_LED7_DriverType
 #define  LED7_3   0x08U
 #define  LED7_ALL 0x0FU
 
+/* Definition of LED7 type. */
+#define LED7_COMMON_ANODE   0
+#define LED7_COMMON_CATHODE 1
+
 /* Maximum number of LED7segment */
 #define MAX_NUM_LED7          4U
 
@@ -120,9 +125,6 @@ typedef struct STag_LED7_DriverType
 #define LED7_PASS             20U
 #define LED7_FAIL             21U
 
-
-#define LEDDOT            PC1
-
 /* Timer Led define */  
 #define TimerLED_ISR              TMR3_IRQHandler
 #define TimerBaseAddr             TIMER3
@@ -135,6 +137,11 @@ typedef struct STag_LED7_DriverType
 #define INCREASE_LED7VAL(val)  ((val >= 9) ? (val = 0) : (val++))
 #define DECREASE_LED7VAL(val)  ((val == 0) ? (val = 9) : (val--))
 
+/* These variables are defined by user. */
+extern const uint8 LED7_NumberFont[11];
+extern const uint8 LED7_ErrorFont[NUMBER_OF_ERROR_CODE][4];
+extern const uint8 LED7_ResultPASS_Font[4];
+extern const uint8 LED7_ResultFAIL_Font[4];
 /*******************************************************************************
 **                      Function Prototypes                                   **
 *******************************************************************************/

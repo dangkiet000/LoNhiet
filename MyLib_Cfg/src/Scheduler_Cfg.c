@@ -14,7 +14,7 @@
 **                      Include Section                                       **
 *******************************************************************************/
 #include "Scheduler.h"
-
+#include "LoNhiet_UserCfg.h"
 /*******************************************************************************
 **                      Global Data                                           **
 *******************************************************************************/
@@ -34,9 +34,9 @@ tSchedulerTask Sch_GaaTable[] =
   /* Index: 1 - SCH_Display_Task */
   {
     /* pfnFunction */
-    &DisplayTask_1000ms,
+    &DisplayTask_UserConfigTimems,
     /* ulInterval */
-    1000,
+    THOI_GIAN_CAP_NHAT_HIEN_THI_NHIET_DO,
     /* ulLastTick */
     0,
     /* enStatus */
