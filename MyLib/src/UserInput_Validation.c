@@ -86,7 +86,7 @@ static uint16 Array_To_Int(uint8 *Array)
 {
   uint16 IntNumber;
   
-  IntNumber = Array[0]*1000 + Array[1]*100 + Array[2]*10 + + Array[3];
+  IntNumber = Array[0]*1000 + Array[1]*100 + Array[2]*10 + Array[3];
 
   return IntNumber;  
 }

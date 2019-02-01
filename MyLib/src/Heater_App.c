@@ -147,22 +147,27 @@ void Heater_DisplayWorkingTime(void)
   */
 void Heater_DisplayInfoAtStartup(void)
 {
+  /* Hiển thị: Ngày */
   LED7_DisplayDay(Heater.MDate.ucDay);
   DelaySystemTick_ms(1000);
   BlinkingAllLED7_Synchronous(800);
   
+  /* Hiển thị: Tháng */
   LED7_DisplayMon(Heater.MDate.ucMonth);
   DelaySystemTick_ms(1000);
   BlinkingAllLED7_Synchronous(800);
   
+  /* Hiển thị: Năm */
   LED7_DisplayLeadingZeros(Heater.MDate.usYear);
   DelaySystemTick_ms(1000);
   BlinkingAllLED7_Synchronous(800);
   
+  /* Hiển thị: Số seri */
   LED7_DisplayLeadingZeros(SERIAL_NUMBER);
   DelaySystemTick_ms(1000);
   BlinkingAllLED7_Synchronous(800);
   
+  /* Hiển thị: Nhiệt độ cài đặt */
   LED7_DisplayNumber(Heater.usSetPoint);
   DelaySystemTick_ms(1000);
   BlinkingAllLED7_Synchronous(800);

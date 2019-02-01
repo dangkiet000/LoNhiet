@@ -43,8 +43,6 @@ int main()
   /* Init GPIO */
   PORT_Init();
   
-  
-  
   /* Unlock protected registers */
   SYS_UnlockReg();
 

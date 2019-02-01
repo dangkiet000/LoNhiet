@@ -27,7 +27,7 @@
 #define THOI_GIAN_DUNG_THU		  1U
 
 /* Số serial của sản phẩm, số này phải là số có bốn chữ số */
-#define SO_SERI             		1000U
+#define SO_SERI             		2000U
 
 /* Đây là số đặc biệt của sản phẩm, hết hợp với số serial tạo thành mật khẩu */
 #define SO_DAC_BIET             2U
@@ -56,6 +56,8 @@ LED7_TYPE = 1: Cathode chung(âm chung).
 */
 #define LED7_TYPE           0
 
+/* Đây là vị trí mã font không hiển thị trong mảng LED7_NumberFont */
+#define LED7_FONT_NO_DISPLAY 11
 
 /* Số mã lỗi hiển thị trên LED7. */
 #define NUMBER_OF_ERROR_CODE 4

@@ -178,12 +178,13 @@ STATIC Std_ReturnType Timer_LED_Init(uint16 LusFrequence)
 
 
 /**
-  * @brief  Decode LED-7seg.
-  * @param[in] RawValue: 8bit LED7. If bitx = 1, LED is ON. Otherwise, LED is OFF
+  * @brief  Convert integer 16-bit number to uint8 array.
+  * @param[in] LusIntNumber: 16-bit number.
+  * @param[in] NoMeaningValue: .
+  * @param[out] LpArray: pointer to output.
   * @return  None.
-  * @details  Decode LED-7seg to display digits.
+  * @details  Convert integer 16-bit number to uint8 array.
   */
-
 static void Int_to_Array(uint16  LusIntNumber, uint8 *LpArray, \
                                     uint8 NoMeaningValue)
 {
@@ -238,26 +239,6 @@ STATIC void LED_7Seg_Decode(uint8 RawValue)
   LED7_SEG_DOT_PIN = (BIT7 & RawValue)>>7;
 }
 
-/**
-  * @brief  Convert int to character array.
-  * @param[in] LusNumber: integer.
-  * @param[in] *LpLEDValue: pointer point to character array.
-  * @return  None.
-  * @details  Ham tach so nguyen (khong dau) thanh ung chu 
-  * so rieng biet va luu vao mang.
-  */
-void LED7_IntToLED7Code(uint16  LusIntNumber, uint8 *LpLEDValue, \
-                                    LED7_DisplayType DisplayType)
-{
-  uint8 LaaTemp[4];
-
-  Int_to_Array(LusIntNumber, LaaTemp, DisplayType);
-  
-  LpLEDValue[0] = LED7_NumberFont[LaaTemp[0]];
-  LpLEDValue[1] = LED7_NumberFont[LaaTemp[1]];
-  LpLEDValue[2] = LED7_NumberFont[LaaTemp[2]];
-  LpLEDValue[3] = LED7_NumberFont[LaaTemp[3]];
-}
 
 /**
   * @brief  Convert array to int.
@@ -269,7 +250,7 @@ static uint16 Array_To_Int(uint8 *Array)
 {
   uint16 IntNumber;
   
-  IntNumber = Array[0]*1000 + Array[1]*100 + Array[2]*10 + + Array[3];
+  IntNumber = Array[0]*1000 + Array[1]*100 + Array[2]*10 + Array[3];
 
   return IntNumber;  
 }
@@ -298,13 +279,20 @@ void LED_7Seg_Init(void)
 
 /**
   * @brief  Display number on LED7segment.
-  * @param[in] LusDisplayValue: 0 -> (2^MAX_NUM_LED7-1).
+  * @param[in] DisplayValue: 0 -> (2^MAX_NUM_LED7-1).
   * @return None.
   * @details  Display value on LED7segment.
   */
 void LED7_DisplayNumber(uint16  DisplayValue)
 {
-  LED7_IntToLED7Code(DisplayValue, GaaLED7Value, LED7_DISPLAY_NUMBER);
+  uint8 LaaTemp[4];
+
+  Int_to_Array(DisplayValue, LaaTemp, LED7_FONT_NO_DISPLAY);
+  
+  GaaLED7Value[0] = LED7_NumberFont[LaaTemp[0]];
+  GaaLED7Value[1] = LED7_NumberFont[LaaTemp[1]];
+  GaaLED7Value[2] = LED7_NumberFont[LaaTemp[2]];
+  GaaLED7Value[3] = LED7_NumberFont[LaaTemp[3]];
 }
 /**
   * @brief  Display number with adding zeros on LED7segment.
@@ -314,8 +302,14 @@ void LED7_DisplayNumber(uint16  DisplayValue)
   */
 void LED7_DisplayLeadingZeros(uint16  DisplayValue)
 {
-  LED7_IntToLED7Code(DisplayValue, GaaLED7Value, \
-               LED7_DISPLAY_NUMBER_LEADING_ZEROS);
+  uint8 LaaTemp[4];
+
+  Int_to_Array(DisplayValue, LaaTemp, 0);
+  
+  GaaLED7Value[0] = LED7_NumberFont[LaaTemp[0]];
+  GaaLED7Value[1] = LED7_NumberFont[LaaTemp[1]];
+  GaaLED7Value[2] = LED7_NumberFont[LaaTemp[2]];
+  GaaLED7Value[3] = LED7_NumberFont[LaaTemp[3]];
 }
 
 /**
@@ -529,11 +523,13 @@ void LED7_DecreaseLED7(uint8 LEDIdx, uint16 *DisplayValue)
 {
   uint8  LaaLED7Value[4];
   
+  /* Convert display value(uint16) to array. */
   Int_to_Array(*DisplayValue, LaaLED7Value, 0);
   
   DECREASE_LED7VAL(LaaLED7Value[LEDIdx]);
   
-  *DisplayValue = Array_To_Int(LaaLED7Value);
+  /* Convert array display value(uint16) to . */
+  *DisplayValue = Array_To_Int(&LaaLED7Value[0]);
 }
 
 

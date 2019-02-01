@@ -42,12 +42,13 @@ typedef enum ETag_LED7_BlinkStateType
 } LED7_BlinkStateType;
 
 /* Definition of position LED */
+/*
 typedef enum ETag_LED7_DisplayType
 {
   LED7_DISPLAY_NUMBER = 0,
   LED7_DISPLAY_NUMBER_LEADING_ZEROS,
 } LED7_DisplayType;
-
+*/
 /* Definition of position LED */
 typedef struct STag_LED7_DriverType
 {
@@ -150,8 +151,6 @@ extern uint32_t millis(void);
 STATIC void LED_7Seg_Decode(uint8 LedNumber);
 STATIC Std_ReturnType Timer_LED_Init(uint16 LusFrequence);
 
-void LED7_IntToLED7Code(uint16  LusIntNumber, uint8 *LpLEDValue, \
-                              LED7_DisplayType DisplayType);
 uint16 Array_To_Int(uint8 *Array);
 /*******************************************************************************
 **                      API Function Prototypes                               **
